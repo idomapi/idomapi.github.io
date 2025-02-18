@@ -1,1 +1,2953 @@
-Hello world1
+
+<!doctype html>
+<html lang="he" dir="rtl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="font-awesome.min.css" rel="stylesheet" />
+		<title>משרד הנגב, הגליל והחוסן הלאומי</title>
+		<!-- Add Vue 2 CDN -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/vue@2"></script> -->
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/earlyaccess/alefhebrew.css"
+		/>
+		<script src="vue@2.js"></script>
+		<link rel="stylesheet" href="layers_icons.css" />
+		<style>
+			[v-cloak] {
+				display: none;
+			}
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			.navbar-header {
+				width: 100%;
+				background: white;
+				padding-right: 1rem;
+				padding-left: 1rem;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+				height: 65px;
+			}
+
+			.header-content {
+				margin: 0 auto;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 1rem;
+			}
+			.header-content1 {
+				/* margin: 0 auto; */
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 1rem;
+				width: 100%;
+			}
+
+			.navbar-brand {
+				font-size: 1.5rem;
+				color: #006dcc;
+				text-decoration: none;
+				text-align: center;
+			}
+
+			.search-container {
+				position: relative;
+				flex-grow: 1;
+				max-width: 300px;
+				min-width: 280px;
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+			}
+
+			.searchInput {
+				width: 100%;
+				height: 2.5rem;
+				padding: 0.5rem 1rem;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 1rem;
+			}
+
+			.actions-container {
+				display: flex;
+				gap: 1rem;
+				align-items: center;
+			}
+
+			.action-button {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.25rem;
+				padding: 0.5rem;
+				border: none;
+				background: none;
+				cursor: pointer;
+				color: #5f6368;
+			}
+
+			.action-button:hover {
+				/* background-color: #f5f5f5; */
+				border-radius: 4px;
+			}
+			.mobile-action-button {
+				display: none;
+			}
+			.mobile-menu-button {
+				display: none;
+				background: none;
+				border: none;
+				padding: 0.5rem;
+				cursor: pointer;
+			}
+
+			.mobile-menu-logo {
+				display: none;
+				background: none;
+				border: none;
+				padding: 0.5rem;
+				cursor: pointer;
+			}
+
+			.drawer {
+				position: fixed;
+				top: 0;
+				right: 0;
+				width: 200px;
+				height: 100%;
+				background: white;
+				box-shadow: -2px 0 4px rgba(0, 0, 0, 0.2);
+				display: flex;
+				flex-direction: column;
+				padding: 1rem;
+				transform: translateX(100%);
+				transition: transform 0.3s ease;
+				z-index: 1000;
+			}
+
+			.drawer.open {
+				transform: translateX(0);
+			}
+
+			.autocomplete-container {
+				display: flex;
+				justify-content: center;
+				width: 100%;
+				margin-bottom: 20px; /* To separate the two components */
+			}
+
+			.autocomplete {
+				position: relative;
+				display: inline-block;
+				width: 100%;
+				max-width: 500px;
+				border: 1px solid transparent;
+			}
+
+			.autocomplete input {
+				border: 1px solid transparent;
+				background-color: white;
+				padding: 10px;
+				font-size: 16px;
+				border: 1px solid transparent;
+				background-color: #f1f1f1;
+				width: 100%;
+				font-family: "Alef Hebrew", "Helvetica Neue", Helvetica, Arial,
+					sans-serif;
+			}
+
+			.autocomplete-items {
+				font-size: 14px !important;
+				position: absolute;
+				border: 1px solid #d4d4d4;
+				border-top: none;
+				z-index: 99;
+				top: 100%;
+				width: 100%;
+				overflow-y: auto;
+				max-height: calc(100vh - 200px);
+			}
+
+			.autocomplete-items::-webkit-scrollbar {
+				width: 10px;
+			}
+
+			/* Track */
+			::-webkit-scrollbar-track {
+				background: #f1f1f1;
+			}
+
+			/* Handle */
+			::-webkit-scrollbar-thumb {
+				background: #888;
+			}
+
+			/* Handle on hover */
+			::-webkit-scrollbar-thumb:hover {
+				background: #555;
+			}
+
+			.autocomplete-items div {
+				padding: 5px;
+				cursor: pointer;
+				background-color: #fff;
+			}
+
+			/* When hovering an item */
+			.autocomplete-items div:hover {
+				background-color: #e9e9e9;
+			}
+
+			.autocomplete-items2 div {
+				padding: 5px;
+				cursor: pointer;
+				background-color: #fff;
+			}
+
+			/* When hovering an item */
+			.autocomplete-items2 div:hover {
+				background-color: #e9e9e9;
+			}
+
+			.autocomplete-error-msg {
+				display: block;
+				position: absolute;
+				top: 100%;
+				right: 0px;
+				z-index: 10;
+				width: 100%;
+				color: #ff5959;
+				font-size: 20px;
+				background: rgba(228, 228, 228, 0.77);
+				text-align: center;
+				margin-top: 5px;
+			}
+
+			.autocomplete-error-msg.show {
+				visibility: visible;
+				opacity: 1;
+			}
+
+			.autocomplete-error-msg.hide {
+				visibility: hidden;
+				opacity: 0;
+				transition:
+					visibility 0s 2s,
+					opacity 2s linear;
+			}
+
+			.autocomplete-badge {
+				font-size: 14px !important;
+				position: absolute;
+				left: 2px;
+				font-weight: 400;
+				border-radius: 50%;
+				display: inline-block;
+				text-align: center;
+				padding-left: 8px;
+				padding-right: 8px;
+				opacity: 0.4;
+			}
+
+			.font {
+				caret-color: transparent;
+				font-family: "Alef Hebrew", "Helvetica Neue", Helvetica, Arial,
+					sans-serif;
+				margin: 0;
+				overflow: hidden; /* Prevent scrolling */
+				height: 100vh;
+			}
+
+			#app {
+				font-family: "Alef Hebrew", "Helvetica Neue", Helvetica, Arial,
+					sans-serif;
+			}
+
+			.search-input-container {
+				position: relative;
+				width: 100%;
+				caret-color: black;
+			}
+
+			.clear-button {
+				position: absolute;
+				left: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 5px;
+				color: #666;
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+			}
+
+			.clear-button:hover {
+				background-color: rgba(0, 0, 0, 0.1);
+			}
+
+			.autocomplete input {
+				padding-left: 35px; /* Make room for clear button */
+			}
+
+			/* Style for keyboard-selected item */
+			.autocomplete-active {
+				background-color: DodgerBlue !important;
+				color: #000;
+			}
+
+			.MapStyle {
+				height: calc(100vh - 98px);
+				/* position: absolute; */
+				/* top:160px; */
+			}
+
+			.disclaimer_mobile {
+				font-weight: bold;
+				font-size: 100%;
+				margin-bottom: 20px;
+				width: 100%;
+				text-align: right;
+				padding-right: 5px;
+			}
+
+			.disclaimer {
+				font-weight: bold;
+				font-size: 100%;
+				margin: auto;
+				width: 100%;
+				height: 100%;
+				text-align: right;
+				padding-right: 5px;
+			}
+
+            .footer{
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+                display: flex;
+                align-items: center;
+                background-color: rgba(255, 255, 255, 1);
+                padding: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                z-index: 1000;
+            }
+
+			.map-footer {
+				/* display: flex; */
+				align-items: center;
+                width: 100%;
+                z-index: 1000;
+			}
+
+			.thumbnail {
+				width: 80px;
+				height: 80px;
+				overflow: hidden;
+				border-radius: 3px;
+				margin-right: 12px;
+			}
+
+			.thumbnail img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			.footer-content {
+				display: flex;
+				font-size: 12px;
+				color: #333;
+				flex-direction: row;
+				justify-content: center;
+				flex-wrap: nowrap;
+				align-items: center;
+			}
+
+			.footer-text {
+				font-weight: 500;
+				margin-left: 16px;
+			}
+
+			.footer-link {
+				color: #0066cc;
+				text-decoration: none;
+				transition: all 0.2s ease;
+			}
+
+			.coordinates {
+				font-family: monospace;
+				color: #666;
+				margin-left: 8px;
+			}
+
+			.mapi-logo {
+				/* position: absolute; */
+				right: 13px;
+				/* bottom: 13px; */
+				background-color: transparent;
+				border: none;
+				z-index: 1;
+				font-family: mapiregular;
+				display: inline-block;
+			}
+
+			.mapi-logo .logo {
+				font-size: 35px;
+				font-style: normal;
+				display: inline-block;
+			}
+
+			.mapi-logo .mapi-23 {
+				float: left;
+				margin-right: -5px;
+			}
+
+			.mapi-logo.bar-logo {
+				position: fixed;
+			}
+
+			.mapi-logo.map-logo {
+				bottom: 0;
+			}
+
+			.mapi-logo.logo-orthoBgPhotoChange,
+			.mapi-logo.logo-orthoBgPhotoChangeEn {
+				text-shadow:
+					2px 0 0 #fff,
+					-2px 0 0 #fff,
+					0 2px 0 #fff,
+					0 -2px 0 #fff,
+					1px 1px #fff,
+					-1px -1px 0 #fff,
+					1px -1px 0 #fff,
+					-1px 1px 0 #fff;
+			}
+
+			.mapi-logo.logo-orthoBgPhotoChange .mapi-23,
+			.mapi-logo.logo-orthoBgPhotoChangeEn .mapi-23 {
+				color: #2178da;
+			}
+
+			.mapi-logo.logo-orthoBgPhotoChange .mapi-25,
+			.mapi-logo.logo-orthoBgPhotoChangeEn .mapi-25 {
+				color: #ff871d;
+			}
+
+			.mapi-logo.logo-mapBgPhotoChange,
+			.mapi-logo.logo-mapBgPhotoChangeEn {
+				text-shadow:
+					2px 0 0 #000,
+					-2px 0 0 #000,
+					0 2px 0 #000,
+					0 -2px 0 #000,
+					1px 1px #000,
+					-1px -1px 0 #000,
+					1px -1px 0 #000,
+					-1px 1px 0 #000;
+			}
+
+			.mapi-logo.logo-mapBgPhotoChange .mapi-23,
+			.mapi-logo.logo-mapBgPhotoChangeEn .mapi-23 {
+				color: #fff;
+			}
+
+			.mapi-logo.logo-mapBgPhotoChange .mapi-25,
+			.mapi-logo.logo-mapBgPhotoChangeEn .mapi-25 {
+				color: #fff;
+			}
+
+			@media (min-width: 768px) {
+				#mobile-header {
+					display: none;
+				}
+				.govmaplogo {
+					display: none;
+				}
+			}
+
+			.esriLabelMask {
+				paint-order: stroke fill;
+				text-wrap: wrap;
+				font-weight: bold;
+				color: black;
+				-webkit-text-stroke: 2.5px white;
+				text-shadow: 0px 0px 18px #ffffff;
+			}
+
+			.info-layers-container {
+				position: absolute;
+				/* right: 318px; */
+				right:20px;
+				top: 15px;
+
+				button {
+					cursor: pointer;
+				}
+			}
+
+			.close-button {
+				left: 0;
+				width: 48px;
+				float: left;
+				background-color: transparent;
+				border: transparent;
+				position: absolute;
+				display: block;
+				font: 20px Alef;
+				font-family: Alef, sans-serif;
+				color: #888;
+			}
+
+			.info-button {
+				display: flex;
+				align-items: center;
+				background: white;
+				border: 1px solid black;
+				gap: 10px;
+				padding: 5px 12px;
+				font-family: 'Alef Hebrew';
+				font-size: 16px;
+				box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+				height: 35px;
+				border: 1px solid #ccc;
+
+				&:hover {
+					svg {
+						fill: #2178da;
+					}
+				}
+
+				:first-child {
+					height: 18px;
+				}
+			}
+
+			.info-layers-card {
+				width: 300px;
+				display: flex;
+				flex-direction: column;
+				background-color: white;
+				text-align: right;
+				z-index: 2;
+			}
+
+			.info-layers-card-header {
+				border-bottom: 1px solid #e9eaed;
+				display: flex;
+				justify-content: center;
+				padding: 10px;
+
+				/* button {
+					left: 0;
+					width: 48px;
+					float: left;
+					background-color: transparent;
+					border: transparent;
+					position: absolute;
+					display: block;
+					font: 20px Alef;
+					font-family: Alef, sans-serif;
+					color: #888;
+				} */
+
+				.info-layers-title {
+					display: block;
+					font: 20px Alef;
+					color: #000;
+				}
+
+			}
+
+			.info-layers-card-buttons {
+				border-bottom: 1px solid #e9eaed;
+				height: 40px;
+
+				button {
+					background-color: transparent;
+					border-color: transparent;
+					font-size: 15px;
+					border-radius: 4px;
+					float: right;
+					height: 40px;
+					padding-left: 15px;
+					padding-right: 15px;
+					color: #1a6eb7;
+
+					&:first-child {
+						border-left: transparent;
+					}
+
+					&.active {
+						background-color: white;
+						border: 1px solid #ccc;
+						border-bottom: transparent;
+						color: #747474;
+					}
+
+					&:first-child.active {
+						border-bottom-left-radius: 0;
+					}
+
+					&:last-child.active {
+						border-bottom-right-radius: 0;
+					}
+				}
+			}
+
+			.info-layers-card-list,
+			.info-layers-ledger-container {
+				max-height: 75vh;
+				overflow-y: auto;
+			}
+
+			.info-layers-card-list {
+				padding: 0;
+ 			  max-height: calc(100vh - 207px);
+
+				.info-layer-button-container {
+					display: flex;
+					gap: 20px;
+					border-bottom: 1px solid #e9eaed;
+					cursor: pointer;
+					padding-top: 7px;
+					height: 40px;
+
+					&:hover {
+						background-color: #f4f5f5;
+					}
+
+					.info-layer-button {
+						color: #ccc;
+						padding-right: 7px;
+						font-size: 18px;
+
+						.square {
+							width: 14px;
+							height: 14px;
+							border: 2px solid #ccc;
+							position: relative;
+							display: inline-block;
+							opacity: 0.8;
+						}
+
+						.square.checked::after {
+							content: '';
+							position: absolute;
+							top: 50%;
+							left: 50%;
+							width: 7px;
+							height: 7px;
+							background-color: #000;
+							transform: translate(-50%, -50%);
+						}
+
+					}
+
+					.info-layers-card-text {
+						font-size: 15px;
+						color: #212121;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						white-space: nowrap;
+						display: inline-block;
+					}
+				}
+			}
+
+			.info-layers-ledger-wrapper {
+				.info-layers-ledger-container {
+					gap: 5px;
+					display: flex;
+					flex-direction: column;
+					padding: 10px;
+					margin-top: 10px;
+
+					.simple-ledger-item-wrapper {
+						display: flex;
+						gap: 5px;
+					}
+
+					.unique-ledger-item-container {
+						.unique-ledger-item-wrapper {
+							display: flex;
+							gap: 5px;
+							margin-right: 5px;
+
+							.unique-ledger-item {
+								font-size: 14px;
+								color: #7b7b7b;
+							}
+						}
+					}
+
+				}
+			}
+
+			.spatial-query-container {
+				background-color: #fff;
+				border: 1px solid #ccc;
+    		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0px rgba(0, 0, 0, 0.02);
+				position: absolute;
+				width: 812px;
+				right: 13px;
+				overflow: hidden;
+				top: 10px;
+				z-index: 1;
+				font-family: Alef;
+
+				.spatial-query-header {
+					.top {
+						display: flex;
+						position: relative;
+						flex-direction: column;
+						align-items: center;
+						margin-top: 20px;
+
+						.title {
+							color: #000;
+							cursor: pointer;
+							font-size: 20px
+						}
+
+						.dropdown-content {
+							width: 300px;
+							background-color: #fff;
+							position: absolute;
+							top: 30px;
+
+							div {
+								border: 1px solid #ccc;
+								border-bottom: none;
+								cursor: pointer;
+								padding: 8px;
+								font-size: 16px;
+
+								&:hover {
+									color: #138EFA;
+								}
+
+								&:last-child {
+									border-bottom: 1px solid #ccc;
+								}
+							}
+						}
+
+						.results-length {
+							color: #989898;
+							font-size: 14px;
+						}
+					}
+				}
+
+				.spatial-query-body {
+					overflow-x: auto;
+
+					table {
+						border-collapse: collapse;
+
+						overflow-x: hidden;
+						table-layout: fixed;
+					}
+
+					tbody {
+						overflow-x: hidden;
+						overflow-y: auto;
+						display: block;
+						max-width: 1885px;
+						max-height: 538px;
+					}
+
+					tr {
+						border-bottom: 1px solid #e9eaed;
+
+						td:first-child {
+							padding-right: 19px;
+						}
+					}
+
+					.th-tr-value {
+						max-width: 285px;
+						min-width: 15px;
+						width: 110px;
+						padding-left: 15px;
+						padding-right: 10px;
+						overflow: hidden;
+						white-space: nowrap;
+						text-align: right;
+						height: 45px;
+						line-height: 42px;
+						vertical-align: bottom;
+						font-size: 15px;
+						color: #000000;
+					}
+
+					tr {
+							display: table;
+							width: 100%;
+							table-layout: fixed;
+					}
+
+					th, td {
+							width: 130px;
+							padding: 8px;
+							text-align: right;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							overflow: hidden;
+
+							&:first-child {
+								width: 45px;
+							}
+
+							&:nth-child(2) {
+								width: 150px;
+							}
+					}
+				}
+			}
+
+			.spatial-query-body-mobile {
+				display: none;
+			}
+
+			.info-card {
+				position: absolute;
+				top: 20px;
+				right: 20px;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+				width: 460px;
+				background: white;
+				direction: rtl;
+				padding: 0;
+				z-index: 1000;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				border-radius: 4px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+			.caret-down {
+				width: 10px;
+				height: 17px;
+				fill: #989898;
+				transition: transform 0.5s ease;
+
+				&.rotate {
+					transform: rotate(180deg);
+				}
+			}
+
+			@media (max-width: 768px) {
+				.info-card {
+					width: 100%;
+					height: 100%;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					z-index: 9999;
+				}
+				.info-layers-card-list {
+					max-height: calc(100vh - 300px);
+				}
+
+				.spatial-query-container {
+					position: fixed;
+					top: 0;
+					right: 0;
+					width: 100%;
+
+					.spatial-query-header {
+						.top {
+							margin-bottom: 10px;
+
+							.title {
+								text-overflow: ellipsis;
+								overflow: hidden;
+								white-space: nowrap;
+								display: inline-block;
+								width: 200px;
+							}
+
+							.dropdown-content {
+								position: fixed;
+								top: 60px;
+							}
+						}
+					}
+
+					.spatial-query-body {
+						display: none;
+					}
+
+				}
+
+				.spatial-query-body-mobile {
+					background: #ececec;
+					top: 60px;
+					position: fixed;
+					width: 100%;
+    			height: 100%;
+					overflow-y: auto;
+					padding: 4px 0 100px;
+
+					&:not(:empty) {
+						display: block;
+					}
+
+					.item-container {
+						padding: 4px 16px;
+
+						&:first-child {
+							margin-top: 12px;
+						}
+
+						.card {
+							display: grid;
+    					grid-template-columns: 0.5fr 1fr;
+							padding: 8px;
+    					background: #ffffff;
+							margin-top: 8px;
+							border: 1px solid #cccccc;
+
+							.label, .value {
+								text-overflow: ellipsis;
+								white-space: nowrap;
+								overflow: hidden;
+							}
+
+							.label {
+								font-weight: bold;
+        				color: #888;
+								width: 25vw;
+							}
+
+							.value {
+								width: 58vw;
+								padding-right: 8px;
+							}
+						}
+					}
+
+				}
+			}
+
+.info-card-header {
+  padding: 0;
+}
+
+.close-button {
+				background: none;
+				border: none;
+				cursor: pointer;
+				color: #666;
+				font-size: 18px;
+				padding: 4px 8px;
+			}
+
+/* Title Section */
+.location-container {
+  background: #2e75b6;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 8px;
+}
+
+.location-setl{
+	color: #fff;
+	font-size: 22px;
+	font-weight: 500;
+	margin-bottom: 0;
+	line-height: 1.2;
+	word-break: break-word;
+}
+
+.location-container .section-header {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 0;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* First info block - "מה קיים על הגג" */
+.section-container-top {
+  /* background-color: #f5f5f5; */
+  padding: 12px 16px;
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+}
+
+.section-container-top .section-header {
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+/* Second info block - "פוטנציאל אנרגיה סולארית" */
+.section-container-bottom {
+  background-color: #9dc3e6;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 8px;
+}
+
+.section-container-bottom .section-header {
+  color: #000;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.field-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  flex-wrap: wrap;
+}
+
+.field-name {
+  color: inherit;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.field-value {
+  margin-right: 6px;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.field-value-small {
+  margin-right: 6px;
+  font-size: 14px;
+  word-break: break-word;
+  flex: 1;
+}
+
+/* Note section */
+.note-section {
+  margin: 12px;
+  padding: 12px;
+  background-color: rgb(225, 224, 224);
+  color: #000;
+  direction: rtl;
+}
+
+.note-section p {
+  margin: 0;
+  font-size: 12px;
+  color: #000;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* Fix long text wrapping */
+.section-container-bottom p {
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Adjust spacing for wrapped lines */
+.field-row > * {
+  margin-bottom: 2px;
+}
+
+/* Remove unwanted margins */
+.info-card-content > div:last-child {
+  margin-bottom: 0;
+}
+
+/* Fix line breaks for specific elements */
+.field-value[data-long-text="true"] {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+
+			.modal {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 1000;
+				direction: rtl;
+			}
+
+			.modal-content {
+				background-color: white;
+				padding: 20px;
+				border-radius: 8px;
+				max-width: 500px;
+				width: 90%;
+				max-height: 80vh;
+				overflow-y: auto;
+			}
+
+			.modal-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 15px;
+			}
+
+			.close-button {
+				background: none;
+				border: none;
+				font-size: 24px;
+				cursor: pointer;
+				padding: 0 8px;
+			}
+
+			.modal-body {
+				line-height: 1.6;
+			}
+
+			.navbar-container {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				height: 65px;
+			}
+
+			@media (max-width: 768px) {
+				.about {
+					display: none;
+				}
+                .map-footer {
+                    /* transform: translateX(-50%);
+                    left: 50%;
+                    bottom: 0;
+                    width: 100%;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    padding: 0px !important; */
+
+                    display: none;
+                }
+				.legend_text_mobile {
+					rotate: -90deg;
+					font-weight: bold;
+					text-shadow:
+						1px 1px 0px #ffffffab,
+						-1px -1px 0px #ffffffab,
+						1px -1px 0px #ffffffab,
+						-1px 1px 0px #ffffffab; /* Stroke effect */
+
+					color: black;
+					-webkit-background-clip: text;
+					background-clip: text;
+				}
+				.navbar-header {
+					width: 100%;
+					background: white;
+					padding: 0.5rem;
+					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+					height: 143px;
+				}
+				#desktop-header {
+					display: none;
+				}
+				.footer {
+					display: none;
+				}
+
+				.buttons-container {
+					display: flex;
+					overflow-x: auto
+				}
+
+				.mobile-action-button {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 0.25rem;
+					padding: 0.5rem;
+					border: none;
+					background: none;
+					cursor: pointer;
+					color: #5f6368;
+				}
+
+				.mobile-action-button:hover {
+					/* background-color: #f5f5f5; */
+					border-radius: 4px;
+				}
+
+				.MapStyle {
+					height: calc(var(--vh) - 143px);
+				}
+				.BgDiv {
+					position: absolute;
+					bottom: 65px;
+					left: 15px;
+				}
+				.display-none {
+					display: none;
+				}
+				.header-content {
+					flex-wrap: wrap;
+				}
+
+				.header-content1 {
+					gap: 0;
+				}
+
+				.navbar-container {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					height: 65px;
+				}
+
+				.mobile-menu-button {
+					display: block;
+				}
+
+				.mobile-menu-logo {
+					display: block;
+				}
+
+				.navbar-brand {
+					/* font-size: 1.2rem; */
+					order: -1;
+					width: 100%;
+					text-align: center;
+					margin-bottom: 1rem;
+					/* height: 50px; */
+                    margin-top: 10px;
+
+				}
+
+				.search-container {
+					order: 1;
+					max-width: none;
+					width: 50%;
+					/* margin-bottom: 1rem; */
+				}
+
+				.actions-container {
+					display: none; /* Hide main action buttons */
+				}
+				.close-btn {
+					align-self: flex-end;
+					background: none;
+					border: none;
+					font-size: 1rem;
+					cursor: pointer;
+					color: #333;
+					margin-bottom: 1rem;
+				}
+
+				.navButton {
+					display: none !important;
+				}
+			}
+		</style>
+	</head>
+
+	<body class="font"><script src="https://analytics.egov.gov.il/analytics.js" defer></script>
+		<div id="app" class="font" v-cloak>
+			<header id="desktop-header" class="navbar-header">
+				<div class="navbar-container">
+					<img
+						class="mobile-menu-logo"
+						src="Logo.jpg"
+						style="height: 50px"
+					/>
+
+					<div class="search-container">
+						<div class="autocomplete">
+							<div class="search-input-container">
+								<input
+									type="text"
+									v-model="query"
+									@focus="showAllItems"
+									@input="filterList"
+									@keydown="handleKeyDown"
+									placeholder="חיפוש כתובת / גוש חלקה /נקודת עניין"
+								/>
+								<button
+									v-if="showClear"
+									class="clear-button"
+									@click="clearSearch"
+									type="button"
+									aria-label="נקה חיפוש"
+								>
+									✕
+								</button>
+							</div>
+							<div v-if="items.length" class="autocomplete-items">
+								<div
+									v-for="(item, index) in items"
+									:key="item.id"
+									@click="selectItem(item)"
+									:class="{ 'autocomplete-active': index === selectedIndex }"
+								>
+									<div>
+										{{ item.text }}
+										<input
+											type="hidden"
+											:value="item.text"
+											:data-key="item.id"
+											:data-lyr="item.type"
+										/>
+										<span class="autocomplete-badge">{{
+											types[item.type]
+										}}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<a :href="baseHref" class="navbar-brand">
+					משרד הנגב, הגליל והחוסן הלאומי
+					</a>
+
+					<div class="actions-container display-none">
+						<button @click="showMeasure()" class="action-button">
+							<svg width="24" height="24" viewBox="0 0 40 26">
+								<g transform="translate(0,26) scale(0.1,-0.1)" fill="#5f6368">
+									<path
+										d="M83 172 c-29 -30 -53 -58 -53 -62 0 -4 25 -30 55 -59 59 -56 69 -57 109 -12 19 21 19 22 -14 56 -18 19 -37 32 -42 29 -5 -4 2 -18 16 -33 25 -27 26 -28 8 -44 -17 -16 -21 -14 -60 26 l-42 43 42 41 c24 22 49 38 56 36 9 -4 13 1 10 13 -6 33 -32 23 -85 -34z"
+									/>
+									<path
+										d="M212 197 l-32 -33 34 -33 c21 -21 39 -30 47 -26 8 6 3 16 -20 34 -31 26 -32 27 -14 44 18 16 21 15 61 -26 l41 -42 -40 -43 c-22 -23 -44 -40 -49 -37 -16 10 -20 -13 -4 -26 13 -10 24 -4 75 47 l59 58 -57 58 c-32 32 -60 58 -63 58 -3 0 -20 -15 -38 -33z"
+									/>
+								</g>
+							</svg>
+							<span>מדוד</span>
+						</button>
+						<button @click="spatialAnalysis()" class="action-button">
+							<svg width="24" height="24" viewBox="0 0 40 26">
+								<g transform="translate(0,26) scale(0.1,-0.1)" fill="#5f6368">
+									<path
+										d="M83 172 c-29 -30 -53 -58 -53 -62 0 -4 25 -30 55 -59 59 -56 69 -57 109 -12 19 21 19 22 -14 56 -18 19 -37 32 -42 29 -5 -4 2 -18 16 -33 25 -27 26 -28 8 -44 -17 -16 -21 -14 -60 26 l-42 43 42 41 c24 22 49 38 56 36 9 -4 13 1 10 13 -6 33 -32 23 -85 -34z"
+									/>
+									<path
+										d="M212 197 l-32 -33 34 -33 c21 -21 39 -30 47 -26 8 6 3 16 -20 34 -31 26 -32 27 -14 44 18 16 21 15 61 -26 l41 -42 -40 -43 c-22 -23 -44 -40 -49 -37 -16 10 -20 -13 -4 -26 13 -10 24 -4 75 47 l59 58 -57 58 c-32 32 -60 58 -63 58 -3 0 -20 -15 -38 -33z"
+									/>
+								</g>
+							</svg>
+							<span>ניתוח מרחבי</span>
+						</button>
+                        <!-- <button @click="govmap.showExportMap()" class="action-button">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="24" height="24"
+                                fill="#5f6368"
+                            >
+                                <path d="M3 2a1 1 0 0 0-1 1v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6.828a2 2 0 0 0-.586-1.414L18.586 2H3zm14 2h2.414L21 5.586V20a1 1 0 0 1-1 1h-2V14a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v7H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12v4zm-8 16v-6h6v6H9zm7-14V4h2v4h-2z"/>
+                            </svg>
+                            <span>שמור מפה</span>
+                        </button> -->
+						<button
+							@click="shareContent"
+							class="action-button"
+							style="margin-top: 5px"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								height="18px"
+								width="18px"
+								viewBox="0 -960 960 960"
+								fill="#5f6368"
+							>
+								<path
+									d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Z"
+								/>
+							</svg>
+							<span>שיתוף</span>
+						</button>
+						<image src="Logo.jpg" style="height: 65px;" />
+					</div>
+				</div>
+			</header>
+			<header id="mobile-header" class="navbar-header">
+				<div class="header-content">
+					<a :href="baseHref" class="navbar-brand">
+					משרד הנגב, הגליל והחוסן הלאומי</a
+					>
+				</div>
+
+				<div class="header-content">
+					<!-- Hamburger button for mobile view -->
+					<div class="header-content1">
+						<div class="buttons-container">
+							<button class="mobile-action-button" @click="showSearch">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 -960 960 960"
+									width="24px"
+									fill="#5f6368"
+								>
+									<path
+										d="M781.69-136.92 530.46-388.16q-30 24.77-69 38.77-39 14-80.69 14-102.55 0-173.58-71.01-71.03-71.01-71.03-173.54 0-102.52 71.01-173.6 71.01-71.07 173.54-71.07 102.52 0 173.6 71.03 71.07 71.03 71.07 173.58 0 42.85-14.38 81.85-14.39 39-38.39 67.84l251.23 251.23-42.15 42.16ZM380.77-395.38q77.31 0 130.96-53.66 53.66-53.65 53.66-130.96t-53.66-130.96q-53.65-53.66-130.96-53.66t-130.96 53.66Q196.15-657.31 196.15-580t53.66 130.96q53.65 53.66 130.96 53.66Z"
+									/>
+								</svg>
+								<span>חיפוש</span>
+							</button>
+
+							<div class="search-container" v-if="isSearchVisible == true">
+								<div class="autocomplete">
+									<div class="search-input-container">
+										<input
+											type="text"
+											v-model="query"
+											@focus="showAllItems"
+											@input="filterList"
+											@keydown="handleKeyDown"
+											placeholder="חיפוש כתובת / גוש חלקה /נקודת עניין"
+										/>
+										<button
+											v-if="showClear"
+											class="clear-button"
+											@click="clearSearch"
+											type="button"
+											aria-label="נקה חיפוש"
+										>
+											✕
+										</button>
+									</div>
+									<div v-if="items.length" class="autocomplete-items">
+										<div
+											v-for="(item, index) in items"
+											:key="item.id"
+											@click="selectItem(item)"
+											:class="{ 'autocomplete-active': index === selectedIndex }"
+										>
+											<div>
+												{{ item.text }}
+												<input
+													type="hidden"
+													:value="item.text"
+													:data-key="item.id"
+													:data-lyr="item.type"
+												/>
+												<span class="autocomplete-badge">{{
+													types[item.type]
+												}}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<!-- Hamburger button for mobile view -->
+							<button v-if="isSearchVisible != true"
+							class="mobile-action-button" @click="toggleDrawer()">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="24px"
+									viewBox="0 -960 960 960"
+									width="24px"
+									fill="#5f6368"
+								>
+									<path
+										d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
+									/>
+								</svg>
+								<span>אודות</span>
+							</button>
+
+							<button
+								@click="showMeasure()"
+								class="mobile-action-button"
+								v-if="isSearchVisible != true"
+							>
+								<svg width="24" height="24" viewBox="0 0 40 26">
+									<g transform="translate(0,26) scale(0.1,-0.1)" fill="#5f6368">
+										<path
+											d="M83 172 c-29 -30 -53 -58 -53 -62 0 -4 25 -30 55 -59 59 -56 69 -57 109 -12 19 21 19 22 -14 56 -18 19 -37 32 -42 29 -5 -4 2 -18 16 -33 25 -27 26 -28 8 -44 -17 -16 -21 -14 -60 26 l-42 43 42 41 c24 22 49 38 56 36 9 -4 13 1 10 13 -6 33 -32 23 -85 -34z"
+										/>
+										<path
+											d="M212 197 l-32 -33 34 -33 c21 -21 39 -30 47 -26 8 6 3 16 -20 34 -31 26 -32 27 -14 44 18 16 21 15 61 -26 l41 -42 -40 -43 c-22 -23 -44 -40 -49 -37 -16 10 -20 -13 -4 -26 13 -10 24 -4 75 47 l59 58 -57 58 c-32 32 -60 58 -63 58 -3 0 -20 -15 -38 -33z"
+										/>
+									</g>
+								</svg>
+								<span>מדוד</span>
+							</button>
+							<button @click="spatialAnalysis()" class="mobile-action-button">
+								<svg width="24" height="24" viewBox="0 0 40 26">
+									<g transform="translate(0,26) scale(0.1,-0.1)" fill="#5f6368">
+										<path
+											d="M83 172 c-29 -30 -53 -58 -53 -62 0 -4 25 -30 55 -59 59 -56 69 -57 109 -12 19 21 19 22 -14 56 -18 19 -37 32 -42 29 -5 -4 2 -18 16 -33 25 -27 26 -28 8 -44 -17 -16 -21 -14 -60 26 l-42 43 42 41 c24 22 49 38 56 36 9 -4 13 1 10 13 -6 33 -32 23 -85 -34z"
+										/>
+										<path
+											d="M212 197 l-32 -33 34 -33 c21 -21 39 -30 47 -26 8 6 3 16 -20 34 -31 26 -32 27 -14 44 18 16 21 15 61 -26 l41 -42 -40 -43 c-22 -23 -44 -40 -49 -37 -16 10 -20 -13 -4 -26 13 -10 24 -4 75 47 l59 58 -57 58 c-32 32 -60 58 -63 58 -3 0 -20 -15 -38 -33z"
+										/>
+									</g>
+								</svg>
+								<span>ניתוח מרחבי</span>
+							</button>
+													<!-- <button @click="govmap.showExportMap()" class="mobile-action-button"
+															style="margin-top: 5px"
+															v-if="isSearchVisible != true">
+															<svg
+																	xmlns="http://www.w3.org/2000/svg"
+																	viewBox="0 0 24 24"
+																	width="24" height="24"
+																	fill="#5f6368"
+															>
+																	<path d="M3 2a1 1 0 0 0-1 1v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6.828a2 2 0 0 0-.586-1.414L18.586 2H3zm14 2h2.414L21 5.586V20a1 1 0 0 1-1 1h-2V14a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v7H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12v4zm-8 16v-6h6v6H9zm7-14V4h2v4h-2z"/>
+															</svg>
+															<span>שמור מפה</span>
+													</button> -->
+							<button
+								@click="shareContent"
+								class="mobile-action-button"
+								style="margin-top: 5px"
+								v-if="isSearchVisible != true"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									height="18px"
+									width="18px"
+									viewBox="0 -960 960 960"
+									fill="#5f6368"
+								>
+									<path
+										d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Z"
+									/>
+								</svg>
+								<span>שיתוף</span>
+							</button>
+						</div>
+						<img
+							class="mobile-menu-logo"
+							src="Logo.jpg"
+							style="height: 65px;"
+							v-if="isSearchVisible != true"
+						/>
+					</div>
+				</div>
+			</header>
+
+			<div name="form" id="mapForm" class="MapStyle" style="position: relative">
+
+				<!-- Spatial analysis and query -->
+				<div class="info-layers-container">
+					<button class="info-button" v-if="!isInfoLayersCardOpen" @click="toggleInfoLayersCard()">
+						<div>
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
+								<rect x="0" y="64" width="320" height="48" />
+								<rect x="0" y="224" width="320" height="48" />
+								<rect x="0" y="384" width="320" height="48" />
+								<circle cx="464" cy="96" r="48" />
+								<circle cx="464" cy="256" r="48" />
+								<circle cx="464" cy="416" r="48" />
+							</svg>
+						</div>
+						<div>
+							שכבות מידע
+						</div>
+					</button>
+					<div class="info-layers-card" v-else>
+						<div class="info-layers-card-header">
+							<button class="close-button" aria-label="סגור" @click="toggleInfoLayersCard()">
+								x
+							</button>
+							<title class="info-layers-title">שכבות מידע</title>
+						</div>
+						<div class="info-layers-card-buttons">
+							<button aria-label="שכבות" :class="{active: activeInfoLayerTab === 'LAYERS'}"
+								@click="changeInfoLayerTab('LAYERS')">
+								שכבות
+							</button>
+							<button aria-label="מקרא" :class="{active: activeInfoLayerTab === 'LEDGER'}"
+								@click="changeInfoLayerTab('LEDGER')">
+								מקרא
+							</button>
+						</div>
+						<ul class="info-layers-card-list" v-if="activeInfoLayerTab === 'LAYERS'">
+							<div v-for="(layer, index) in infoLayers" :key="layer.data.layerName" class="info-layer-button-container"
+								@click="infoLayerClicked(layer)">
+								<div class="info-layer-button">
+									<div class="square" :class="{checked: layer.data.visible}"></div>
+								</div>
+								<span class="info-layers-card-text">
+									{{ layer.data.caption }}
+								</span>
+							</div>
+
+						</ul>
+						<ul v-else class="info-layers-ledger-wrapper">
+							<div v-if="infoLayersLedgerRenderer.length > 0" class="info-layers-ledger-container">
+
+								<div v-for="(layer, index) in infoLayersLedgerRenderer" :key="index">
+
+									<div v-if="layer.RendererType === 'simple'" class="simple-ledger-item-wrapper">
+										<img :src="layer.img" />
+										<span>{{layer.caption}}</span>
+									</div>
+
+									<div v-else class="unique-ledger-item-container">
+										<div>{{layer.caption}}</div>
+										<div v-for="(sublayer, j) in layer.RendererList" :key="j" class="unique-ledger-item-wrapper">
+											<img :src="sublayer.img" />
+											<span class="unique-ledger-item">{{sublayer.caption}}</span>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</ul>
+					</div>
+				</div>
+
+				<div class="spatial-query-container" v-if="spatialAnalysisTable.names.length > 0">
+					<div class="spatial-query-header">
+						<button class="close-button" style="z-index: 1;" aria-label="סגור" @click="closeSpatialAnalysisTable()">
+							x
+						</button>
+						<div class="top">
+							<div class="title" @click="toggleSpatialAnalysisDropdown()">
+								<span>טבלת יישויות – {{spatialAnalysisTable.selected}}</span>
+								<span>
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 17" class="caret-down" :class="{'rotate': isSpatialAnalysisDropdownOpen}">
+										<path d="M0.978 6.375h8.044c0.556 0 0.834 0.672 0.441 1.066L5.44 11.463c-0.244 0.244-0.641 0.244-0.885 0L0.537 7.441C0.144 7.047 0.422 6.375 0.978 6.375z"/>
+								</svg>
+								</span>
+							</div>
+
+							<div class="dropdown-content" v-if="isSpatialAnalysisDropdownOpen">
+								<div
+								v-for="name in spatialAnalysisTable.names"
+								:key="name"
+								@click="selectSpatialAnalysisLayer(name)"
+								class="dropdown-item"
+								>
+								{{ name }}
+							</div>
+						</div>
+
+
+							<div class="results-length">{{spatialAnalysisTable.layers[spatialAnalysisTable.selected].length}} תוצאות</div>
+						</div>
+					</div>
+					<div class="spatial-query-body">
+						<table>
+							<thead>
+								<tr>
+									<th class=""></th>
+									<th v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.FieldName" class="th-tr-value">{{item.FieldName}}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(row, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index">
+									<td>{{index + 1}}.</td>
+									<td v-for="column in row" :key="column.Value" class="th-tr-value">{{column.Value}}</td>
+									</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="spatial-query-body-mobile">
+					<div v-for="(card, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index" class="item-container">
+						<div class="card">
+							<div>
+								<div class="label" v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.FieldName">{{item.FieldName}}:</div>
+							</div>
+							<div>
+								<div class="value" v-for="(row, j) in card" :key="j">
+									{{row.Value}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End of Spatial analysis and query -->
+
+				<div class="info-card" v-show="fields.length > 0">
+					<div class="info-card-header">
+						<button class="close-button" @click="closeCard">×</button>
+					</div>
+
+					<div class="info-card-content">
+						<div class="location-container">
+							<!-- Section 1: Address -->
+							<div
+								v-if="fields.find((f) => f.FieldName === 'שם ישוב')"
+								class="location-setl"
+							>
+								{{ fields.find((f) => f.FieldName === "שם ישוב").FieldValue }}
+							</div>
+							<div
+								v-if="
+									fields.find((f) => f.FieldName === 'כתובת') &&
+									fields.find((f) => f.FieldName === 'כתובת').FieldValue != ''
+								"
+								class="section-header"
+							>
+								{{ fields.find((f) => f.FieldName === "כתובת").FieldValue }}
+							</div>
+							<div v-else class="section-header">
+								גוש {{ gushNum }} חלקה {{ parcelNum }}
+							</div>
+							<div v-if="usageType" class="field-row">
+								<span v-if="usageType" class="field-name">סוג שימוש:</span>
+								<span v-if="usageType" class="field-value"> {{ usageType }}</span>
+							</div>
+						</div>
+
+						<!-- Section 2: Existing on Roof -->
+						<div v-if="existingFields != null" class="section-container-top">
+							<div class="section-header">{{ roofTitle }}</div>
+							<div
+								v-for="field in existingFields"
+								:key="field.FieldName"
+								class="field-row"
+							>
+								<span style="color: grey;" v-if="(field.FieldName === 'שטח פאנלים קיימים על הגג' && field.FieldValue != '0') || (field.FieldName === 'שטח פנוי')" class="field-name">
+									{{ field.FieldName.replace('קיימים על הגג', 'סולאריים') }}:</span>
+								<span v-if="field.FieldName === 'שטח פאנלים קיימים על הגג' && field.FieldValue != '0'" class="field-value"
+									>{{ Number(field.FieldValue).toLocaleString() }} מ"ר </span
+								>
+								<span style="font-weight: bold; font-size: 16px;" v-if="field.FieldName === 'שטח פנוי'" class="field-value"
+									>{{ Number(field.FieldValue).toLocaleString() }}  מ"ר </span
+								>
+							</div>
+						</div>
+
+							<!-- horizontal line -->
+							<div style="border-bottom: 1px solid #ccc; margin-left: 20px; margin-right: 20px; margin-bottom: 20px;"></div>
+
+						<!-- Section 3: Solar Potential -->
+						<div class="section-container-bottom">
+							<div class="section-header">פוטנציאל אנרגיה סולארית</div>
+							<div
+								v-for="field in potentialFields"
+								:key="field.FieldName"
+								class="field-row"
+							>
+								<span v-if="field.FieldName !== 'פרמיה אורבנית'" class="field-name" style="font-weight: bold;">{{ field.FieldName }}:</span>
+								<span v-else
+									class="field-value-small"
+									style="right: 0; width: 100%;"
+									>{{ field.FieldValue }}
+								</span>
+								<span
+									v-if="field.FieldName === 'שטח פנוי'"
+									class="field-value"
+									>{{ Number(field.FieldValue).toLocaleString() }} מ"ר
+								</span>
+								<span
+									v-if="field.FieldName === 'קרינת שמש ממוצעת שנתית'"
+									class="field-value"
+									>{{ Number(field.FieldValue).toLocaleString() }} שעות שמש בשנה
+								</span>
+								<span
+									v-if="field.FieldName === 'פוטנציאל הספק'"
+									class="field-value"
+									>{{ Number(field.FieldValue).toLocaleString() }} קילו-ואט
+									מותקן
+								</span>
+								<span
+									v-if="field.FieldName === 'ייצור אנרגיה בשנה'"
+									class="field-value"
+									>{{ Number(field.FieldValue).toLocaleString() }} קילו-ואט/שעה
+									לשנה</span
+								>
+							</div>
+						</div>
+					</div>
+
+					<!-- Note Section -->
+					<div class="note-section" v-if="noteField">
+						<div v-if="areaCoef" class="field-row">
+							<span v-if="areaCoef" class="field-name"> מקדם שטח פנוי:</span>
+							<span v-if="areaCoef" class="field-value"> {{ areaCoef }}</span>
+						</div>
+
+						<p>{{ noteField.FieldValue.replace(".", "") }}</p>
+					</div>
+				</div>
+
+				<div id="map_div" class="MapStyle"></div>
+			</div>
+
+			<!-- Modal Component -->
+			<div class="modal" v-if="isModalVisible" @click.self="closeModal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>{{ modalTitle }}</h3>
+						<button class="close-button" @click="closeModal">&times;</button>
+					</div>
+					<div class="modal-body" v-html="modalContent"></div>
+				</div>
+			</div>
+
+			<!-- Drawer for mobile menu -->
+			<div class="drawer" :class="{ open: showDrawer }">
+				<!-- Close button for drawer -->
+				<div style="
+					display: flex;
+					justify-content: space-between;
+					align-items: center;">
+					<button @click="showDrawer = false;" class="close-btn">✕</button>
+					<div class="mapi-logo map-logo footer-text logo-orthoBgPhotoChange govmaplogo"
+						style="margin-bottom: 5px;">
+						<i class="logo mapi-25"></i> <i class="logo mapi-23"></i>
+					</div>
+				</div>
+
+				<!-- Footer -->
+
+				<div class="footer-text">
+					<a
+						href="https://www.gov.il/he/departments/survey_of_israel/govil-landing-page"
+						class="footer-link"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						© המרכז למיפוי ישראל
+					</a>
+				</div>
+				<div class="footer-text">
+					<a href="#" @click="showModal(usingCondText)" class="footer-link"
+						>תנאי שימוש</a
+					>
+				</div>
+				<div class="footer-text">
+					<a href="#" @click="showModal(aboutText)" class="footer-link"
+						>אודות</a
+					>
+				</div>
+				<div class="footer-text">
+					<a href="#" @click="showModal(contactText)" class="footer-link"
+						>צור קשר</a
+					>
+				</div>
+				<div class="footer-text">
+					<a href="#" @click="showModal(accesebilityText)" class="footer-link"
+						>הצהרת נגישות</a
+					>
+				</div>
+
+			</div>
+
+
+            <!-- Footer -->
+            <div class="footer">
+                <div style="width: 78px;">1:{{scale}}</div>
+                <div class="map-footer">
+                    <div class="footer-content">
+                        <div
+                            class="mapi-logo map-logo footer-text logo-orthoBgPhotoChange govmaplogo"
+                        >
+                            <i class="logo mapi-25"></i>
+                            <i class="logo mapi-23"></i>
+                        </div>
+                        <div class="footer-text">
+                            <a
+                                href="https://www.gov.il/he/departments/survey_of_israel/govil-landing-page"
+                                class="footer-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                © המרכז למיפוי ישראל
+                            </a>
+                        </div>
+                        <div class="footer-text">
+                            <a href="#" @click="showModal(usingCondText)" class="footer-link"
+                                >תנאי שימוש</a
+                            >
+                        </div>
+                        <div class="footer-text">
+                            <a href="#" @click="showModal(aboutText)" class="footer-link"
+                                >אודות</a
+                            >
+                        </div>
+                        <div class="footer-text">
+                            <a href="#" @click="showModal(contactText)" class="footer-link"
+                                >צור קשר</a
+                            >
+                        </div>
+                        <div class="footer-text">
+                            <a href="#" @click="showModal(accesebilityText)" class="footer-link"
+                                >הצהרת נגישות</a
+                            >
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 78px;"></div>
+            </div>
+
+			</div>
+
+
+
+
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script
+			language="javascript"
+			type="text/javascript"
+			src="https://govmap.gov.il/govmap/api/govmap.api.js"
+		></script>
+		<!-- Include Terraformer, WKT parser, and ArcGIS parser script tags -->
+		<script src="https://cdn.jsdelivr.net/npm/terraformer@1.0.7"></script>
+		<script src="https://cdn.jsdelivr.net/npm/terraformer-wkt-parser@1.0.0"></script>
+		<script src="https://cdn.jsdelivr.net/npm/terraformer-arcgis-parser@1.0.0"></script>
+		<!-- Include Turf.js script tag -->
+		<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+		<!-- Include Proj4.js script tag -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.5/proj4.js"></script>
+
+
+
+		<!-- Add Vue instance initialization -->
+		<script>
+
+        function updateMapHeight() {
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`);
+        }
+
+
+
+			new Vue({
+				el: "#app",
+				data: {
+                    z_2_meter: {
+                        0: 3000000,
+                        1: 1000000,
+                        2: 500000,
+                        3: 250000,
+                        4: 100000,
+                        5: 50000,
+                        6: 25000,
+                        7: 10000,
+                        8: 5000,
+                        9: 2500,
+                        10: 1250,
+                        11: 500,
+                    },
+					checked: false,
+					layerNameClicked: null,
+					roofTitle: null,
+					gushNum: null,
+					parcelNum: null,
+					isModalVisible: false,
+					modalTitle: "",
+					modalContent: "",
+
+					// Modal content objects
+
+					usingCondText: {
+						title: "תנאי שימוש",
+						content: `<div class="content">
+                <table cellpadding="0" cellspacing="0" dir="rtl">
+                    <tbody><tr>
+                        <td style="font-weight:bold">"מגבלות השימוש" בשרת המפות הממשלתי</td>
+                    </tr>
+                    <tr><td height="10px">&nbsp;</td></tr>
+                    <tr><td> הכניסה לשרת המפות הממשלתי הגאוגרפי ו/או כל חלק ממנו מהווה אישור המשתמש כי קרא והסכים לכל תנאי השימוש דלהלן וכי לא תהיה לו כל תביעה ו/או טענה בקשר לכך:</td></tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>הגדרות:</td></tr>
+                    <tr>
+                        <td>
+                            "משתמש" - גולש המעיין ו/או העושה שימוש, וזאת בכל אופן ו/או דרך בשרת המפות הממשלתי הגאוגרפי בין במישרין ובין בעקיפין, בין באמצעות מחשב ובין באמצעות כל אמצעי אחר.            <br>
+                            "המרכז" – המרכז למיפוי ישראל או "מפ"י".           <br>
+                            "שרת המפות הממשלתי", "אתר המפות הממשלתי" ("הפורטל הגאוגרפי לשעבר")- אתר אינטרנט שהוקם על ידי / בחסות / ניהול / ארגון / על בסיס תשתית הנתונים של המרכז למיפוי ישראל, המרכז, משלב ומפיץ מידע גאוגרפי לציבור.             <br>
+                            "מידע" – כל המידע ו/או הנתונים בכל פורמט שהוא המצויים בשרת המפות הממשלתי לרבות, אך לא רק, מלל, מפות, שרטוטים, קבצי גרפים, טבלאות, עיצובים, קוד מחשב, לוגו וכיוצ"ב.             <br>
+                            "אזור אישי" - רכיב בשרת המפות הממשלתי המאפשר למשתמש הנרשם לאתר לטעון מידע ישירות לבסיס הנתונים של שרת המפות הממשלתי. כמו כן רכיב זה מאפשר למשתמש הרשום לפרסם מידע תחת מגבלות שיפורטו להלן וזאת תוך שימוש בהרשאה מיוחדת.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>כללי</td></tr>
+                    <tr>
+                        <td>
+						הכניסה לאתר והעיון במידע / נתונים ו/או מפות ו/או מסמכים המוצגים בו היא ללא תמורה ואין המרכז רואה מכך כל רווח. רכישת חלק מן המפות, בהן יש למפ"י זכויות יוצרים, תתאפשר על פי התנאים המופיעים / באמצעות משוב "צרו קשר" באתר govMap. רכישת מידע ו/או נתונים ממשרדי הממשלה האחרים החברים באתר תעשה באמצעות פנייה אל מנהל האתר דרך "צור קשר" באתר.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>זכויות יוצרים</td></tr>
+                    <tr>
+                        <td>
+                            לפי דיני זכויות היוצרים בישראל, למפ"י ולמשרדים השותפים באתר govMap שמורות כל זכויות היוצרים באתר ובהרכבו. <br>
+                            זכויות היוצרים חולשות בין השאר, על טקסט, תמונות, איורים, מפות, גרפיקה, כרזות וכיו"ב (להלן: "החומר המוגן").<br>
+                            אין להעתיק, להפיץ, להוציא לאור, להציג או לפרסם את החומר המוגן, ללא הסכמה מראש ובכתב של מנכ"ל המרכז למיפוי ישראל, או מי מטעמו.<br>
+                            עם זאת, המשתמש רשאי לעשות שימוש הוגן בחומר המוגן, לפי הכללים הקבועים בדין. שימוש הוגן כולל ציטוט סביר מתוך החומר המוגן, אך המצטט כאמור חייב לציין כמקור המידע הן את המסמך ממנו הוא מצטט והן את העובדה כי המסמך / נתונים נלקח מאתר המפות הממשלתי.<br>
+                            אסור למשתמש לעשות בחומר המוגן כל סילוף, פגימה או שינוי אחר, או כל פעולה שיש בה משום הפחתת ערכו של חומר המוגן, או פגיעה בכבודם או בשמם של המרכז ו/או מי משותפיו משרדי ממשלה / מדינת ישראל, או של בעלי זכויות היוצרים או הזכויות המוסריות במסמכים.<br>
+                            <br>
+                            כל אמצעי תקשורת המעוניין לעשות שימוש בהצגת אירוע \מקום במפות מתוך אתר המפות יוכל לעשות זאת ללא תשלום ובלבד שיציין קרדיט
+                            במקום בולט באחת מפינות המפה "המפה באדיבות המרכז למיפוי ישראל " ובתנאי שלא ישולב כל ציון - פרסום מסחרי בתוך גבולות המפה.
+                            במידה ומוצגת שכבה נוספת על גבי המפה מתוך כלל שכבות אתר המפות יש לציין קרדיט כנ"ל אם מקור השכבה הוא משרד אחר (כגון משרד התחבורה, הגנת הסביבה וכדומה)
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>אחריות לגבי המידע הגיאוגרפי</td></tr>
+                    <tr>
+                        <td>
+                            1.המידע המצוי להלן נמסר על ידי מספר גורמים כמפורט להלן בפירוט מידע (מטה דאטה על כל שכבה) למעט המרכז, מוזן בחלקו באופן ידני ולא שוטף ולפיכך, המרכז אינו ערב למהימנותו ואמיתותו. מקורות המידע מעודכנים לפי המפורט ב META DATA של שרת המפות הממשלתי. כאשר עושה המשתמש שימוש במידע משולב תתכנה אי תאימות הנובעת משלוב מקורות המידע השונים. השירות מוצע לציבור כמות שהוא (“as is”). ייתכן ובמקרים מסויים מדובר במידע חלקי או בלתי שלם.<br>
+                            2. השימוש במידע המצוי להלן ו/או כל חלק ממנו נעשה על אחריותו הבלעדית של המשתמש והמרכז לא יהא אחראי לכל נזק ו/או הוצאה, בין עקיפים ובין ישירים, בהם יישא המשתמש בגין שימושו ו/או הסתמכותו על מידע זה. מובהר כי אין המידע הנמסר כאן יכול לשמש תחליף למידע הנמסר על פי כל דין על ידי כל רשות מוסמכת (בין בתמורה ובין שלא בתמורה ובין אם היא חברה בשרת המפות הממשלתי ובין אם לאו) ואין לעשות בו שימוש כתחליף למידע הנדרש לצרכי תכנון ו/או רשוי ו/בנייה. <br>
+                            המרכז ו/או מי משותפיו אינו אחראי להתאמת השירות לצרכי המשתמש וכן אינו אחראי לטעויות או לשגיאות בחומר המוצג בשירות ו/או לעכובים בעדכונו. יודגש כי הנתונים הקדסטריים המוצגים בשכבות השונות הם לתצוגה בלבד וברמת דיוק גרפית ואינם יכולים להוות בסיס לשחזור גבולות מלא על פי הנדרש בתקנות המדידות והנחיות המנהל. יצויין כי חלק מן המידע כפוף לסיווג בטחוני ועבר צנזורה מטעמי בטחון.     המפות או השכבות המוצגות באתר זה אינן מהוות אסמכתא לנושא גבולות השיפוט מסוג כל שהוא או גבולות בין לאומיים של מדינת ישראל.<br>
+                            מפ"י איננו אחראי גם לשינויים שנעשו בחומר המוצג בשירות על ידי המשתמש או על ידי כל צד ג'. המשתמש בלבד הוא שיישא באחריות לאופן שבו הוא עושה שימוש בשירות.<br>
+                            מפ"י אינו אחראי לכל נזק שנגרם למשתמש או לכל צד ג' כתוצאה ישירה או עקיפה מן השימוש בשירות, ובכלל זה אין הוא אחראי לנזק שנגרם עקב השימוש ביישומי תוכנה שהורדו ישירות באמצעות או דרך השירות או הופעלו כתוצאה מהשימוש בשירות. כמו כן אין מפ"י אחראי לכל מחיקה, שינוי או כל שיבוש אחר שנגרם למידע המופיע בשירות, או לכל נזק שנגרם כתוצאה משימוש באתר אחר אשר מקיים קישור (link) בינו לבין שירות זה. לעניין סעיף זה, "מפ"י" משמע, לרבות עובדיו ונציגיו.<br>
+							3. בשאלות והבהרות בקשר למידע ניתן לפנות למנהל השרת המפות הממשלתי, באמצעות "צור קשר" באתר. <br>
+                            4. המידע המוצג בשכבת "עסקאות נדל"ן יד ראשונה", עובד והוכן מנתוני מערכת חוק המכר של משרד הבינוי והשיכון. <br>
+                            במידע ייתכנו שגיאות, אי-התאמות וסתירות פנימיות כתוצאה מעיבוד המידע והצגתו.<br>
+                            השימוש במידע הינו באחריות המשתמש בלבד, ואין המרכז למיפוי ישראל ומשרד הבינוי והשיכון אחראי על כל נזק שיגרם כתוצאה משימוש בנתונים.<br>
+							5. חלק מהשמות המופיעים באתר זה אינם שמות רשמיים (מקומות יישוב, צמתים ועוד) והוספו לצורכי נוחות התמצאות, תיאום וביטחון.
+
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>שימוש מסחרי ו/או אחר במידע המצוי בשרת המפות הממשלתי</td></tr>
+                    <tr>
+                        <td>
+                            4. המידע המצוי בשרת המפות הממשלתי בבעלות המרכז ו/או גורמים נוספים וכל הזכויות במידע (לרבות זכויות יוצרים וקניין רוחני) שמורות למרכז ו/או לגורמים אשר בבעלותם מצוי. לפיכך, אין לעשות כל שימוש מסחרי ו/או שאינו אישי ו/או פרטי במידע ו/או חלקו וזאת בכל דרך ו/או אופן שהוא לרבות, אך לא רק, הוספת קישור לשרת המפות הממשלתי וזאת מכל מקום שהוא, ללא קבלת אישורו של המרכז ו/או הגורם אשר בבעלותו מצוי המידע מראש ובכתב.<br>
+                            5. רצה המשתמש להשתמש במידע המצוי בבעלותו המלאה של המרכז שלא למטרות אישיות ופרטיות ולא מסחריות הרי כי יפנה למרכז אשר רשאי להתנות את אישורו בתנאים. <br>
+                            מובהר בזאת כי אין במתן אישורו של המרכז כאמור כדי להוות אישור למהימנותו ואמיתותו של המידע ומשתמש המעוניין בקבלת מידע עדכני ומהימן יפנה למנהל השרת המפות הממשלתי כאמור בס' 3 לעיל. <br>
+                            אישר המרכז שימוש במידע כאמור הרי כי יציין המשתמש בצמוד למידע כי "כל זכויות היוצרים שייכות למרכז למיפוי ישראל".<br>
+                            6. היה המידע בבעלותו (בין המלאה ובין החלקית) של גורם שאינו המרכז יופנה המשתמש אל הגורם אשר בבעלותו מצוי המידע והמשתמש יפנה על חשבונו ובאחריותו לגורם זה לשם קבלת אישורו לשימוש במידע. מובהר בזאת כי המרכז לא יהא אחראי ו/או ערב לכל תשובה ו/או מענה של כל גורם כאמור לרבות מידת מהימנות של המידע אשר סיפק.<br>
+                            7.  המשתמש מודע לכך כי הימנעותו מקבלת אישור המרכז ו/או הגורם בבעלותו מצוי המידע עשוי להוביל לתביעתו ו/או הגשת תלונה כנגדו במשטרה ו/או כל סעד אחר לו זכאי המרכז ו/או בעל המידע לפי כל דין.<br>
+                            8. חשש המשתמש כי השימוש אשר מעוניין לעשות במידע הוא שימוש אסור כאמור בס' 4 לעיל הרי כי יפנה למנהל המרכז והמנהל יכריע בסוגיה.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>גביית תשלומים</td></tr>
+                    <tr>
+                        <td>
+                            9. במועד זה אין המרכז ושותפיו לשרת המפות הממשלתי גובה כל תשלום ו/או עמלה בגין השימוש ו/או העיון בשרת המפות הממשלתי אולם המרכז שומר לעצמו את הזכות לגבות בעתיד תשלום ו/או עמלה כאמור וזאת בעבור השימוש בשירותים ו/או חלקם ו/או העיון בשרת המפות הממשלתי ו/או חלק או חלקים מסויימים בו, והכל על פי שיקול דעתו הבלעדי של המרכז.
+                            מאידך מופנה המשתמש בקישוריות  לפי הענין של שכבה זו או אחרת  אל המשרד המתאים, הבעלים של השכבה/ות למקרה ומעוניין לרכוש שכבה/ות  אלו.<br>
+                            10. אם המרכז יחליט לגבות תשלום כאמור תפורסם על כך הודעה.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>תקלות ואבטחת מידע</td></tr>
+                    <tr>
+                        <td>
+                            11. המשתמש מצהיר כי הוא מודע לכך כי בשל מגוון תקלות (בין בשליטת המרכז ובין שאינן בשליטתו) מידע יאבד ו/או יוצגו מידע חלקי ו/או בלתי שלם ו/או שגוי ו/או לא יתאפשר השימוש בשרת המפות הממשלתי ו/או יחדרו לשרת המפות הממשלתי "פורצים" ו/או "האקרים" אשר עשויים "לשתול" בו וירוסים אשר עשויים לעבור למחשבי המשתמשים בשרת המפות הממשלתי ו/או אשר עשויים להעתיק כל מידע אשר נמסר על ידי מי מהמשתמשים בשרת המפות הממשלתי וכל תקלה אפשרית אחרת. מובהר בזאת כי חלק מהתקלות האמורות עשויות להשפיע ו/או להסב נזק גם למחשבי המשתמשים בשרת המפות הממשלתי ו/או לנצל כל נתון ו/או מידע אשר מסרו.<br>
+                            12. המשתמש מצהיר בזאת כי הוא מודע ומסכים עם האמור בס' 11 לעיל ומוותר על כל תביעה ו/או טענה כנגד המרכז או כנגד כל צד שלישי בשל כל נזק אשר נגרם לו בגין האמור בס' 11 לעיל.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>שינויים בשרת המפות הממשלתי ובתנאי שימוש אלו</td></tr>
+                    <tr>
+                        <td>
+                            13. המרכז רשאי לשנות את תנאי השימוש בשרת המפות הממשלתי. במידה ושונו תנאי השימוש הרי כי הודעה אודות השינוי תתפרסם בעמוד הראשי של שרת המפות הממשלתי.<br>
+                            14.  המרכז שומר לעצמו את הזכות לשנות את מבנה שרת המפות הממשלתי ו/או תכניו ו/או עיצובו וכן להפסיק את קיומו כליל והכל על פי שיקול דעתו הבלעדי. מובהר בזאת כי המרכז לא יהא חייב להתריע ו/או ליידע את המשתמשים מראש אודות כוונותיו כאמור למעט במקרה של הפסקת השירות, אז תתפרסם בעמוד הראשי של שרת המפות הממשלתי הודעה אודות הפסקת השימוש כאמור.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>התיישנות</td></tr>
+                    <tr>
+                        <td>
+                            15. המשתמש מסכים בזאת, כי כל תביעה /ואו דרישה כנגד המרכז ו/או כל גורם שלישי בגין מידע המצוי בשרת המפות הממשלתי תוגבל לפרק זמן של 6 חודשים ממועד פרסום ו/או הופעה של המידע בגינו מוגשת התביעה, בשרת המפות הממשלתי (וזאת בין אם המידע המשיך להתפרסם לאחר פרק זמן זה ובין אם לאו). הצדדים מסכימים לראות בפרק הזמן המנוי לעיל בסיפא של ס' זה כתקופת התיישנות מוסכמת כמשמעותו בסעיף 19 לחוק ההתיישנות תשי"ח - 1958. מובהר בזאת כי הוראה זו תגבר על כל הוראת דין אחרת.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>הגבלת אחריות</td></tr>
+                    <tr>
+                        <td>
+                            16. המשתמש פוטר את מנהלי ו/או עובדי ו/או נושאי משרה במרכז מכל אחריות שהיא ובכל מקרה מובהר בזאת כי כל הגבלה על אחריות המרכז ו/או כל גורם שלישי תחשב גם להגבלת אחריותם של נושאי משרה ו/או עובדי ו/או מנהלי המרכז ו/או מי משותפיו לשרת המפות הממשלתי ו/או כל גורם שלישי.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>סמכות שיפוט ודין</td></tr>
+                    <tr>
+                        <td>
+                            17. כל מחלוקת אשר תתעורר בגין השימוש בשרת המפות הממשלתי ו/או בקשר אליו תידון בבית המשפט המוסמך בתל אביב בלבד ולבית המשפט בתל אביב סמכות השיפוט הבלעדית. הדין הישראלי הינו הדין שיחול.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>מדיניות פרטיות ורישום לשרת המפות הממשלתי</td></tr>
+                    <tr>
+                        <td>
+                            18. המרכז שומר לעצמו את הזכות להתנות את השימוש ו/או העיון בשרת המפות הממשלתי ו/או חלקו בציון פרטיו המזהים של המשתמש ו/או כל פרט אחר והכל על פי שיקול דעתו הבלעדי של המרכז. המרכז יהא רשאי למנוע עיון ו/או שימוש בשרת המפות הממשלתי ו/או חלקו ממשתמשים אשר ימנעו מציון פרטים אלו.<br>
+                            19. המרכז יהא רשאי לעשות בכל מידע ו/או נתון אשר נמסר לו ו/או התקבל מהמשתמש את הפעולות הבאות, וזאת בין בעצמו ובין על ידי אחרים:
+                            א. ביצוע מחקרים אודות הרגלי הגלישה ומאפייניה והכל ללא פרטיו האישיים של הגולש.
+                            ב. כל שימוש אחר המותר על פי חוק ו/או אשר הסכים לו המשתמש בעת שציין את פרטיו.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>מסירת מידע לצד שלישי</td></tr>
+                    <tr>
+                        <td>
+                            20. המרכז מתחייב בזאת כי לא ימסור לכל גורם שהוא את פרטיו האישיים של המשתמש וכל מידע אודות אופן שימושו בשרת המפות הממשלתי (ככל שמידע זה מזהה את המשתמש אישית) אלא בהתקיים המקרים דלהלן:<br>
+                            א. אם יקבל המרכז צו שיפוטי המורה לו למסור את פרטי המשתמש או מידע אודות אופן שימושו בשרת המפות הממשלתי לכל גורם שהוא.  <br>
+
+                            ב. בכל מקרה בו יפר המשתמש את תנאי השימוש בשרת המפות הממשלתי ו/או יבצע בשרת המפות הממשלתי כל מעשה ו/או פעולה הנחזים כמנוגדים לדין ו/או ינסה לבצע כל מעשה ו/או פעולה הנחזים כמנוגדים לדין הרי כי המרכז יהא רשאי להעביר את פרטי המשתמש ואופן שימושו בשרת המפות הממשלתי לכל גורם, לפי הנדרש. <br>
+
+                            ג. במידה ויתקיימו בין המרכז לבין המשתמש מחלוקת ו/או הליכים משפטיים ו/או דרישות ו/או טענות. <br>
+
+                            ד. בכל מקרה בו המרכז יסבור, לפי שיקול דעתו הבלעדי, כי מסירת פרטי המשתמש ואופן שימושו בשרת המפות הממשלתי נחוץ לשם מניעת נזק לכל גורם שהוא. <br>
+
+                            ה. במידה והשרת המפות הממשלתי יעבור לחסות גורם אחר הרי כי המרכז יעביר לו את פרטי המשתמש ואופן שימושו בשרת המפות הממשלתי וזאת בתנאי כי גורם זה התחייב בפניו כי לא יעשה במידע כל שימוש שאינו מותר על פי תנאי שימוש אלו.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>שיפוי</td></tr>
+                    <tr>
+                        <td>
+                            21. המשתמש מתחייב בזאת לשפות את המרכז ו/או שותפיו ו/או כל צד שלישי ו/או מי מעובדיהם ו/או מי ממנהליהם ו/או מי מנושאי המשרה בהם ו/או מי מטעמם בגין כל נזק ו/או הפסד ו/או הוצאה ו/או תשלום בהם יחויבו (וזאת מכל גורם שהוא) בגין הפרתו את תנאי השימוש דלעיל ו/או חלק מהם, לרבות שכר טרחת עו"ד והוצאות משפט.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>מסמכים מקוריים</td></tr>
+                    <tr>
+                        <td>
+                            22. אם תתגלה סתירה או אי התאמה בין החומר המוצג בשירות זה לבין המסמכים המקוריים, יש לראות אך ורק במסמכים המקוריים כמסמכים נכונים.
+                        </td>
+                    </tr>
+                    <tr><td style="font-weight:bold; text-decoration: underline;"><br>כללי הוספת ופרסום מידע ברכיב האזור האישי</td></tr>
+                    <tr>
+                        <td>
+                            23. משתמש שהוא נציג מוסד ציבורי / רשות מוניציפאלית / משרד ממשלתי רשאי ליצור מידע ולטעון אותו ישירות לבסיס הנתונים של שרת המפות הממשלתי ובלבד שקיים רישום כנדרש בשרת המפות לשם ביצוע פעולה זו. משתמש זה רשאי לפרסם המידע לאחר אישורו במערכת ההרשאות של שרת המפות הממשלתי.   <br>
+                            24. מערכת שרת המפות הממשלתי תקיים ועדה ובה נציגי המשרד ונציגי ועדה בין משרדית לממ"ג אשר תדון באישור מידע/שכבות מידע אשר משתמש מוסדי מבקש לפרסם בשרת המפות הממשלתי.   <br>
+                            25.  משתמש שאינו מוסדי המעוניין לטעון מידע לשרת המפות יוכל לעשות זאת לאחר שנרשם באתר כנדרש והמידע עומד בתנאי מגבלות השימוש. משתמש זה מהציבור הרחב לא יוכל לפרסם המידע אלא בבקשה מיוחדת ולאחר שאושר ע"י הועדה כמתואר בסעיף 24 הנ"ל, ויעמוד בתנאי הרישום למערכת ההרשאות של שרת המפות הממשלתי.   <br>
+                            26. הן המידע שיוטען והן המידע שיפורסם בשרת המפות הממשלתי יעמוד בכל מגבלות השימוש הנ"ל ובנוסף: אין לטעון ו/או לפרסם מידע אשר יש בו כדי לפגוע בצנעת הפרט, לפגוע בזכויות יוצרים מכל סוג שהוא, לפגוע בביטחון המדינה ובביטחון הפרט וכן אין בו כדי הבעת דיעה פוליטית כלשהיא.<br>
+                            כל מידע המועלה באזור האישי לשרת המפות, בין אם פורסם ובין אם לשימוש אישי יעמוד במגבלות צנעת הפרט, לא יהווה פגיעה בזכויות יוצרים או פגיעה בטחונית במדינה. למשתמש המעלה מידע כזה ידוע כי האתר מאובטח ברמת אבטחה רגילה וההגנה עליו הניה מוגבלת. אין הנהלת תהיל"ה או מפ"י אחראים במקרה של תקלה באבטחת מידע זה.
+                            27. האחריות על המידע המוטען ומוצג בשרת המפות הממשלתי באמצעות רכיב האזור האישי חלה על המשתמש טוען המידע ו/או המפרסמו באתר (להבהרה ראה סעיפים 1, 2, 3 הנ"ל במגבלות השימוש)<br>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </div>`,
+                    },
+
+					aboutText: {
+						title: "אודות",
+                        content: `<div class="aboutContent">
+                אתר המפות הממשלתי הינו ענן מחשוב גאוגרפי ממשלתי המרכז את מירב המידע הממשלתי והמוסדי אשר ניתן להביאו לידי ביטוי בצורה גאוגרפית.<br>
+                <b>
+                    <br>
+                    החזון:
+                    <br>
+                    לאפשר לציבור גישה פשוטה באמצעות האינטרנט למידע גאוגרפי מקיף בזמינות גבוהה, מתוך שיפור שרות הממשלה לציבור וחיסכון בהוצאות הממשלה.<br>
+                    <br>
+                    מטרות אתר המפות:
+                </b><br>
+                א. הגברת זמינות המידע הגאוגרפי לציבור לגורמי הממשלה ולגופים ציבוריים.<br>
+                ב. חסכון בהוצאות הממשלה וההוצאות הלאומיות.<br>
+                ג. שיפור בתפקוד הממשלה באמצעות יצירת שפה משותפת והגברת התאום מתוך שימוש במידע גאוגרפי.<br>
+                ד. הוזלת המידע הגאוגרפי לצרכנים.<br>
+                <br>
+                <b>
+                    יעד לפעולה:<br>
+                    ריכוז, שילוב והפצה של מידע גאוגרפי לציבור כמרכיב ב"ממשל זמין".<br>
+                </b>
+                <br>
+                כוונתנו להעמיד לרשותכם כלי שרות להפקת מידע לעבודה, ללימוד ולפנאי.<br>
+                כלי לקבלת החלטות בחיי היום יום.<br>
+                הצוות שלנו יאזין לכל שאלה, טענה, ביקורת, הצעה ורעיונות לשיפור.<br>
+                <br>
+                לתשומת לב!<br>
+                מטבע הדברים שהפורטל המכיל מידע כה מגוון ממקורות שונים ברמות עידכון שונות, עשוי להכיל בתוכו סתירות פנימיות מסוימות.<br>
+                במקרים אלו, עצם הצגת הבדלי המידע יחדדו אצל המקורות למידע (משרדי הממשלה השונים) את הצורך בתיקון והתאמת המידע בגבולות אחידים לצמצום הסתירות הללו.<br>
+                בהקשר לכך, ראה הפרק "תנאי שימוש".<br>
+                <br>
+                אתר המפות הממשלתי הוקם במרכז למיפוי ישראל בהנחיית הועדה הבין משרדית למידע לאומי גאוגרפי.<br>
+                <br>
+				<br>govmap@mapi.gov.il
+				<br>
+				<br>
+				© המרכז למיפוי ישראל, CNES, Airbus
+            </div>`,
+                    },
+
+					contactText: {
+						title: "צור קשר",
+						content: `<div>
+						<h4>יצירת קשר</h4>
+						<p>נשמח לעמוד לרשותכם בכל שאלה או בקשה.</p>
+						<div class="contact-info">
+							<p><strong>דוא"ל:</strong>noaml@png.gov.il</p>
+							<p><strong>נעם לסקר</strong></p>
+						</div>
+
+						</div>`,
+                    },
+
+                    accesebilityText: {
+                        title: "הצהרת נגישות",
+                        content: `<div ng-if="$root.isDefaultLanguage" class="" style="">
+                        <!--Title Description-->
+                        <div class="description-txt dark-gray-txt bold tbl-accesabilty tbl-responsive xs-mb-25 lg-mb-30  sub-links-permanent-underline">המרכז למיפוי ישראל רואה חשיבות רבה במתן הזדמנות שווה לכל גולשי האתר. לשם כך מושקעים מאמצים ומשאבים רבים בהנגשת האתר לשביעות רצון הגולשים.
+ההנגשה נועדה להתאים את האתר כך שיהיה זמין, נוח וידידותי לשימוש עבור אנשים עם מוגבלויות.
+המרכז למיפוי ישראל פועל בהתאם להנחיות הנגישות הקבועות בתקן ישראלי רשמי מספר 5568 שעניינו "קווים מנחים - לנגישות תכנים באינטרנט" לרמה AA (להלן- תקן הנגישות(.
+תקן ישראלי זה מתבסס על מסמך הקווים המנחים של הארגון הבינלאומי העוסק בתקינה ברשת - Web Content Accessibility Guidelines (WCAG) 2.0.
+</div>
+                        <!--Content Image-->
+                        <!--Content Text-->
+						 <p dir="RTL" id="ngdialog1-aria-describedby">
+                                <strong>בעברית:</strong>&nbsp;<a href="https://www.w3c.org.il/guidelines/guidelines_WCAG_2.0.html" target="_blank" style="text-decoration: underline;">WCAG 2.0 הנחיות לנגישות תכנים באינטרנט</a><br>
+                                <strong>באנגלית:</strong> &nbsp;<a href="http://www.w3.org/TR/WCAG20" target="_blank" style="text-decoration: underline;">Web Content Accessibility Guidelines (WCAG) 2.0</a><br>
+                                &nbsp;
+                        </p>
+						<h3 dir="RTL">תמיכה בדפדפנים</h3>
+                        <div class="xs-mb-25  lg-mb-30  margin-for-ul txt tbl-accesabilty tbl-responsive  sub-links-permanent-underline">
+                            <p dir="RTL">
+                                <span dir="RTL">האתר תומך בכל הדפדפנים הפופולריים כגון: Internet Explorer, Google Chrome, Firefox  ועוד.
+								</span>
+                            </p>
+
+
+
+                            <h3 dir="RTL">רכז נגישות (קבוע)</h3>
+
+                            <p dir="RTL">
+
+							ניתן לפנות לרכז הנגישות (זמנית) במשרד בנושאים הבאים:<span dir="LTR"></span>
+                            </p>
+
+                            <p dir="RTL">1. אם נמצא שמידע מסוים באתר דורש התאמות נגישות נוספות;</p>
+
+                            <p dir="RTL">2. הגשת בקשה להנגשת מידע המצוי באתר ואינו מחויב בהנגשה.</p>
+
+
+
+                            <h3 dir="RTL">יצירת קשר</h3>
+
+			    <p dir="RTL">
+
+							את הפניות יש להפנות לרכז הנגישות (זמנית) שירה תלש שוכן באמצעות:<span dir="LTR"></span>
+                            </p>
+
+                            <p dir="RTL">1. שליחת דואר אלקטרוני לכתובת  <a href="mailto:shira@mapi.gov.il" style="text-decoration: underline;">shira@mapi.gov.il</a>.</p>
+
+                            <p dir="RTL">2. טלפון שמספרו: 050-67904926</p>
+
+                            <h3 dir="RTL">נגישות במערכת Govmap</h3>
+
+                            <p dir="RTL">מערכת Govmap מבוססת על רכיב מפה גיאוגרפי, אשר לא נמצא לו עדיין פתרון טכנולוגי להנגשה לפי התקן. המרכז למיפוי ישראל, פועל במרץ להנגשת יתר הרכיבים האפשריים באתר.</p>
+
+
+                        </div>
+
+
+                    </div>`,
+                    },
+
+					baseHref: "",
+					baseHtmlPath: "/energy/energy.html",
+					map_x: 219545,
+					map_y: 631555,
+					map_z: 5,
+					isMesure: false,
+					isSearchVisible: false, // Add this new property
+					searchQuery: "",
+					showDrawer: false,
+					layersToc: null,
+					//
+					types: {
+						address: "כתובת",
+						neighborhood: "שכונה",
+						street: "רחוב",
+						settlement: "יישוב",
+						parks: "שמורות טבע וגנים",
+						institutes: "מוסדות",
+						junction: "צומת",
+						block: "גוש",
+						parcel: "חלקה",
+						ways: "דרכים",
+						poi: "נקודת עניין",
+						statistic: "איזור סטטיסטי",
+					},
+					setl_areas: {},
+					loading: false,
+					x: 0,
+					y: 0,
+					query: "",
+					items: [],
+					items_wkts: {},
+					filteredItems: [],
+					map: null,
+					entries: [],
+					city: "",
+					searchCodes: {
+						NEIGHBORHOOD: 4,
+						STREET: 2,
+						ADDRESS: 1,
+						SETTLEMENT: 8,
+						KPARCEL_ALL: 16384,
+					},
+					searchSetlCode: 0,
+					selectedIndex: -1, // Track currently selected item
+					showClear: false, // Control clear button visibility
+
+					isVisible: true,
+					fields: [],
+					isInfoLayersCardOpen: false,
+					activeInfoLayerTab: 'LAYERS',
+					infoLayers: [],
+					infoLayersLedger: {},
+					infoLayersLedgerRenderer: [],
+					isSpatialAnalysisDropdownOpen: false,
+					spatialAnalysisTable: {selected: '', names: [], layers: []},
+				},
+				computed: {
+                    scale() {
+                        console.log(this.map_z);
+                        return this.z_2_meter[this.map_z];
+                    },
+					existingFields() {
+						if (this.layerNameClicked == "CMPLX_SOLAR_POTEN541"){
+							return null;
+						}
+						return this.fields.filter((field) =>
+							["שטח פאנלים קיימים על הגג", "שטח פנוי"].includes(
+								field.FieldName,
+							),
+						);
+					},
+					potentialFields() {
+						if (this.layerNameClicked == "CMPLX_SOLAR_POTEN541"){
+							return this.fields.filter((field) =>
+								[
+									"שטח פנוי",
+									"קרינת שמש ממוצעת שנתית",
+									"פוטנציאל הספק",
+									"ייצור אנרגיה בשנה",
+									"פרמיה אורבנית"
+								].includes(field.FieldName),
+							);
+						}
+						return this.fields.filter((field) =>
+							[
+								"קרינת שמש ממוצעת שנתית",
+								"פוטנציאל הספק",
+								"ייצור אנרגיה בשנה",
+								"פרמיה אורבנית"
+							].includes(field.FieldName),
+						);
+
+					},
+					usageType(){
+						const field = this.fields.find((field) => field.FieldName === "שם שימוש");
+						if (field) {
+							return field.FieldValue;
+						}
+						return "";
+					},
+					areaCoef(){
+						const field = this.fields.find((field) => field.FieldName === "מקדם חישוב שטח");
+						if (field) {
+							return field.FieldValue;
+						}
+						return "";
+					},
+					noteField() {
+						return this.fields.find((field) => (field.FieldName === "הערה" || field.FieldName === "הערות"));
+					},
+					bgClass() {
+						//return this.currentBg === 41 ? 'bgBtn mapCacheImg' : 'bgBtn orthoImg';
+						if (this.currentBg === 0) {
+							return "bgBtn mapCacheImg";
+						}
+						if (this.currentBg === 1) {
+							return "bgBtn orthoImg";
+						}
+						if (this.currentBg === 41) {
+							return "bgBtn solarImg";
+						}
+						return "bgBtn orthoImg";
+					},
+					bgTitle() {
+						if (this.currentBg === 0) {
+							return "רחובות ומבנים";
+						}
+						if (this.currentBg === 1) {
+							return "צילום אוויר";
+						}
+						return "אנרגיה מתחדשת";
+					},
+				},
+				methods: {
+					showModal(textObj) {
+                        console.log(textObj);
+						this.modalTitle = textObj.title;
+						this.modalContent = textObj.content;
+						this.isModalVisible = true;
+                        console.log(this.isModalVisible);
+						// Prevent page scrolling when modal is open
+						document.body.style.overflow = "hidden";
+					},
+					closeModal() {
+						if (this.modalTitle=="תניית פטור (Disclaimer)" && this.checked == false){
+							return;
+						}
+						this.isModalVisible = false;
+						// Restore page scrolling
+						document.body.style.overflow = "auto";
+					},
+					closeCard() {
+						this.isVisible = false;
+						this.fields = [];
+					},
+					showMeasure() {
+						var appVue = this;
+						// turn on the measure tool
+						this.isMesure = true;
+
+						govmap.showMeasure().then((result) => {
+							// go back to isMesure = false
+							appVue.isMesure = false;
+						});
+					},
+					showSearch() {
+						this.isSearchVisible = !this.isSearchVisible;
+						if (this.isSearchVisible) {
+							// Focus the search input when showing
+							setTimeout(() => {
+								const searchInput = document.querySelector(
+									".search-container input",
+								);
+								if (searchInput) {
+									searchInput.focus();
+								}
+							}, 100);
+						}
+					},
+					// Modify the clearSearch method to also hide the search on mobile
+					clearSearch() {
+						this.query = "";
+						this.items = [];
+						this.selectedIndex = -1;
+						this.showClear = false;
+						if (window.innerWidth <= 768) {
+							this.isSearchVisible = false;
+						}
+					},
+					async shareContent() {
+						if (navigator.share) {
+							try {
+								await navigator.share({
+									title: "פוטנציאל ייצור אנרגיה מתחדשת",
+									text: "מפה דינאמית של פוטנציאל ייצור אנרגיה מתחדשת בדו שימוש בשטחים הבנויים",
+									url: window.location.href, // Or you can specify a custom URL
+								});
+							} catch (error) {
+								console.error("Error sharing:", error);
+							}
+						} else {
+							// Fallback for browsers that do not support the Share API
+							this.fallbackShare();
+						}
+					},
+					fallbackShare() {
+						// You can use the Clipboard API or simply open a share dialog
+						const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+						window.open(shareUrl, "_blank");
+					},
+					changeBg() {
+						// Toggle currentBg between 41 and 0
+						// (Now - Lets add another option for the tuggle, as it will be 3...)
+						// currentBg === 1
+						// the order of the tuggling will be: [41, 0, 1]. ok?
+						this.currentBg =
+							this.currentBg === 41 ? 0 : this.currentBg === 0 ? 1 : 41;
+
+						// Change background image
+						govmap.setBackground(this.currentBg);
+					},
+					toggleDrawer() {
+						console.log(this.showDrawer);
+						this.showDrawer = !this.showDrawer;
+					},
+					showAllItems() {
+						this.filteredItems = this.items;
+					},
+					filterList() {
+						this.showClear = this.query.length > 0;
+						this.selectedIndex = -1; // Reset selection when filtering
+						var url =
+							"https://es.govmap.gov.il/TldSearch/api/DetailsByQuery?query=" +
+							this.query +
+							"&lyrs=276267023&gid=govmap";
+						// get...
+						fetch(url)
+							.then((response) => response.json())
+							.then((data) => {
+								this.items = [];
+								// if data.data has SETTLEMENT:
+								if (data.data.SETTLEMENT) {
+									data.data.SETTLEMENT.forEach((item) => {
+										this.items.push({
+											id: item.ObjectID,
+											text: item.ResultLable,
+											type: "settlement",
+											shape: `POINT(${item.X} ${item.Y})`,
+										});
+									});
+								}
+								// if data.data has NEIGHBORHOOD:
+								if (data.data.NEIGHBORHOOD) {
+									data.data.NEIGHBORHOOD.forEach((item) => {
+										this.items.push({
+											id: item.ObjectID,
+											text: item.ResultLable,
+											type: "neighborhood",
+											shape: `POINT(${item.X} ${item.Y})`,
+										});
+									});
+								}
+								// if data.data has STREET:
+								if (data.data.STREET) {
+									data.data.STREET.forEach((item) => {
+										this.items.push({
+											id: item.ObjectID,
+											text: item.ResultLable,
+											type: "street",
+											shape: `POINT(${item.X} ${item.Y})`,
+										});
+									});
+								}
+								// if data.data has ADDRESS:
+								if (data.data.ADDRESS) {
+									data.data.ADDRESS.forEach((item) => {
+										this.items.push({
+											id: item.ObjectID,
+											text: item.ResultLable,
+											type: "address",
+											shape: `POINT(${item.X} ${item.Y})`,
+										});
+									});
+								}
+								//if data.data has GOVMAP_PARCEL_ALL:
+								if (data.data.GOVMAP_PARCEL_ALL) {
+									data.data.GOVMAP_PARCEL_ALL.forEach((item) => {
+										this.items.push({
+											id: item.ObjectID,
+											text: item.ResultLable,
+											type: "parcel",
+											shape: `POINT(${item.X} ${item.Y})`,
+										});
+									});
+								}
+								//if POI_MID_POINT
+								if (data.data.POI_MID_POINT) {
+									data.data.POI_MID_POINT.forEach((item) => {
+										//ResultLable => only first 30 characters if more then 30
+										if (item.ResultLable.length > 30) {
+											item.ResultLable =
+												item.ResultLable.substring(0, 30) + "...";
+										}
+										this.items.push({
+											id: item.ObjectID,
+											text: item.ResultLable,
+											type: "poi",
+											shape: `POINT(${item.X} ${item.Y})`,
+										});
+									});
+								}
+
+								// sort this.item by this order: 'settlement', 'neighborhood' 'street', 'address', 'parcel', 'poi'..
+								var order = [
+									"settlement",
+									"neighborhood",
+									"street",
+									"address",
+									"parcel",
+									"poi",
+								];
+								this.items.sort((a, b) => {
+									return order.indexOf(a.type) - order.indexOf(b.type);
+								});
+
+								this.filteredItems = this.items;
+							});
+					},
+					selectItem(item) {
+						this.query = item.text;
+						this.items = [];
+						this.selectedIndex = -1;
+						this.showClear = true;
+						this.filteredItems = [];
+						//get the wkt for the selected item
+						var wkt = item.shape;
+						//"POINT(3887038.1170383873 3786759.179448681)"
+						var geojson = Terraformer.WKT.parse(wkt);
+						var coords = geojson.coordinates;
+						var x = parseFloat(coords[0]);
+						var y = parseFloat(coords[1]);
+
+						// zoom to the selected item
+
+						// web mercator to wgs84
+						// Define EPSG:2039
+						proj4.defs([
+							[
+								"EPSG:2039",
+								"+proj=tmerc +lat_0=31.7343936111111 +lon_0=35.2045169444445 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 +ellps=GRS80 +towgs84=-24.002400,-17.103200,-17.844400,-0.33077,-1.852690,1.669690,5.424800 +units=m +no_defs",
+							],
+						]);
+
+						// Example coordinate in EPSG:3857
+						const point3857 = [x, y]; // Replace 3857_x and 3857_y with your actual coordinates
+
+						// Transform the coordinates to EPSG:2039
+						// const point2039 = proj4('EPSG:3857', 'EPSG:2039', point3857);
+						// this.x = point2039[0];
+						// this.y = point2039[1];
+
+						this.x = x;
+						this.y = y;
+
+						// zoom to the selected item
+						govmap.zoomToXY({ x: this.x, y: this.y, level: 10, marker: true });
+
+						if (window.innerWidth <= 768) {
+							this.isSearchVisible = false;
+						}
+					},
+
+					// Handle keyboard navigation
+					handleKeyDown(e) {
+						if (this.items.length === 0) return;
+
+						switch (e.keyCode) {
+							case 40: // Down arrow
+								e.preventDefault();
+								this.selectedIndex =
+									this.selectedIndex < this.items.length - 1
+										? this.selectedIndex + 1
+										: this.items.length - 1;
+								this.scrollToSelected();
+								break;
+
+							case 38: // Up arrow
+								e.preventDefault();
+								this.selectedIndex =
+									this.selectedIndex > 0 ? this.selectedIndex - 1 : 0;
+								this.scrollToSelected();
+								break;
+
+							case 13: // Enter
+								e.preventDefault();
+								if (this.selectedIndex >= 0) {
+									this.selectItem(this.items[this.selectedIndex]);
+								}
+								break;
+
+							case 27: // Escape
+								this.clearSearch();
+								break;
+						}
+					},
+
+					// Scroll selected item into view
+					scrollToSelected() {
+						if (this.selectedIndex < 0) return;
+						const container = document.querySelector(".autocomplete-items");
+						const selected = container.children[this.selectedIndex];
+						if (selected) {
+							selected.scrollIntoView({ block: "nearest" });
+						}
+					},
+
+					// Clear search
+					clearSearch() {
+						this.query = "";
+						this.items = [];
+						this.selectedIndex = -1;
+						this.showClear = false;
+					},
+					toggleInfoLayersCard() {
+						this.isInfoLayersCardOpen = !this.isInfoLayersCardOpen;
+					},
+
+					/**
+					 *  @param {'LAYER' | 'LEDGER'} tab - The tab to activate
+					 */
+					async changeInfoLayerTab(tab) {
+						this.activeInfoLayerTab = tab;
+
+						if (tab === "LEDGER") {
+							this.infoLayersLedgerRenderer = [];
+							await this.fetchLayers();
+							this.handleInfoLayersLedger();
+						}
+					},
+					getLayerNames(isVisible, option = 'visible') {
+						if (option === 'all') {
+							const visibleLayers = [];
+							const hiddenLayers = [];
+
+							Object.values(this.infoLayersLedger).forEach(lyr => {
+								if (lyr.isVisible) {
+									visibleLayers.push(lyr.name);
+								} else {
+									hiddenLayers.push(lyr.name);
+								}
+							});
+
+							return { visibleLayers, hiddenLayers };
+						}
+
+						return Object.values(this.infoLayersLedger)
+							.filter(lyr => lyr.isVisible === isVisible)
+							.map(lyr => lyr.name);
+					},
+					infoLayerClicked(layer) {
+						layer.data.visible = !layer.data.visible;
+						this.infoLayersLedger[layer.data.layerName] = { ...(this.infoLayersLedger[layer.data.layerName] ?? {}), isVisible: layer.data.visible, name: layer.data.layerName };
+						const { visibleLayers, hiddenLayers } = this.getLayerNames(null, 'all');
+
+						Object.values(this.infoLayersLedger).forEach(lyr => {
+							if (lyr.isVisible) {
+								visibleLayers.push(lyr.name);
+							} else {
+								hiddenLayers.push(lyr.name);
+							}
+						});
+
+						govmap.setVisibleLayers(visibleLayers, hiddenLayers);
+					},
+					spatialAnalysis() {
+						const fetchData = async (coordinates) => {
+							const visibleLayers = this.getLayerNames(true);
+							try {
+								const response = await Promise.all(visibleLayers.map(LayerName => govmap.getLayerData({ LayerName, Radius: coordinates.radius, Point: { x: coordinates.x, y: coordinates.y } })));
+									if (response.every(res => !res.data)) {
+										this.showModal({ title: 'הודעת מערכת', content: 'לא נמצאו תוצאות. סמן מחדש' });
+										return;
+									}
+
+									response.forEach((layer, index) => arrangeLayers(visibleLayers, layer, index));
+									this.spatialAnalysisTable.selected = this.spatialAnalysisTable.names[0];
+							} catch (e) {
+								throw new Error(e);
+							}
+						}
+
+						const arrangeLayers = (visibleLayers, layer, index) => {
+							if (!layer.data) {
+								return;
+							}
+
+							layer.data.forEach(lyr => {
+								if (!lyr.Fields) {
+									return;
+								}
+
+								const caption = this.infoLayers.find(lyrName => lyrName.data.layerName === visibleLayers[index])?.data?.caption;
+
+								if (!caption) {
+									return;
+								}
+
+								if (!this.spatialAnalysisTable.names.includes(caption)) {
+									this.spatialAnalysisTable.names.push(caption);
+								}
+
+
+								if (!this.spatialAnalysisTable.layers[caption]) {
+									this.spatialAnalysisTable.layers[caption] = [];
+								}
+
+								this.spatialAnalysisTable.layers[caption].push(lyr.Fields);
+							});
+						};
+
+						this.closeSpatialAnalysisTable();
+
+						govmap.draw(govmap.drawType.Circle).progress((coordinates) => {
+							setTimeout(function () {
+								govmap.clearDrawings();
+							}, 2000);
+
+							if (coordinates.radius > 3000) {
+								this.showModal({ title: 'חריגה ממגבלה', content: 'הבחירה אפשרית עד רדיוס של 1.5 ק"מ בלבד.' });
+								return;
+							}
+
+							fetchData(coordinates);
+						});
+					},
+
+
+					// var o;
+					// govmap.getLayerData({ LayerName: 'HOTELS', Radius: 250, Point: { x: 221755.46 , y: 631539.23 } }).then(response => {
+					// 	o = response.data.map(lyr => lyr.Fields);
+					// 	console.log(o)
+					// })
+					// populateSpatialAnalysisTable(sheets) {
+					// 	console.log('0000sheets', sheets);
+					// 	this.spatialAnalysisTable = sheets;
+					// },
+					closeSpatialAnalysisTable() {
+						this.spatialAnalysisTable = {selected: '', names: [], layers: {}};
+						this.isSpatialAnalysisDropdownOpen = false;
+					},
+					selectSpatialAnalysisLayer(name) {
+						this.spatialAnalysisTable.selected = name;
+						this.toggleSpatialAnalysisDropdown();
+					},
+					toggleSpatialAnalysisDropdown() {
+						this.isSpatialAnalysisDropdownOpen = !this.isSpatialAnalysisDropdownOpen;
+					},
+					async loadJson() {
+						try {
+							const response = await fetch("./info-layers.json");
+							if (!response.ok) {
+								throw new Error("Network response was not ok");
+							}
+							const data = await response.json();
+							this.infoLayers = data;
+						} catch (error) {
+							console.error("Failed to load JSON:", error);
+						}
+					},
+					async fetchLayers() {
+						const newLayers = Object.values(this.infoLayersLedger).filter((layer) => !layer.img);
+
+						if (newLayers.length === 0) {
+							return;
+						}
+
+						try {
+							const response = await govmap.getLayerRenderer({ LayerNames: newLayers.map(l => l.name) });
+							const data = response?.data?.Renderers ?? response?.data?.SiteRenderer ?? false;
+
+							if (!data || response.errorCode !== 0) {
+								throw new Error("No data returned from getLayerRenderer");
+							}
+
+							this.populateInfoLayersLedger(data);
+						} catch (error) {
+							console.error('Error with getLayerRenderer:', error);
+						}
+					},
+					populateInfoLayersLedger(layers) {
+						for (lyr in layers) {
+							this.infoLayersLedger[lyr] = {
+								...this.infoLayersLedger[lyr],
+								RendererType: layers[lyr].RendererType,
+								caption: layers[lyr].LayerCaption
+							};
+
+							if (layers[lyr].RendererType === "simple") {
+								this.infoLayersLedger[lyr].img = layers[lyr].RendererList[""];
+							} else {
+								this.infoLayersLedger[lyr].RendererList = [];
+								Object.keys(layers[lyr].RendererList).forEach((l) => {
+									this.infoLayersLedger[lyr].RendererList.push({
+										caption: l,
+										img: layers[lyr].RendererList[l]
+									});
+								});
+							}
+						}
+
+					},
+					handleInfoLayersLedger() {
+						this.infoLayersLedgerRenderer = Object.values(this.infoLayersLedger).filter(lyr => lyr.isVisible);
+					},
+				},
+				watch: {
+					isModalVisible(){
+						if (this.isModalVisible == true) {
+							this.showDrawer = false;
+						}
+
+					},
+					checked(newVal) {
+						if (newVal) {
+							setTimeout(() => {
+								this.closeModal();
+							}, 1000);
+						}
+					},
+					// Watch for query changes
+					query(newVal) {
+						this.showClear = newVal.length > 0;
+					},
+				},
+				mounted() {
+					var appVue = this;
+
+
+                    window.addEventListener('resize', updateMapHeight);
+                    updateMapHeight();
+
+
+					this.baseHref = `${window.location.origin}${this.baseHtmlPath}`;
+
+					// check if there are query params (x, y, z) in the browser url
+					const urlParams = new URLSearchParams(window.location.search);
+					const x = urlParams.get("x");
+					const y = urlParams.get("y");
+					const z = urlParams.get("z");
+
+					if (x && y && z) {
+						this.map_x = x;
+						this.map_y = y;
+						this.map_z = z;
+					}
+
+					var my_token = "5a4b8472-b95b-4687-8179-0ccb621c7990";
+
+					if (window.location.hostname.includes("govmap.gov.il")) {
+						my_token = "0fff9694-a045-4ede-b997-ee9927b0d56c";
+					} else if (window.location.hostname.includes("github.io")) {
+						my_token = "aafedfe5-8dfa-4fd5-9af9-8b95759447bd";
+					}
+
+					var zoomButtons = true;
+					const isMobile = window.matchMedia("(max-width: 767px)").matches;
+					if (isMobile) {
+						zoomButtons = false;
+					}
+
+					govmap.createMap("map_div", {
+						token: my_token,
+						visibleLayers: [],
+						layers: ["ILREGION","MMI_DISTRICTS","MINHALARBSETLBRDR","CONTOUR","REGIONALPEREFERIYA","REGIONALGALIL","REGIONALNEGEV","DISTRICTS_ADDITIONAL","REGIONALCOUNCIL","AGRIPARCELS","SOIL_SURVEY","FLOODPLAIN","DEAD_SEA_DELEK","RETZEFGVULOT","TOCHNIOTSHIVUK","TABAOT","TAZAR","MT_IL","SKARIM","TALAR_TABLE_TAVLAEI","GUSHIM_REZEF_ADDITONAL","PARCEL_REZEF_ADDITIONAL","ECONOMYLOTS_V2","MICHRAZIM_HALUKA","MICHRAZIM","RESIDENTIALSTOCKPLAN","SOIHISTORYPARCELS","ADD_RAIN_AREA_PLANNING_PROD","PLAN_REGION_STRATEGIC","ATAREI_RATAG","TAYARUT","HOTELS","FIELDSCHOOL","TRACKS","SHVIL_ISRAEL","RESERVE_NATURAL_PLAN","BASIN","INTERESTLAYERMEKOROT","PURIFIED_DRAINAGE_PONDS","TRAIN_TRACKS_STATUS","BL_LIN_P","ROUT3","EMERGANCY_HOSPITALS","TAMAT_DISTRICTS_POLYGONS"],
+						showXY: false,
+						identifyOnClick: true,
+						background: 0,
+						layersMode: 4,
+						bgButton: true,
+						level: appVue.map_z,
+						center: { x: appVue.map_x, y: appVue.map_y },
+						isEmbeddedToggle: true,
+						zoomButtons: zoomButtons,
+					});
+
+					// Construct the URL with query parameters
+					const url = new URL(window.location.href);
+					url.searchParams.set("x", parseInt(appVue.map_x));
+					url.searchParams.set("y", parseInt(appVue.map_y));
+					url.searchParams.set("z", appVue.map_z);
+
+					// Update the browser's URL
+					window.history.replaceState({}, "", url.toString());
+
+
+					govmap.onEvent(govmap.events.EXTENT_CHANGE).progress(function (e) {
+						if (e.levelChange) {
+							appVue.map_z = e.lod.level;
+						}
+						appVue.map_x = e.extent.xmin + (e.extent.xmax - e.extent.xmin) / 2;
+						appVue.map_y = e.extent.ymin + (e.extent.ymax - e.extent.ymin) / 2;
+
+						// Construct the URL with query parameters
+						const url = new URL(window.location.href);
+						url.searchParams.set("x", parseInt(appVue.map_x));
+						url.searchParams.set("y", parseInt(appVue.map_y));
+						url.searchParams.set("z", appVue.map_z);
+
+						// Update the browser's URL
+						window.history.replaceState({}, "", url.toString());
+					});
+					this.loadJson();
+				},
+			});
+		</script>
+	</body>
+</html>

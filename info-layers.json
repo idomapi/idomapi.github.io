@@ -1,0 +1,442 @@
+[
+  {
+    "data": {
+      "caption": "בתי מלון",
+      "visible": false,
+      "layerName": "HOTELS",
+      "layerType": 0,
+      "layerID": 68
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מסלולים",
+      "visible": false,
+      "layerName": "TRACKS",
+      "layerType": 0,
+      "layerID": 72
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אתרי תיירות בתכנון",
+      "visible": false,
+      "layerName": "TAYARUT",
+      "layerType": 0,
+      "layerID": 83
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "בתי חולים",
+      "visible": false,
+      "layerName": "EMERGANCY_HOSPITALS",
+      "layerType": 0,
+      "layerID": 144
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אתרי רשות הטבע והגנים",
+      "visible": false,
+      "layerName": "ATAREI_RATAG",
+      "layerType": 0,
+      "layerID": 156
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "בתי ספר שדה",
+      "visible": false,
+      "layerName": "FIELDSCHOOL",
+      "layerType": 0,
+      "layerID": 165
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "שביל ישראל",
+      "visible": false,
+      "layerName": "SHVIL_ISRAEL",
+      "layerType": 0,
+      "layerID": 188
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "תצ\"ר",
+      "visible": false,
+      "layerName": "TAZAR",
+      "layerType": 0,
+      "layerID": 189
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "קווי גובה",
+      "visible": false,
+      "layerName": "CONTOUR",
+      "layerType": 0,
+      "layerID": 198
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "קטעי כביש לפי תחום אחריות",
+      "visible": false,
+      "layerName": "ROUT3",
+      "layerType": 0,
+      "layerID": 225
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "סטאטוס מסילות",
+      "visible": false,
+      "layerName": "TRAIN_TRACKS_STATUS",
+      "layerType": 0,
+      "layerID": 228
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "תוכניות שמורות טבע",
+      "visible": false,
+      "layerName": "RESERVE_NATURAL_PLAN",
+      "layerType": 0,
+      "layerID": 235
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אגני ניקוז",
+      "visible": false,
+      "layerName": "BASIN",
+      "layerType": 0,
+      "layerID": 236
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "פשטי הצפה",
+      "visible": false,
+      "layerName": "FLOODPLAIN",
+      "layerType": 0,
+      "layerID": 238
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "קו כחול תוכניות רכבת",
+      "visible": false,
+      "layerName": "BL_LIN_P",
+      "layerType": 0,
+      "layerID": 242
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "חלקות חקלאיות",
+      "visible": false,
+      "layerName": "AGRIPARCELS",
+      "layerType": 0,
+      "layerID": 245
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מרחבים-רמ\"י",
+      "visible": false,
+      "layerName": "MMI_DISTRICTS",
+      "layerType": 0,
+      "layerID": 247
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גבול מחוז משרד הפנים",
+      "visible": false,
+      "layerName": "DISTRICTS_ADDITIONAL",
+      "layerType": 0,
+      "layerID": 249
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "תב\"ע - גבולות - רמ\"י",
+      "visible": false,
+      "layerName": "RETZEFGVULOT",
+      "layerType": 0,
+      "layerID": 304
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "תוכניות לשיווק-רמ\"י",
+      "visible": false,
+      "layerName": "TOCHNIOTSHIVUK",
+      "layerType": 0,
+      "layerID": 306
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "סקרים-רמ\"י",
+      "visible": false,
+      "layerName": "SKARIM",
+      "layerType": 0,
+      "layerID": 307
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מכרזי מקרקעין - מגרשים-רמ\"י",
+      "visible": false,
+      "layerName": "MICHRAZIM_HALUKA",
+      "layerType": 0,
+      "layerID": 309
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מכרזי מקרקעין - גבולות - רמ\"י",
+      "visible": false,
+      "layerName": "MICHRAZIM",
+      "layerType": 0,
+      "layerID": 310
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מגרשי תעשיה באזורי פיתוח",
+      "visible": false,
+      "layerName": "ECONOMYLOTS_V2",
+      "layerType": 0,
+      "layerID": 313
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "סקר קרקעות",
+      "visible": false,
+      "layerName": "SOIL_SURVEY",
+      "layerType": 0,
+      "layerID": 317
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גבול יער/צומח מנוהל ע''י קק''ל",
+      "visible": false,
+      "layerName": "ILREGION",
+      "layerType": 0,
+      "layerID": 325
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אזורי עדיפות לאומית",
+      "visible": false,
+      "layerName": "TAMAT_DISTRICTS_POLYGONS",
+      "layerType": 0,
+      "layerID": 330
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אינטרסים של מקורות",
+      "visible": false,
+      "layerName": "INTERESTLAYERMEKOROT",
+      "layerType": 0,
+      "layerID": 339
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "תשתיות דלק",
+      "visible": false,
+      "layerName": "DEAD_SEA_DELEK",
+      "layerType": 0,
+      "layerID": 343
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אזורי תפקוד - התכנית האסטרטגית המרחבית",
+      "visible": false,
+      "layerName": "PLAN_REGION_STRATEGIC",
+      "layerType": 0,
+      "layerID": 354
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מאגרי קולחין",
+      "visible": false,
+      "layerName": "PURIFIED_DRAINAGE_PONDS",
+      "layerType": 0,
+      "layerID": 355
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מרחבי תכנון",
+      "visible": false,
+      "layerName": "MT_IL",
+      "layerType": 0,
+      "layerID": 365
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "אזורי גשם לתכנון",
+      "visible": false,
+      "layerName": "ADD_RAIN_AREA_PLANNING_PROD",
+      "layerType": 0,
+      "layerID": 369
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "תב\"עות - נתיבי ישראל",
+      "visible": false,
+      "layerName": "TABAOT",
+      "layerType": 0,
+      "layerID": 374
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "חלקות - גבולות רישום מקרקעין",
+      "visible": false,
+      "layerName": "PARCEL_REZEF_ADDITIONAL",
+      "layerType": 0,
+      "layerID": 378
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גושים - גבולות רישום מקרקעין",
+      "visible": false,
+      "layerName": "GUSHIM_REZEF_ADDITONAL",
+      "layerType": 0,
+      "layerID": 379
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גבולות תצ\"ר טבלאי",
+      "visible": false,
+      "layerName": "TALAR_TABLE_TAVLAEI",
+      "layerType": 0,
+      "layerID": 380
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גבולות חלקות מבוטלות",
+      "visible": false,
+      "layerName": "SOIHISTORYPARCELS",
+      "layerType": 0,
+      "layerID": 382
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "מלאי תכנוני למגורים",
+      "visible": false,
+      "layerName": "RESIDENTIALSTOCKPLAN",
+      "layerType": 0,
+      "layerID": 385
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גבולות מועצות גליל,נגב ופריפריה",
+      "visible": false,
+      "layerName": "REGIONALCOUNCIL",
+      "layerType": 0,
+      "layerID": 393
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "רשויות מקומיות גליל",
+      "visible": false,
+      "layerName": "REGIONALGALIL",
+      "layerType": 0,
+      "layerID": 394
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "רשויות מקומיות נגב",
+      "visible": false,
+      "layerName": "REGIONALNEGEV",
+      "layerType": 0,
+      "layerID": 395
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "רשויות מקומיות בפריפריה",
+      "visible": false,
+      "layerName": "REGIONALPEREFERIYA",
+      "layerType": 0,
+      "layerID": 397
+    },
+    "isVisibleInScale": false
+  },
+  {
+    "data": {
+      "caption": "גבולות אדמות הכפרים",
+      "visible": false,
+      "layerName": "MINHALARBSETLBRDR",
+      "layerType": 0,
+      "layerID": 407
+    },
+    "isVisibleInScale": false
+  }
+]

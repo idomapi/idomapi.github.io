@@ -769,7 +769,7 @@
 						overflow-y: auto;
 						display: block;
 						max-width: 1885px;
-						max-height: 538px;
+						max-height: 67vh;
 					}
 
 					tr {
@@ -2754,6 +2754,7 @@
 							});
 						};
 
+						this.isInfoLayersCardOpen = false;
 						this.closeSpatialAnalysisTable();
 
 						govmap.draw(govmap.drawType.Circle).progress((coordinates) => {

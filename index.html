@@ -491,7 +491,6 @@
 
 			.info-layers-container {
 				position: absolute;
-				/* right: 318px; */
 				right:20px;
 				top: 15px;
 
@@ -552,19 +551,6 @@
 				justify-content: center;
 				padding: 10px;
 
-				/* button {
-					left: 0;
-					width: 48px;
-					float: left;
-					background-color: transparent;
-					border: transparent;
-					position: absolute;
-					display: block;
-					font: 20px Alef;
-					font-family: Alef, sans-serif;
-					color: #888;
-				} */
-
 				.info-layers-title {
 					display: block;
 					font: 20px Alef;
@@ -624,8 +610,9 @@
 					gap: 20px;
 					border-bottom: 1px solid #e9eaed;
 					cursor: pointer;
-					padding-top: 7px;
-					height: 40px;
+					padding: 7px 0;
+					min-height: 40px;
+					height: auto;
 
 					&:hover {
 						background-color: #f4f5f5;
@@ -661,10 +648,6 @@
 					.info-layers-card-text {
 						font-size: 15px;
 						color: #212121;
-						text-overflow: ellipsis;
-						overflow: hidden;
-						white-space: nowrap;
-						display: inline-block;
 					}
 				}
 			}
@@ -695,6 +678,50 @@
 						}
 					}
 
+				}
+			}
+
+			.info-layers-draw-container {
+				background-color: white;
+				border: 1px solid #cccccc;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0px rgba(0, 0, 0, 0.02);
+				width: 300px;
+
+				.header {
+					border-bottom: 1px solid #e9eaed;
+					display: flex;
+					align-items: center;
+					padding: 10px;
+
+				.text {
+					font: 20px alef;
+					color: #000000;
+					width: 100%;
+				}
+				}
+
+				.draw-options {
+					padding-right: 12px;
+
+					.sub-title {
+						line-height: 48px;
+					}
+
+					.icons-container {
+						display: flex;
+						padding-left: 12px;
+						padding-bottom: 20px;
+						justify-content: space-between;
+
+						.icon-wrapper {
+							cursor: pointer;
+
+							img {
+								width: 43px;
+								height: 43px;
+							}
+						}
+					}
 				}
 			}
 
@@ -755,20 +782,16 @@
 				}
 
 				.spatial-query-body {
-					overflow-x: auto;
+					max-height: 67vh;
+					overflow: auto;
 
 					table {
 						border-collapse: collapse;
-
-						overflow-x: hidden;
-						table-layout: fixed;
 					}
 
 					tbody {
 						overflow-x: hidden;
 						overflow-y: auto;
-						display: block;
-						max-width: 1885px;
 						max-height: 67vh;
 					}
 
@@ -781,25 +804,15 @@
 					}
 
 					.th-tr-value {
-						max-width: 285px;
 						min-width: 15px;
-						width: 110px;
 						padding-left: 15px;
 						padding-right: 10px;
-						overflow: hidden;
-						white-space: nowrap;
 						text-align: right;
 						height: 45px;
 						line-height: 42px;
 						vertical-align: bottom;
 						font-size: 15px;
 						color: #000000;
-					}
-
-					tr {
-							display: table;
-							width: 100%;
-							table-layout: fixed;
 					}
 
 					th, td {
@@ -811,11 +824,7 @@
 							overflow: hidden;
 
 							&:first-child {
-								width: 45px;
-							}
-
-							&:nth-child(2) {
-								width: 150px;
+								width: 60px;
 							}
 					}
 				}
@@ -880,7 +889,8 @@
 								overflow: hidden;
 								white-space: nowrap;
 								display: inline-block;
-								width: 200px;
+								width: 80vw;
+								text-align: center;
 							}
 
 							.dropdown-content {
@@ -1341,7 +1351,7 @@
 							</svg>
 							<span>מדוד</span>
 						</button>
-						<button @click="spatialAnalysis()" class="action-button">
+						<button @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.DRAW)" class="action-button">
 							<svg width="24" height="24" viewBox="0 0 40 26">
 								<g transform="translate(0,26) scale(0.1,-0.1)" fill="#5f6368">
 									<path
@@ -1493,7 +1503,7 @@
 								</svg>
 								<span>מדוד</span>
 							</button>
-							<button @click="spatialAnalysis()" class="mobile-action-button">
+							<button @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.DRAW)" class="mobile-action-button">
 								<svg width="24" height="24" viewBox="0 0 40 26">
 									<g transform="translate(0,26) scale(0.1,-0.1)" fill="#5f6368">
 										<path
@@ -1553,72 +1563,92 @@
 
 				<!-- Spatial analysis and query -->
 				<div class="info-layers-container">
-					<button class="info-button" v-if="!isInfoLayersCardOpen" @click="toggleInfoLayersCard()">
-						<div>
-							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
-								<rect x="0" y="64" width="320" height="48" />
-								<rect x="0" y="224" width="320" height="48" />
-								<rect x="0" y="384" width="320" height="48" />
-								<circle cx="464" cy="96" r="48" />
-								<circle cx="464" cy="256" r="48" />
-								<circle cx="464" cy="416" r="48" />
-							</svg>
-						</div>
-						<div>
-							שכבות מידע
-						</div>
-					</button>
-					<div class="info-layers-card" v-else>
-						<div class="info-layers-card-header">
-							<button class="close-button" aria-label="סגור" @click="toggleInfoLayersCard()">
-								x
-							</button>
-							<title class="info-layers-title">שכבות מידע</title>
-						</div>
-						<div class="info-layers-card-buttons">
-							<button aria-label="שכבות" :class="{active: activeInfoLayerTab === 'LAYERS'}"
-								@click="changeInfoLayerTab('LAYERS')">
-								שכבות
-							</button>
-							<button aria-label="מקרא" :class="{active: activeInfoLayerTab === 'LEDGER'}"
-								@click="changeInfoLayerTab('LEDGER')">
-								מקרא
-							</button>
-						</div>
-						<ul class="info-layers-card-list" v-if="activeInfoLayerTab === 'LAYERS'">
-							<div v-for="(layer, index) in infoLayers" :key="layer.data.layerName" class="info-layer-button-container"
-								@click="infoLayerClicked(layer)">
-								<div class="info-layer-button">
-									<div class="square" :class="{checked: layer.data.visible}"></div>
-								</div>
-								<span class="info-layers-card-text">
-									{{ layer.data.caption }}
-								</span>
+						<div class="info-layers-card" v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.TABLE">
+							<div class="info-layers-card-header">
+								<button class="close-button" aria-label="סגור" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">
+									x
+								</button>
+								<title class="info-layers-title">שכבות מידע</title>
 							</div>
-
-						</ul>
-						<ul v-else class="info-layers-ledger-wrapper">
-							<div v-if="infoLayersLedgerRenderer.length > 0" class="info-layers-ledger-container">
-
-								<div v-for="(layer, index) in infoLayersLedgerRenderer" :key="index">
-
-									<div v-if="layer.RendererType === 'simple'" class="simple-ledger-item-wrapper">
-										<img :src="layer.img" />
-										<span>{{layer.caption}}</span>
+							<div class="info-layers-card-buttons">
+								<button aria-label="שכבות" :class="{active: activeInfoLayerTab === 'LAYERS'}"
+									@click="changeInfoLayerTab('LAYERS')">
+									שכבות
+								</button>
+								<button aria-label="מקרא" :class="{active: activeInfoLayerTab === 'LEDGER'}"
+									@click="changeInfoLayerTab('LEDGER')">
+									מקרא
+								</button>
+							</div>
+							<ul class="info-layers-card-list" v-if="activeInfoLayerTab === 'LAYERS'">
+								<div v-for="(layer, index) in infoLayers" :key="layer.data.layerName" class="info-layer-button-container"
+									@click="infoLayerClicked(layer)">
+									<div class="info-layer-button">
+										<div class="square" :class="{checked: layer.data.visible}"></div>
 									</div>
+									<span class="info-layers-card-text">
+										{{ layer.data.caption }}
+									</span>
+								</div>
 
-									<div v-else class="unique-ledger-item-container">
-										<div>{{layer.caption}}</div>
-										<div v-for="(sublayer, j) in layer.RendererList" :key="j" class="unique-ledger-item-wrapper">
-											<img :src="sublayer.img" />
-											<span class="unique-ledger-item">{{sublayer.caption}}</span>
+							</ul>
+							<ul v-else class="info-layers-ledger-wrapper">
+								<div v-if="infoLayersLedgerRenderer.length > 0" class="info-layers-ledger-container">
+
+									<div v-for="(layer, index) in infoLayersLedgerRenderer" :key="index">
+
+										<div v-if="layer.RendererType === 'simple'" class="simple-ledger-item-wrapper">
+											<img :src="layer.img" />
+											<span>{{layer.caption}}</span>
+										</div>
+
+										<div v-else class="unique-ledger-item-container">
+											<div>{{layer.caption}}</div>
+											<div v-for="(sublayer, j) in layer.RendererList" :key="j" class="unique-ledger-item-wrapper">
+												<img :src="sublayer.img" />
+												<span class="unique-ledger-item">{{sublayer.caption}}</span>
+											</div>
 										</div>
 									</div>
-								</div>
 
+								</div>
+							</ul>
+						</div>
+						<div v-else-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.DRAW" class="info-layers-draw-container">
+							<div class="header">
+								<span class="text">
+										ניתוח מרחבי
+								</span>
+								<button aria-label="סגור" class="close-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">x</button>
+						</div>
+						<div class="draw-options">
+							<div class="sub-title">בחר כלי סימון:
 							</div>
-						</ul>
+							<div class="icons-container" >
+								<div class="icon-wrapper" v-for="(option, index) in drawOptions" :key="index" @click="spatialAnalysis(option.drawType, true)">
+									<img :src="'./shapes/' + option.drawType + '.png'" :title="option.title"/>
+									{{option.title}}
+								</div>
+							</div>
 					</div>
+
+						</div>
+
+						<button v-else class="info-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.TABLE)">
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
+									<rect x="0" y="64" width="320" height="48" />
+									<rect x="0" y="224" width="320" height="48" />
+									<rect x="0" y="384" width="320" height="48" />
+									<circle cx="464" cy="96" r="48" />
+									<circle cx="464" cy="256" r="48" />
+									<circle cx="464" cy="416" r="48" />
+								</svg>
+							</div>
+							<div>
+								שכבות מידע
+							</div>
+						</button>
 				</div>
 
 				<div class="spatial-query-container" v-if="spatialAnalysisTable.names.length > 0">
@@ -1647,7 +1677,6 @@
 							</div>
 						</div>
 
-
 							<div class="results-length">{{spatialAnalysisTable.layers[spatialAnalysisTable.selected].length}} תוצאות</div>
 						</div>
 					</div>
@@ -1656,15 +1685,17 @@
 							<thead>
 								<tr>
 									<th class=""></th>
-									<th v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.FieldName" class="th-tr-value">{{item.FieldName}}</th>
+									<th v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.name" class="th-tr-value">{{item.name}}</th>
 								</tr>
 							</thead>
+							<div>
 							<tbody>
 								<tr v-for="(row, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index">
 									<td>{{index + 1}}.</td>
-									<td v-for="column in row" :key="column.Value" class="th-tr-value">{{column.Value}}</td>
+									<td v-for="column in row" :key="column.value" class="th-tr-value">{{column.value}}</td>
 									</tr>
 							</tbody>
+						</div>
 						</table>
 					</div>
 				</div>
@@ -1673,11 +1704,11 @@
 					<div v-for="(card, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index" class="item-container">
 						<div class="card">
 							<div>
-								<div class="label" v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.FieldName">{{item.FieldName}}:</div>
+								<div class="label" v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.name">{{item.name}}:</div>
 							</div>
 							<div>
 								<div class="value" v-for="(row, j) in card" :key="j">
-									{{row.Value}}
+									{{row.value}}
 								</div>
 							</div>
 						</div>
@@ -2282,12 +2313,23 @@
 
 					isVisible: true,
 					fields: [],
-					isInfoLayersCardOpen: false,
+					INFO_LAYERS_CONTAINER_MODES: {
+						'TABLE': 'TABLE',
+						'DRAW': 'DRAW',
+						'BUTTON': 'BUTTON'
+					},
+					infoLayersContainerMode: 'BUTTON',
 					activeInfoLayerTab: 'LAYERS',
 					infoLayers: [],
 					infoLayersLedger: {},
 					infoLayersLedgerRenderer: [],
 					isSpatialAnalysisDropdownOpen: false,
+					drawOptions: [
+						{ drawType: govmap.drawType.Point, title: 'נקודה' },
+						{ drawType: govmap.drawType.Polygon, title: 'פוליגון' },
+						{ drawType: govmap.drawType.Circle, title: 'רדיוס' },
+						{ drawType: govmap.drawType.Rectangle, title: 'ריבוע' }
+					],
 					spatialAnalysisTable: {selected: '', names: [], layers: []},
 				},
 				computed: {
@@ -2657,8 +2699,12 @@
 						this.selectedIndex = -1;
 						this.showClear = false;
 					},
-					toggleInfoLayersCard() {
-						this.isInfoLayersCardOpen = !this.isInfoLayersCardOpen;
+					toggleInfoLayersCard(mode) {
+						this.infoLayersContainerMode = mode;
+
+						if (mode !== this.INFO_LAYERS_CONTAINER_MODES.TABLE) {
+							this.closeSpatialAnalysisTable();
+						}
 					},
 
 					/**
@@ -2708,79 +2754,97 @@
 
 						govmap.setVisibleLayers(visibleLayers, hiddenLayers);
 					},
-					spatialAnalysis() {
+					spatialAnalysis(mode, isImmediatelyCloseDrawMenu = false) {
 						const fetchData = async (coordinates) => {
 							const visibleLayers = this.getLayerNames(true);
 							try {
-								const response = await Promise.all(visibleLayers.map(LayerName => govmap.getLayerData({ LayerName, Radius: coordinates.radius, Point: { x: coordinates.x, y: coordinates.y } })));
-									if (response.every(res => !res.data)) {
-										this.showModal({ title: 'הודעת מערכת', content: 'לא נמצאו תוצאות. סמן מחדש' });
-										return;
-									}
+								const type = isCircle ? 'Radius' : 'Shape';
+								const body = {};
 
-									response.forEach((layer, index) => arrangeLayers(visibleLayers, layer, index));
-									this.spatialAnalysisTable.selected = this.spatialAnalysisTable.names[0];
+								if (mode === govmap.drawType.Circle) {
+									body.Wkt =  `POINT(${coordinates.x} ${coordinates.y})`;
+									body.Radius = coordinates.radius;
+								} else if (mode === govmap.drawType.Point) {
+									body.Wkt = coordinates.wkt;
+									body.Radius = coordinates.tolerance;
+								} else {
+									body.Wkt = coordinates.wkt;
+								}
+
+								const layersRequest = visibleLayers.map(LayerName => {
+									const shallowCopy = { ...body };
+									shallowCopy.LayerName = LayerName;
+									return shallowCopy;
+								});
+
+								const responses = await Promise.all(
+									layersRequest.map(layer => fetch(`https://ags.govmap.gov.il/AdvancedSearch/QueryBy${type}`, {
+										method: 'POST',
+										headers: { 'Content-Type': 'application/json' },
+										body: JSON.stringify(layer)
+									})));
+
+								const layersList = await Promise.all(responses.map(async response => {
+									const json = await response.json();
+									return json.data.Data;
+								}));
+
+								processResults(layersList);
 							} catch (e) {
 								throw new Error(e);
 							}
 						}
-
-						const arrangeLayers = (visibleLayers, layer, index) => {
-							if (!layer.data) {
+						const processResults = (layersList,) => {
+							if (layersList.every(layer => !layer)) {
+								this.showModal({ title: 'הודעת מערכת', content: 'לא נמצאו תוצאות. סמן מחדש' });
 								return;
 							}
 
-							layer.data.forEach(lyr => {
-								if (!lyr.Fields) {
-									return;
-								}
-
-								const caption = this.infoLayers.find(lyrName => lyrName.data.layerName === visibleLayers[index])?.data?.caption;
-
-								if (!caption) {
-									return;
-								}
-
-								if (!this.spatialAnalysisTable.names.includes(caption)) {
-									this.spatialAnalysisTable.names.push(caption);
-								}
-
-
-								if (!this.spatialAnalysisTable.layers[caption]) {
-									this.spatialAnalysisTable.layers[caption] = [];
-								}
-
-								this.spatialAnalysisTable.layers[caption].push(lyr.Fields);
+							layersList.filter(layer => layer).forEach(layer => {
+								this.spatialAnalysisTable.names.push(layer.Layer.caption);
+								this.spatialAnalysisTable.layers[layer.Layer.caption] = processLayer(layer);
 							});
-						};
+							this.spatialAnalysisTable.selected = this.spatialAnalysisTable.names[0];
+						}
+						const processLayer = (responseData) => {
+							const { Data: data, Settings: settings } = responseData;
+							const filteredSettings = settings.filter(s => s.fieldAlias !== "DONTSHOW");
+							const fieldNames = filteredSettings.map(s => s.fieldName);
+							const fieldAliases = filteredSettings.map(s => s.fieldAlias);
+							const processedData = data.map(item => {
+								let newItem = [];
+								fieldNames.forEach((fname, idx) => {
+									newItem.push({ name: fieldAliases[idx], value: item[fname] });
+								});
 
-						this.isInfoLayersCardOpen = false;
-						this.closeSpatialAnalysisTable();
+								return newItem;
+							});
 
-						govmap.draw(govmap.drawType.Circle).progress((coordinates) => {
+							return processedData;
+						}
+
+						if (isImmediatelyCloseDrawMenu) {
+							this.toggleInfoLayersCard(this.INFO_LAYERS_CONTAINER_MODES.BUTTON);
+						}
+
+						this.infoLayersContainerMode === this.INFO_LAYERS_CONTAINER_MODES.BUTTON;
+						const isCircle = mode === govmap.drawType.Circle || mode === govmap.drawType.Point;
+
+						govmap.draw(mode).progress((coordinates) => {
 							setTimeout(function () {
 								govmap.clearDrawings();
+								govmap.setDefaultTool();
 							}, 2000);
 
-							if (coordinates.radius > 3000) {
+							if (isCircle && coordinates.radius > 3000) {
 								this.showModal({ title: 'חריגה ממגבלה', content: 'הבחירה אפשרית עד רדיוס של 1.5 ק"מ בלבד.' });
 								return;
 							}
 
-							fetchData(coordinates);
+							this.toggleInfoLayersCard(this.INFO_LAYERS_CONTAINER_MODES.BUTTON);
+							fetchData(coordinates, isCircle);
 						});
 					},
-
-
-					// var o;
-					// govmap.getLayerData({ LayerName: 'HOTELS', Radius: 250, Point: { x: 221755.46 , y: 631539.23 } }).then(response => {
-					// 	o = response.data.map(lyr => lyr.Fields);
-					// 	console.log(o)
-					// })
-					// populateSpatialAnalysisTable(sheets) {
-					// 	console.log('0000sheets', sheets);
-					// 	this.spatialAnalysisTable = sheets;
-					// },
 					closeSpatialAnalysisTable() {
 						this.spatialAnalysisTable = {selected: '', names: [], layers: {}};
 						this.isSpatialAnalysisDropdownOpen = false;

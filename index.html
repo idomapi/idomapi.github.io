@@ -565,39 +565,39 @@
 
 			}
 
-			.info-layers-card-buttons {
+			.info-layers-card-buttons-container {
 				border-bottom: 1px solid #e9eaed;
 				height: 40px;
+			}
 
-				button {
-					background-color: transparent;
-					border-color: transparent;
-					font-size: 15px;
-					border-radius: 4px;
-					float: right;
-					height: 40px;
-					padding-left: 15px;
-					padding-right: 15px;
-					color: #1a6eb7;
+			.info-layers-card-button {
+				background-color: transparent;
+				border-color: transparent;
+				font-size: 15px;
+				border-radius: 4px;
+				float: right;
+				height: 40px;
+				padding-left: 15px;
+				padding-right: 15px;
+				color: #1a6eb7;
 
-					&:first-child {
-						border-left: transparent;
-					}
+				&:first-child {
+					border-left: transparent;
+				}
 
-					&.active {
-						background-color: white;
-						border: 1px solid #ccc;
-						border-bottom: transparent;
-						color: #747474;
-					}
+				&.active {
+					background-color: white;
+					border: 1px solid #ccc;
+					border-bottom: transparent;
+					color: #747474;
+				}
 
-					&:first-child.active {
-						border-bottom-left-radius: 0;
-					}
+				&:first-child.active {
+					border-bottom-left-radius: 0;
+				}
 
-					&:last-child.active {
-						border-bottom-right-radius: 0;
-					}
+				&:last-child.active {
+					border-bottom-right-radius: 0;
 				}
 			}
 
@@ -1346,7 +1346,6 @@
 								</div>
 							</div>
 						</div>
-						<!-- ido -->
 						<button id="info-layers-button" class="info-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.CARD)">
 							<div>
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
@@ -1594,7 +1593,6 @@
 
 				<!-- Spatial analysis and query -->
 
-				<!-- ido -->
 				<template v-if="isDisplayInfoLayersInterface">
 					<div class="info-layers-container">
 						<div class="info-layers-card" v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.CARD">
@@ -1605,12 +1603,12 @@
 								</button>
 								<title class="info-layers-title">שכבות מידע</title>
 							</div>
-							<div class="info-layers-card-buttons">
-								<button aria-label="שכבות" :class="{active: activeInfoLayerTab === 'LAYERS'}"
+							<div class="info-layers-card-buttons-container">
+								<button aria-label="שכבות" class="info-layers-card-button" :class="{active: activeInfoLayerTab === 'LAYERS'}"
 									@click="changeInfoLayerTab('LAYERS')">
 									שכבות
 								</button>
-								<button aria-label="מקרא" :class="{active: activeInfoLayerTab === 'LEDGER'}"
+								<button aria-label="מקרא" class="info-layers-card-button" :class="{active: activeInfoLayerTab === 'LEDGER'}"
 									@click="changeInfoLayerTab('LEDGER')">
 									מקרא
 								</button>
@@ -1670,7 +1668,6 @@
 
 						</div>
 
-						<!-- <button v-else class="info-button" ido -->
 						<button v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.BUTTON" id="info-layers-button-mobile" class="info-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.CARD)">
 							<div>
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
@@ -1690,7 +1687,7 @@
 
 					<div class="spatial-query-container" v-if="spatialAnalysisTable.names.length > 0 && infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.TABLE">
 						<div class="spatial-query-header">
-							<button class="close-button" style="z-index: 1;" aria-label="סגור" @click="closeSpatialAnalysisTable() && toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">
+							<button class="close-button" style="z-index: 1;" aria-label="סגור" @click="closeSpatialAnalysisTable()">
 								x
 							</button>
 							<div class="top">
@@ -2750,7 +2747,6 @@
 						this.showClear = false;
 					},
 					toggleInfoLayersCard(mode) {
-					console.log('0000toggleInfoLayersCard', mode);
 						govmap.closeBubble();
 						this.infoLayersContainerMode = mode;
 						this.canDisplayInfoLayersInterface = true;

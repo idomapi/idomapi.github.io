@@ -59,11 +59,17 @@
 			.search-container {
 				position: relative;
 				flex-grow: 1;
-				max-width: 300px;
+				max-width: 450px;
 				min-width: 280px;
 				display: flex;
 				align-items: center;
 				gap: 1rem;
+
+				#info-layers-button {
+					cursor: pointer;
+					width: 100%;
+					max-width: 133px;
+				}
 			}
 
 			.searchInput {
@@ -787,6 +793,7 @@
 
 					table {
 						border-collapse: collapse;
+						width: 100%;
 					}
 
 					tbody {
@@ -860,7 +867,15 @@
 				}
 			}
 
+			#info-layers-button-mobile {
+				display: none;
+			}
+
 			@media (max-width: 768px) {
+				#info-layers-button-mobile {
+					display: flex;
+				}
+
 				.info-card {
 					width: 100%;
 					height: 100%;
@@ -1331,6 +1346,22 @@
 								</div>
 							</div>
 						</div>
+						<!-- ido -->
+						<button id="info-layers-button" class="info-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.CARD)">
+							<div>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
+									<rect x="0" y="64" width="320" height="48" />
+									<rect x="0" y="224" width="320" height="48" />
+									<rect x="0" y="384" width="320" height="48" />
+									<circle cx="464" cy="96" r="48" />
+									<circle cx="464" cy="256" r="48" />
+									<circle cx="464" cy="416" r="48" />
+								</svg>
+							</div>
+							<div>
+								שכבות מידע
+							</div>
+						</button>
 					</div>
 
 					<a :href="baseHref" class="navbar-brand">
@@ -1562,10 +1593,14 @@
 			<div name="form" id="mapForm" class="MapStyle" style="position: relative">
 
 				<!-- Spatial analysis and query -->
-				<div class="info-layers-container">
-						<div class="info-layers-card" v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.TABLE">
+
+				<!-- ido -->
+				<template v-if="isDisplayInfoLayersInterface">
+					<div class="info-layers-container">
+						<div class="info-layers-card" v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.CARD">
 							<div class="info-layers-card-header">
-								<button class="close-button" aria-label="סגור" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">
+								<button class="close-button" aria-label="סגור"
+									@click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">
 									x
 								</button>
 								<title class="info-layers-title">שכבות מידע</title>
@@ -1614,27 +1649,29 @@
 								</div>
 							</ul>
 						</div>
-						<div v-else-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.DRAW" class="info-layers-draw-container">
+						<div v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.DRAW" class="info-layers-draw-container">
 							<div class="header">
 								<span class="text">
-										ניתוח מרחבי
+									ניתוח מרחבי
 								</span>
-								<button aria-label="סגור" class="close-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">x</button>
-						</div>
-						<div class="draw-options">
-							<div class="sub-title">בחר כלי סימון:
+								<button aria-label="סגור" class="close-button"
+									@click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">x</button>
 							</div>
-							<div class="icons-container" >
-								<div class="icon-wrapper" v-for="(option, index) in drawOptions" :key="index" @click="spatialAnalysis(option.drawType, true)">
-									<img :src="'./shapes/' + option.drawType + '.png'" :title="option.title"/>
-									{{option.title}}
+							<div class="draw-options">
+								<div class="sub-title">בחר כלי סימון:</div>
+								<div class="icons-container">
+									<div class="icon-wrapper" v-for="(option, index) in drawOptions" :key="index"
+										@click="spatialAnalysis(option.drawType, true)">
+										<img :src="'./shapes/' + option.drawType + '.png'" :title="option.title" />
+										{{option.title}}
+									</div>
 								</div>
 							</div>
-					</div>
 
 						</div>
 
-						<button v-else class="info-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.TABLE)">
+						<!-- <button v-else class="info-button" ido -->
+						<button v-if="infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.BUTTON" id="info-layers-button-mobile" class="info-button" @click="toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.CARD)">
 							<div>
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512" fill="currentColor">
 									<rect x="0" y="64" width="320" height="48" />
@@ -1649,56 +1686,63 @@
 								שכבות מידע
 							</div>
 						</button>
-				</div>
-
-				<div class="spatial-query-container" v-if="spatialAnalysisTable.names.length > 0">
-					<div class="spatial-query-header">
-						<button class="close-button" style="z-index: 1;" aria-label="סגור" @click="closeSpatialAnalysisTable()">
-							x
-						</button>
-						<div class="top">
-							<div class="title" @click="toggleSpatialAnalysisDropdown()">
-								<span>טבלת יישויות – {{spatialAnalysisTable.selected}}</span>
-								<span>
-									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 17" class="caret-down" :class="{'rotate': isSpatialAnalysisDropdownOpen}">
-										<path d="M0.978 6.375h8.044c0.556 0 0.834 0.672 0.441 1.066L5.44 11.463c-0.244 0.244-0.641 0.244-0.885 0L0.537 7.441C0.144 7.047 0.422 6.375 0.978 6.375z"/>
-								</svg>
-								</span>
-							</div>
-
-							<div class="dropdown-content" v-if="isSpatialAnalysisDropdownOpen">
-								<div
-								v-for="name in spatialAnalysisTable.names"
-								:key="name"
-								@click="selectSpatialAnalysisLayer(name)"
-								class="dropdown-item"
-								>
-								{{ name }}
-							</div>
-						</div>
-
-							<div class="results-length">{{spatialAnalysisTable.layers[spatialAnalysisTable.selected].length}} תוצאות</div>
-						</div>
 					</div>
-					<div class="spatial-query-body">
-						<table>
-							<thead>
-								<tr>
-									<th class=""></th>
-									<th v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.name" class="th-tr-value">{{item.name}}</th>
-								</tr>
-							</thead>
-							<div>
-							<tbody>
-								<tr v-for="(row, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index">
-									<td>{{index + 1}}.</td>
-									<td v-for="column in row" :key="column.value" class="th-tr-value">{{column.value}}</td>
+
+					<div class="spatial-query-container" v-if="spatialAnalysisTable.names.length > 0 && infoLayersContainerMode === INFO_LAYERS_CONTAINER_MODES.TABLE">
+						<div class="spatial-query-header">
+							<button class="close-button" style="z-index: 1;" aria-label="סגור" @click="closeSpatialAnalysisTable() && toggleInfoLayersCard(INFO_LAYERS_CONTAINER_MODES.BUTTON)">
+								x
+							</button>
+							<div class="top">
+								<div class="title" @click="toggleSpatialAnalysisDropdown()">
+									<span>טבלת יישויות – {{spatialAnalysisTable.selected}}</span>
+									<span>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 17" class="caret-down"
+											:class="{'rotate': isSpatialAnalysisDropdownOpen}">
+											<path
+												d="M0.978 6.375h8.044c0.556 0 0.834 0.672 0.441 1.066L5.44 11.463c-0.244 0.244-0.641 0.244-0.885 0L0.537 7.441C0.144 7.047 0.422 6.375 0.978 6.375z" />
+										</svg>
+									</span>
+								</div>
+
+								<div class="dropdown-content" v-if="isSpatialAnalysisDropdownOpen">
+									<div v-for="name in spatialAnalysisTable.names" :key="name" @click="selectSpatialAnalysisLayer(name)"
+										class="dropdown-item">
+										{{ name }}
+									</div>
+								</div>
+
+								<div class="results-length">{{spatialAnalysisTable.layers[spatialAnalysisTable.selected].length}} תוצאות</div>
+							</div>
+						</div>
+						<div class="spatial-query-body">
+							<table>
+								<thead>
+									<tr>
+										<th class=""></th>
+										<th v-for="item in spatialAnalysisTable.layers[spatialAnalysisTable.selected][0]" :key="item.name"
+											class="th-tr-value">{{item.name}}</th>
 									</tr>
-							</tbody>
+								</thead>
+								<div>
+									<tbody>
+										<tr v-for="(row, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index">
+											<td>{{index + 1}}.</td>
+											<td v-for="column in row" :key="column.value" class="th-tr-value">
+												<template v-if="/^https?:\/\//.test(column.value)">
+													<a :href="column.value" target="_blank">קישור</a>
+												</template>
+												<template v-else>
+													{{column.value}}
+												</template>
+											</td>
+										</tr>
+									</tbody>
+								</div>
+							</table>
 						</div>
-						</table>
 					</div>
-				</div>
+				</template>
 
 				<div class="spatial-query-body-mobile">
 					<div v-for="(card, index) in spatialAnalysisTable.layers[spatialAnalysisTable.selected]" :key="index" class="item-container">
@@ -2270,6 +2314,7 @@
 					map_y: 631555,
 					map_z: 5,
 					isMesure: false,
+					canDisplayInfoLayersInterface: true,
 					isSearchVisible: false, // Add this new property
 					searchQuery: "",
 					showDrawer: false,
@@ -2313,9 +2358,11 @@
 
 					isVisible: true,
 					fields: [],
+					clickEventHandled: false,
 					INFO_LAYERS_CONTAINER_MODES: {
-						'TABLE': 'TABLE',
+						'CARD': 'CARD',
 						'DRAW': 'DRAW',
+						'TABLE': 'TABLE',
 						'BUTTON': 'BUTTON'
 					},
 					infoLayersContainerMode: 'BUTTON',
@@ -2407,6 +2454,9 @@
 							return "צילום אוויר";
 						}
 						return "אנרגיה מתחדשת";
+					},
+					isDisplayInfoLayersInterface() {
+						return !this.isMesure && this.canDisplayInfoLayersInterface;
 					},
 				},
 				methods: {
@@ -2700,7 +2750,10 @@
 						this.showClear = false;
 					},
 					toggleInfoLayersCard(mode) {
+					console.log('0000toggleInfoLayersCard', mode);
+						govmap.closeBubble();
 						this.infoLayersContainerMode = mode;
+						this.canDisplayInfoLayersInterface = true;
 
 						if (mode !== this.INFO_LAYERS_CONTAINER_MODES.TABLE) {
 							this.closeSpatialAnalysisTable();
@@ -2829,11 +2882,11 @@
 
 						this.infoLayersContainerMode === this.INFO_LAYERS_CONTAINER_MODES.BUTTON;
 						const isCircle = mode === govmap.drawType.Circle || mode === govmap.drawType.Point;
-
 						govmap.draw(mode).progress((coordinates) => {
-							setTimeout(function () {
+							setTimeout(() => {
 								govmap.clearDrawings();
 								govmap.setDefaultTool();
+								this.subscribeToClickEvent();
 							}, 2000);
 
 							if (isCircle && coordinates.radius > 3000) {
@@ -2841,10 +2894,25 @@
 								return;
 							}
 
-							this.toggleInfoLayersCard(this.INFO_LAYERS_CONTAINER_MODES.BUTTON);
+							this.toggleInfoLayersCard(this.INFO_LAYERS_CONTAINER_MODES.TABLE);
+							// this.infoLayersContainerMode === this.INFO_LAYERS_CONTAINER_MODES.TABLE;
 							fetchData(coordinates, isCircle);
 						});
 					},
+					subscribeToClickEvent() {
+						if (this.clickEventHandled) {
+							return;
+						}
+
+						this.clickEventHandled = true;
+						govmap.onEvent(govmap.events.CLICK).progress(cb => {
+							setTimeout(() => {
+								this.canDisplayInfoLayersInterface = false;
+								this.clickEventHandled = false;
+							});
+						});
+					},
+
 					closeSpatialAnalysisTable() {
 						this.spatialAnalysisTable = {selected: '', names: [], layers: {}};
 						this.isSpatialAnalysisDropdownOpen = false;
@@ -2992,6 +3060,11 @@
 
 					// Update the browser's URL
 					window.history.replaceState({}, "", url.toString());
+
+
+					govmap.onEvent(govmap.events.CLICK).progress((e) => {
+						this.canDisplayInfoLayersInterface = false;
+					});
 
 
 					govmap.onEvent(govmap.events.EXTENT_CHANGE).progress(function (e) {

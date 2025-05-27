@@ -8,7 +8,7 @@
         function initGovMap() {
             govmap.createMap('map', {
                 token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-                layers: ["GASSTATIONS", "201027", "201052", "158375"],
+                layers: ["SUB_GUSH_ALL"],
                 showXY: true,
                 identifyOnClick: true,
                 isEmbeddedToggle: false,
@@ -18,11 +18,22 @@
                 bgButton: true,
             });
         }
+        function getLayerData(){
+            var params = {
+                LayerName: 'SUB_GUSH_ALL',
+                Point: {x: 179451, y: 663649},
+                Radius:30
+            };
+           govmap.getLayerData('getLayerData', params).then(function(response) {
+               console.log(response);
+           });
+        }
     </script>
 </head>
 
 <body>
     <div id="map" style="width:600px;height:600px;"></div>
+    <button onClick="getLayerData()">Get Layer Data</button>
 </body>
 
 </html>

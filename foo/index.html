@@ -2,13 +2,12 @@
 
 <head>
     <title>API Example - FOO</title>
-    <!-- <script src="https://db70-213-8-244-34.ngrok-free.app/govmap.api.js" defer onload="initGovMap()"></script> -->
-    <script src="https://next.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
     <script type="text/javascript" defer>
         function initGovMap() {
             govmap.createMap('map', {
                 token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-                layers: ["SUB_GUSH_ALL"],
+                layers: ["SUB_GUSH_ALL", "211923"],
                 showXY: true,
                 identifyOnClick: true,
                 isEmbeddedToggle: false,
@@ -32,7 +31,7 @@
 </head>
 
 <body>
-    <div id="map" style="width:600px;height:600px;"></div>
+    <div id="map" style="width:600px;height:800px;"></div>
     <button onClick="getLayerData()">Get Layer Data</button>
 </body>
 

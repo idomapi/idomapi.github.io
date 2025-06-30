@@ -55,6 +55,7 @@ function selectFeaturesOnMapParcel() {
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {
         console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }
 

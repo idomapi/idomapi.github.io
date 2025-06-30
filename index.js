@@ -42,15 +42,15 @@ function selectFeaturesOnMapParcel() {
         drawType: govmap.drawType.Polygon,
         filterLayer: false,
         isZoomToExtent: true,
-        layers: ['211923'],
+        layers: ['SUB_GUSH_ALL', 'layer_211923'],
         returnFields: {
             'SUB_GUSH_ALL': ['objectid', 'gush_num', 'status_text'],
-            '211923': ['value0', 'value1']
+            'layer_211923': ['value0', 'value1']
         },
         selectOnMap: true,
         whereClause: {
             'SUB_GUSH_ALL': `(gush_num IN(7103, 7101))`,
-            '211923': `(value1 BETWEEN 8 AND 18)`
+            'layer_211923': `(value1 >= 18)`
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {

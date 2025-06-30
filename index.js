@@ -1,7 +1,7 @@
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: ["GASSTATIONS", "bus_stops", "SUB_GUSH_ALL", "211923"],
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
         visibleLayers: ["211923"],
         showXY: true,
         identifyOnClick: true,
@@ -120,4 +120,15 @@ function filterLayers() {
         zoomToExtent: true
     };
     govmap.filterLayers(params);
+}
+
+function getLayerData() {
+    var params = {
+        LayerName: '211923',
+        Point: { x: 178501, y: 664110 },
+        Radius: 50
+    };
+    govmap.getLayerData(params).then(function (response) {
+        console.log(response);
+    });
 }

@@ -1,26 +1,39 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
-    <title>API Example</title>
+    <title>אתר דמו לפונקציות API - גובמאפ</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
     <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
-    <script type="text/javascript" defer>
-        function initGovMap() {
-            govmap.createMap('map', {
-                token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-                layers: ["GASSTATIONS", "201027", "201052", "158375", "211923"],
-                showXY: true,
-                identifyOnClick: true,
-                isEmbeddedToggle: false,
-                background: 0,
-                layersMode: 2,
-                zoomButtons: false,
-            });
-        }
-    </script>
 </head>
 
 <body>
-    <div id="map" style="width:600px;height:1000px;"></div>
+    <div id="map"></div>
+    <div class="controls">
+        <div class="dropdown">
+            <button class="dropbtn">ניתוח מרחבי לפי שם חברת דלק</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="selectFeaturesOnMap('דלק')">דלק</a>
+                <a href="#" onclick="selectFeaturesOnMap('פז')">פז</a>
+                <a href="#" onclick="selectFeaturesOnMap('סונול')">סונול</a>
+                <a href="#" onclick='selectFeaturesOnMap("סד\"ש")'>סד"ש</a>
+                <a href="#" onclick='selectFeaturesOnMap("דור אלון")'>דור אלון</a>
+            </div>
+            <button onclick="selectFeaturesOnMapParcel()">ניתוח מרחבי לפי מספר חלקה ולשכות אושר</button>
+            <button onclick="filterLayers()">סינון שכבת לשכות אושר - הצגה לשכות עם לפחות עשרה אשנבים</button>
+        </div>
+        <button onclick="displayGeometries()">הוספת גיאומטריה מאתר מארח</button>
+        <button onclick="closeBubble()">סגירת בועית</button>
+        <section>
+            <p>פונקציות הדורשות טוקן אימות</p>
+            <div>
+                <input type="text" id="searchInput" placeholder="ערך לחיפוש">
+                <button onclick="geocode(false)">חיפוש תוצאות מלאות</button>
+                <button onclick="geocode(true)">חיפוש תוצאה מדויקת</button>
+            </div>
+        </section>
+        <div id="data-display"></div>
+    </div>
 </body>
 
 </html>

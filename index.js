@@ -115,8 +115,8 @@ function closeBubble() {
 
 function filterLayers() {
     var params = {
-        layerName: 'SUB_GUSH_ALL',
-        whereClause: "gush_num >= 7104",
+        layerName: '211923',
+        whereClause: "value0 >= 10",
         zoomToExtent: true
     };
     govmap.filterLayers(params);

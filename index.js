@@ -50,7 +50,7 @@ function selectFeaturesOnMapParcel() {
         selectOnMap: true,
         whereClause: {
             'SUB_GUSH_ALL': `(gush_num IN(7103, 7101))`,
-            '211923': `(value0 > 5)`
+            '211923': `(value1 > 5)`
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {
@@ -116,7 +116,7 @@ function closeBubble() {
 function filterLayers() {
     var params = {
         layerName: '211923',
-        whereClause: "value0 >= 10",
+        whereClause: "value1 >= 10",
         zoomToExtent: true
     };
     govmap.filterLayers(params);

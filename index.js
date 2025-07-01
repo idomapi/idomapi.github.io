@@ -1,8 +1,8 @@
 function initGovMap() {
     govmap.createMap('map', {
         token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
-        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
-        visibleLayers: ["211923"],
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923"],
+        visibleLayers: ["201923"],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -115,7 +115,7 @@ function closeBubble() {
 
 function filterLayers() {
     var params = {
-        layerName: '211923',
+        layerName: '201923',
         whereClause: "value1 >= 10",
         zoomToExtent: true
     };
@@ -124,7 +124,7 @@ function filterLayers() {
 
 function getLayerData() {
     var params = {
-        LayerName: '211923',
+        LayerName: '201923',
         Point: { x: 178501, y: 664110 },
         Radius: 50
     };

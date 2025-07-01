@@ -1,8 +1,8 @@
 function initGovMap() {
     govmap.createMap('map', {
-        token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
-        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923"],
-        visibleLayers: ["201923"],
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
+        visibleLayers: ["211923"],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -42,15 +42,15 @@ function selectFeaturesOnMapParcel() {
         drawType: govmap.drawType.Polygon,
         filterLayer: false,
         isZoomToExtent: true,
-        layers: ['SUB_GUSH_ALL', '201923'],
+        layers: ['SUB_GUSH_ALL', 'layer_211923'],
         returnFields: {
             SUB_GUSH_ALL: ['objectid', 'gush_num', 'status_text'],
-            201923: ['value0', 'value1']
+            layer_211923: ['value0', 'value1']
         },
         selectOnMap: true,
         whereClause: {
             SUB_GUSH_ALL: "(gush_num IN(7103, 7101))",
-            201923: "(value0 >= 5)"
+            layer_211923: "(value1 >= 18)"
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {

@@ -1,12 +1,18 @@
 function initGovMap() {
     govmap.createMap('map', {
-        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f', // prod
-        // token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657', // stage
+        onClick: function (e) {
+            console.log('onClick', e);
+        },
+        onPan: function (e) {
+            console.log('onPan', e);
+        },
+        token: 'YOUR_API_TOKEN',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
-        visibleLayers: ["211923"],
+        visibleLayers: ["211923", "SUB_GUSH_ALL"],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
+        bgButton: true,
         background: "0",
         layersMode: 1,
         zoomButtons: false,
@@ -43,20 +49,19 @@ function selectFeaturesOnMapParcel() {
         drawType: govmap.drawType.Polygon,
         filterLayer: false,
         isZoomToExtent: true,
-        layers: ['SUB_GUSH_ALL', '211923'],
+        layers: ['SUB_GUSH_ALL', 'layer_211923'],
         returnFields: {
-            SUB_GUSH_ALL: ['objectid', 'gush_num', 'status_text'],
-            211923: ['value0', 'value1']
+            'SUB_GUSH_ALL': ['objectid', 'gush_num', 'status_text'],
+            'layer_211923': ['value0', 'value1']
         },
         selectOnMap: true,
         whereClause: {
-            SUB_GUSH_ALL: "(gush_num IN(7103, 7101))",
-            211923: "(value1 >= 18)"
+            'SUB_GUSH_ALL': "(gush_num IN(7103, 7101))",
+            'layer_211923': "(value1 >= 18)"
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {
         console.log(response);
-        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }
 
@@ -87,7 +92,22 @@ function displayGeometries() {
                 'categories/78',
                 'categories/132'
             ],
-            // bubbleUrl: 'https://www.0404.co.il/'
+            // bubbleUrl: 'https://www.0404.co.il/',
+            labels: ['ראשון', 'שני', 'שלישי'],
+            fontLabel: [
+                {
+                    font: 'Arial',
+                    size: 12,
+                    fill: 'yellow',
+                    stroke: 'green',
+                },
+                {
+                    font: 'Arial',
+                    size: 16,
+                    fill: '#a64d79',
+                    stroke: '#b45f06',
+                },
+            ]
         }
     };
     govmap.displayGeometries(data).then(function (response) {

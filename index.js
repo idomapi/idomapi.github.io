@@ -6,7 +6,7 @@ function initGovMap() {
         onPan: function (e) {
             console.log('onPan', e);
         },
-        token: 'YOUR_API_TOKEN',
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
         visibleLayers: ["211923", "SUB_GUSH_ALL"],
         showXY: true,

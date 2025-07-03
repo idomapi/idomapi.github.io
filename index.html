@@ -11,7 +11,7 @@
     <div id="map" style="width: 70%; height: 650px;"></div>
     <div class="controls">
         <div class="dropdown">
-            <button class="dropbtn">ניתוח מרחבי לפי שם חברת דלק</button>
+            <button class="dropbtn">סימון ישויות על המפה לפי שם חברת דלק</button>
             <div class="dropdown-content">
                 <a href="#" onclick="selectFeaturesOnMap('דלק')">דלק</a>
                 <a href="#" onclick="selectFeaturesOnMap('פז')">פז</a>
@@ -20,7 +20,12 @@
                 <a href="#" onclick='selectFeaturesOnMap("דור אלון")'>דור אלון</a>
             </div>
         </div>
-        <button onclick="selectFeaturesOnMapParcel()">ניתוח מרחבי לפי מספר גוש (7103, 7101) ולשכות אושר (לפחות 18 אשנבים)</button>
+        <div>
+            <button onclick="draw()">צייר</button>
+            <select id="drawType"></select>
+        </div>
+        <button onclick="selectFeaturesOnMapParcel()">סימון ישויות על המפה לפי מספר גוש (7103, 7101) ולשכות אושר (לפחות
+            18 אשנבים)</button>
         <button onclick="filterLayers()">סינון שכבת לשכות אושר - הצגה לשכות עם לפחות עשרה אשנבים</button>
         <button onclick="displayGeometries()">הוספת גיאומטריה מאתר מארח</button>
         <button onclick="closeBubble()">סגירת בועית</button>
@@ -31,6 +36,13 @@
                 <input type="text" id="searchInput" placeholder="ערך לחיפוש">
                 <button onclick="geocode(false)">חיפוש תוצאות מלאות</button>
                 <button onclick="geocode(true)">חיפוש תוצאה מדויקת</button>
+            </div>
+            <div>
+                <button onclick="searchAndLocate(true)">חיפוש גוש/חלקה לכתובת וילסון 10, תל-אביב</button>
+                <button onclick="searchAndLocate()">חיפוש כתובת לגוש 7103, חלקה 90</button>
+            </div>
+            <div>
+                <button onclick="getLayerData()">קבלת מידע על בסיס מיקום - שרונה (אלוף קלמן מגן פינת רב אלוף דוד אלעזר)</button>
             </div>
         </section>
         <div id="data-display"></div>

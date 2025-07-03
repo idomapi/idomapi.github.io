@@ -16,6 +16,11 @@ body {
     direction: rtl;
 }
 
+select {
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
 button {
     padding: 5px 10px;
     border: 1px solid #ccc;

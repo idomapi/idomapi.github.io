@@ -1,10 +1,7 @@
 function initGovMap() {
     govmap.createMap('map', {
-        onClick: function (e) {
-            console.log('onClick', e);
-        },
-        onPan: function (e) {
-            console.log('onPan', e);
+        onLoad: function (e) {
+            populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
@@ -20,6 +17,28 @@ function initGovMap() {
         level: 9
 
     });
+}
+
+function populateDropdown() {
+    const select = document.getElementById('drawType');
+    for (let type in govmap.drawType) {
+        const option = document.createElement('option');
+        option.value = govmap.drawType[type];
+        option.text = type;
+        select.appendChild(option);
+    }
+    generateDrawFunction();
+}
+
+function generateDrawFunction() {
+    window.draw = function () {
+        const select = document.getElementById('drawType');
+        const selectedValue = select.value;
+        govmap.draw(selectedValue).then(response => {
+            console.log('Drawn:', response);
+            document.getElementById('data-display').innerText = JSON.stringify(response);
+        });
+    }
 }
 
 function selectFeaturesOnMap(company) {
@@ -62,6 +81,7 @@ function selectFeaturesOnMapParcel() {
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {
         console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }
 
@@ -112,6 +132,7 @@ function displayGeometries() {
     };
     govmap.displayGeometries(data).then(function (response) {
         console.log(response.data);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 
 }
@@ -127,6 +148,7 @@ function geocode(isAccuracyOnly) {
     govmap.geocode({ keyword: keyword, type: isAccuracyOnly ? govmap.geocodeType.AccuracyOnly : govmap.geocodeType.FullResult })
         .then(function (response) {
             console.log(response)
+            document.getElementById('data-display').innerText = JSON.stringify(response);
         });
 }
 
@@ -151,5 +173,47 @@ function getLayerData() {
     };
     govmap.getLayerData(params).then(function (response) {
         console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
+    });
+}
+
+function searchAndLocate(isLotParcelToAddress) {
+    var params = isLotParcelToAddress
+        ? {
+            type: govmap.locateType.lotParcelToAddress,
+            address: 'וילסון 10, תל אביב'
+        }
+        : {
+            type: govmap.locateType.addressToLotParcel,
+            lot: 7103,
+            parcel: 90
+        };
+    govmap.searchAndLocate(params).then(function (response) {
+        console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
+    });
+}
+
+function getLayerData() {
+    var params = {
+        LayerName: '211923',
+        Point: { x: 180143, y: 664332 },
+        Radius: 10
+    };
+    govmap.getLayerData(params).then(function (response) {
+        console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
+    });
+}
+
+function intersectFeatures() {
+    var params = {
+        geometry: "POLYGON((179572.19 663962.85, 179580.09 663912.41, 179642.97 663928.29, 179653.26 663968.58, 179572.19 663962.85))",
+        layerName: "GASSTATIONS",
+        fields: ['name', 'company'],
+    }
+    govmap.intersectFeatures(params).then(function (response) {
+        console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }

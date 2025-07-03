@@ -165,18 +165,6 @@ function filterLayers() {
     govmap.filterLayers(params);
 }
 
-function getLayerData() {
-    var params = {
-        LayerName: '211923',
-        Point: { x: 178501, y: 664110 },
-        Radius: 50
-    };
-    govmap.getLayerData(params).then(function (response) {
-        console.log(response);
-        document.getElementById('data-display').innerText = JSON.stringify(response);
-    });
-}
-
 function searchAndLocate(isLotParcelToAddress) {
     var params = isLotParcelToAddress
         ? {

@@ -9,6 +9,10 @@ body {
     float: left;
 }
 
+#data-display {
+    direction: ltr;
+}
+
 .controls {
     display: flex;
     gap: 10px;

@@ -198,7 +198,7 @@ function getLayerData() {
     var params = {
         LayerName: '211923',
         Point: { x: 180143, y: 664332 },
-        Radius: 10
+        Radius: 20
     };
     govmap.getLayerData(params).then(function (response) {
         console.log(response);

@@ -206,7 +206,7 @@ function intersectFeatures(isWrongAddress) {
     var params = {
         address: `סעדיה הגאון ${isWrongAddress ? 26 : 24} תל אביב`,
         layerName: "GASSTATIONS",
-        fields: ['company']
+        fields: ['company', 'name', 'address'],
     }
     govmap.intersectFeatures(params).then(function (response) {
         console.log(response);

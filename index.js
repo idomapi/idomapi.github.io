@@ -4,7 +4,7 @@ function initGovMap() {
             populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923"],
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL"],
         visibleLayers: ["211923", "SUB_GUSH_ALL"],
         showXY: true,
         identifyOnClick: true,

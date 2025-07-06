@@ -202,24 +202,15 @@ function getLayerData() {
     });
 }
 
-function intersectFeatures() {
-    var params = {
-        geometry: "POLYGON((179572.19 663962.85, 179580.09 663912.41, 179642.97 663928.29, 179653.26 663968.58, 179572.19 663962.85))",
-        layerName: "GASSTATIONS",
-        fields: ['name', 'company'],
-    }
-    govmap.intersectFeatures(params).then(function (response) {
-        console.log(response);
-        document.getElementById('data-display').innerText = JSON.stringify(response);
-    });
-}
-
 function searchInLayer() {
     var params = {
         layerName: '211923',
         fieldName: 'value0',
         fieldValues: ['הכרמל', 'שרונה'],
-        showBubble: true
+        showBubble: false,
+        highlight: true,
+        fillColor: ['180', '0', '255'],
+        outLineColor: ['255', '136', '0']
     };
     govmap.searchInLayer(params);
 }

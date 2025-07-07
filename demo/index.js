@@ -133,6 +133,10 @@ function clearFilterLayers() {
     govmap.filterLayers(params);
 }
 
+function clearDrawings() {
+    govmap.clearDrawings();
+}
+
 // Page Setup
 
 // Hardcoded city data

@@ -1,5 +1,8 @@
 function initGovMap() {
     govmap.createMap('map', {
+        onLoad: function (e) {
+            populateDropdown();
+        },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL"],
         visibleLayers: ["211923"],
@@ -14,6 +17,28 @@ function initGovMap() {
         level: 9
 
     });
+}
+
+function populateDropdown() {
+    const select = document.getElementById('drawType');
+    for (let type in govmap.drawType) {
+        const option = document.createElement('option');
+        option.value = govmap.drawType[type];
+        option.text = type;
+        select.appendChild(option);
+    }
+    generateDrawFunction();
+}
+
+function generateDrawFunction() {
+    window.draw = function () {
+        const select = document.getElementById('drawType');
+        const selectedValue = select.value;
+        govmap.draw(selectedValue).then(response => {
+            console.log('Drawn:', response);
+
+        });
+    }
 }
 
 function searchInLayer(address) {

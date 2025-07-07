@@ -1,0 +1,221 @@
+function initGovMap() {
+    govmap.createMap('map', {
+        onLoad: function (e) {
+            populateDropdown();
+        },
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL"],
+        visibleLayers: ["211923"],
+        showXY: true,
+        // identifyOnClick: true,
+        isEmbeddedToggle: false,
+        // bgButton: true,
+        background: "0",
+        layersMode: 1,
+        // zoomButtons: false,
+        center: { x: 179487, y: 663941 },
+        level: 9
+
+    });
+}
+
+function searchInLayer(address) {
+    var params = {
+        layerName: '211923',
+        fieldName: 'value3',
+        fieldValues: [address],
+        showBubble: true,
+        highlight: true,
+        // fillColor: ['180', '0', '255'],
+        // outLineColor: ['255', '136', '0']
+    };
+    govmap.searchInLayer(params);
+}
+
+function filterLayers() {
+    var params = {
+        layerName: '211923',
+        whereClause: "value2 = 'רמת-גן'",
+        zoomToExtent: false
+    };
+    govmap.filterLayers(params);
+}
+
+var hashalomTrainStation = { x: 179530, y: 663955 };
+
+function zoomToXY() {
+    govmap.zoomToXY({ ...hashalomTrainStation, level: 10, marker: true });
+}
+
+function getLayerData() {
+    var params = {
+        LayerName: '211923',
+        Point: hashalomTrainStation,
+        Radius: 500
+    };
+    govmap.getLayerData(params).then(function (response) {
+        console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
+    });
+}
+
+function selectFeaturesOnMap() {
+    var params = {
+        continous: false,
+        drawType: govmap.drawType.Polygon,
+        filterLayer: false,
+        isZoomToExtent: false,
+        layers: ['211923'],
+        returnFields: {
+            '211923': ['value0', 'value1']
+        },
+        selectOnMap: true,
+        whereClause: {
+            '211923': "(value1 >= 10)"
+        },
+    }
+    govmap.selectFeaturesOnMap(params).then(function (response) {
+        console.log(response);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
+    });
+}
+
+function displayGeometries() {
+    var data = {
+        wkts: ['POINT(181611, 665679)', "POINT(181388, 665731)"],
+        names: ['p1', 'p2'],
+        geometryType: govmap.geometryType.POINT,
+        defaultSymbol:
+        {
+            url: 'https://avatars.githubusercontent.com/u/39527795?s=48&v=4',
+            width: 50,
+            height: 50
+        },
+        symbols: [
+            { url: 'https://idomapi.github.io/demo/falafel.jpg', width: 35, height: 35 },
+            { url: 'https://idomapi.github.io/demo/shawarma.jpg', width: 50, height: 50 },
+        ],
+        clearExisting: true,
+        data: {
+            tooltips: ['פלאפל כדורי', 'סטקיית סבינו'],
+            headers: ['פלאפל', 'שווארמה'],
+            bubbleHTML,
+            bubbles: [
+                '80330790',
+                '4678520'
+            ],
+            bubbleUrl: 'https://www.rest.co.il/',
+            labels: ['צמחוני', 'בשרי'],
+            fontLabel: [
+                {
+                    font: 'Arial',
+                    size: 12,
+                    fill: 'yellow',
+                    stroke: 'green',
+                },
+                {
+                    font: 'Arial',
+                    size: 16,
+                    fill: '#a64d79',
+                    stroke: '#b45f06',
+                },
+            ]
+        }
+    };
+    govmap.displayGeometries(data).then(function (response) {
+        console.log(response.data);
+        document.getElementById('data-display').innerText = JSON.stringify(response);
+    });
+}
+
+function closeBubble() {
+    govmap.closeBubble();
+}
+
+function clearFilterLayers() {
+    var params = {
+        layerName: '211923',
+        whereClause: "1 = 1",
+        zoomToExtent: false
+    };
+    govmap.filterLayers(params);
+}
+
+// Page Setup
+
+// Hardcoded city data
+const cityData = [
+  { name: 'שרונה', city: 'תל-אביב', address: 'דרך בגין 125', id: 1, area: 'נפת גוש דן' },
+  { name: 'מפ/"י', city: 'תל-אביב', address: 'לינקולן 3', id: 2, area: 'נפת גוש דן' },
+  { name: 'שרקוטרי', city: 'תל-אביב', address: 'וילסון 10', id: 3, area: 'נפת גוש דן' },
+  { name: 'נחמני', city: 'תל-אביב', address: 'שדרות רוטשילד 80', id: 4, area: 'נפת גוש דן' },
+  { name: 'הכרמל', city: 'תל-אביב', address: 'אלנבי 58', id: 5, area: 'נפת גוש דן' },
+  { name: 'הבורסה', city: 'רמת-גן', address: 'דרך אבא הלל 1', id: 6, area: 'נפת גוש דן' },
+];
+
+// Populate dropdown and city list on DOM ready
+$(function() {
+  const $dropdown = $('#cityDropdown');
+  const $cityList = $('#cityList');
+
+  // Populate the <select> dropdown with addresses
+  $dropdown.empty();
+  cityData.forEach(function(item) {
+    $dropdown.append(
+      $('<option>', { value: item.id, text: item.address })
+    );
+  });
+
+
+  // Populate city list
+  cityData.forEach(function(item) {
+    $cityList.append(
+      $('<li>', {
+        class: 'city-item',
+        'data-id': item.id,
+        tabindex: 0,
+        html: `<strong>${item.city}</strong>: ${item.address} <span style="color:#888;font-size:0.95em">(${item.area})</span>`
+      })
+    );
+  });
+
+  // On city list item click or keyboard enter
+  $cityList.on('click', '.city-item', function() {
+    const id = $(this).data('id');
+    selectCityById(id);
+  });
+  $cityList.on('keydown', '.city-item', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const id = $(this).data('id');
+      selectCityById(id);
+    }
+  });
+
+  // Unified selection logic for dropdown and sidebar
+  function selectCityById(id) {
+    // Highlight correct city in sidebar
+    $cityList.children().removeClass('selected');
+    $cityList.children(`[data-id="${id}"]`).addClass('selected');
+    // Set dropdown value by id
+    $dropdown.val(id);
+    // For demo: log selection
+    const city = cityData.find(c => c.id == id);
+    if (city) {
+      console.log(`Selected: ${city.city} (${city.address}, ${city.area})`);
+      searchInLayer(city.address);
+    }
+  }
+  // On dropdown change (select)
+  $dropdown.on('change', function() {
+    const id = $(this).val();
+    selectCityById(id);
+  });
+
+  // Initial selection (first city)
+  if (cityData.length > 0) {
+    selectCityById(cityData[0].id);
+  }
+
+  // Expose for debugging/demo
+  window.selectCityById = selectCityById;
+});

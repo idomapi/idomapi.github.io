@@ -49,7 +49,7 @@ function searchInLayer(address) {
         highlight: false,
     };
     govmap.searchInLayer(params);
-    clearFilterLayers();
+    setTimeout(() => clearFilterLayers());
 }
 
 function filterLayers() {

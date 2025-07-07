@@ -19,12 +19,10 @@ function initGovMap() {
 function searchInLayer(address) {
     var params = {
         layerName: '211923',
-        fieldName: 'value2',
+        fieldName: 'value3',
         fieldValues: [address],
         showBubble: true,
         highlight: true,
-        // fillColor: ['180', '0', '255'],
-        // outLineColor: ['255', '136', '0']
     };
     govmap.searchInLayer(params);
 }

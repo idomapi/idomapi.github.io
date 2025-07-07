@@ -36,7 +36,6 @@ function generateDrawFunction() {
         const selectedValue = select.value;
         govmap.draw(selectedValue).then(response => {
             console.log('Drawn:', response);
-
         });
     }
 }
@@ -47,9 +46,10 @@ function searchInLayer(address) {
         fieldName: 'value3',
         fieldValues: [address],
         showBubble: true,
-        highlight: true,
+        highlight: false,
     };
     govmap.searchInLayer(params);
+    clearFilterLayers();
 }
 
 function filterLayers() {

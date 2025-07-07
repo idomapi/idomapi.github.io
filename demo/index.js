@@ -1,8 +1,5 @@
 function initGovMap() {
     govmap.createMap('map', {
-        onLoad: function (e) {
-            populateDropdown();
-        },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL"],
         visibleLayers: ["211923"],
@@ -22,7 +19,7 @@ function initGovMap() {
 function searchInLayer(address) {
     var params = {
         layerName: '211923',
-        fieldName: 'value3',
+        fieldName: 'value2',
         fieldValues: [address],
         showBubble: true,
         highlight: true,
@@ -41,7 +38,7 @@ function filterLayers() {
     govmap.filterLayers(params);
 }
 
-var hashalomTrainStation = { x: 179530, y: 663955 };
+var hashalomTrainStation = { x: 180620, y: 664501 };
 
 function zoomToXY() {
     govmap.zoomToXY({ ...hashalomTrainStation, level: 10, marker: true });
@@ -55,7 +52,6 @@ function getLayerData() {
     };
     govmap.getLayerData(params).then(function (response) {
         console.log(response);
-        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }
 
@@ -76,35 +72,34 @@ function selectFeaturesOnMap() {
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {
         console.log(response);
-        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }
 
 function displayGeometries() {
     var data = {
-        wkts: ['POINT(181611, 665679)', "POINT(181388, 665731)"],
-        names: ['p1', 'p2'],
+        wkts: ['POINT(181611 665679)', "POINT(181388 665731)", "POINT(181564 665568)"],
+        names: ['p1', 'p2', 'p3'],
         geometryType: govmap.geometryType.POINT,
         defaultSymbol:
         {
             url: 'https://avatars.githubusercontent.com/u/39527795?s=48&v=4',
-            width: 50,
-            height: 50
+            width: 35,
+            height: 35
         },
         symbols: [
-            { url: 'https://idomapi.github.io/demo/falafel.jpg', width: 35, height: 35 },
-            { url: 'https://idomapi.github.io/demo/shawarma.jpg', width: 50, height: 50 },
+            { url: 'https://idomapi.github.io/demo/falafel.jpg', width: 65, height: 65 },
+            { url: 'https://idomapi.github.io/demo/shawarma.jpg', width: 50, height: 50 }
         ],
         clearExisting: true,
         data: {
             tooltips: ['פלאפל כדורי', 'סטקיית סבינו'],
-            headers: ['פלאפל', 'שווארמה'],
-            bubbleHTML,
+            headers: ['פלאפל', 'שווארמה', 'אחר'],
             bubbles: [
-                '80330790',
-                '4678520'
+                '8848208',
+                '8817869',
+                '26464151'
             ],
-            bubbleUrl: 'https://www.rest.co.il/',
+            bubbleUrl: 'https://easy.co.il/page/',
             labels: ['צמחוני', 'בשרי'],
             fontLabel: [
                 {
@@ -117,14 +112,13 @@ function displayGeometries() {
                     font: 'Arial',
                     size: 16,
                     fill: '#a64d79',
-                    stroke: '#b45f06',
+                    stroke: '#f1c232',
                 },
             ]
         }
     };
     govmap.displayGeometries(data).then(function (response) {
         console.log(response.data);
-        document.getElementById('data-display').innerText = JSON.stringify(response);
     });
 }
 

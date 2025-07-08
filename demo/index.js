@@ -1,6 +1,7 @@
 function initGovMap() {
     govmap.createMap('map', {
         onLoad: function (e) {
+            populateDropdownAndCityList();
             populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
@@ -174,8 +175,7 @@ const cityData = [
   { name: 'הבורסה', city: 'רמת-גן', address: 'דרך אבא הלל 1', id: 6, area: 'נפת גוש דן' },
 ];
 
-// Populate dropdown and city list on DOM ready
-$(function() {
+function populateDropdownAndCityList() {
   const $dropdown = $('#cityDropdown');
   const $cityList = $('#cityList');
 
@@ -239,4 +239,4 @@ $(function() {
 
   // Expose for debugging/demo
   window.selectCityById = selectCityById;
-});
+}

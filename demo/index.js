@@ -49,6 +49,7 @@ function searchInLayer(address) {
         highlight: false,
     };
     govmap.searchInLayer(params);
+    setTimeout(() => clearFilterLayers(), 250);
 }
 
 function filterLayers() {

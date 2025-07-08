@@ -179,12 +179,24 @@ function populateDropdownAndCityList() {
   const $dropdown = $('#cityDropdown');
   const $cityList = $('#cityList');
 
-  // Populate the <select> dropdown with addresses
-  $dropdown.empty();
+  const $placeholder = $('<option>', {
+    value: -1,
+    text: 'בחר כתובת',
+    selected: true,
+    disabled: false
+  });
+
+  $dropdown.append($placeholder);
   cityData.forEach(function(item) {
     $dropdown.append(
       $('<option>', { value: item.id, text: item.address })
     );
+  });
+  setTimeout(() => $dropdown.val("-1"), 0);
+
+  // Remove placeholder on first interaction
+  $dropdown.one('change', function() {
+    $dropdown.find('option[value="-1"]').prop('disabled', true);
   });
 
 
@@ -236,7 +248,4 @@ function populateDropdownAndCityList() {
   if (cityData.length > 0) {
     selectCityById(cityData[0].id);
   }
-
-  // Expose for debugging/demo
-  window.selectCityById = selectCityById;
 }

@@ -6,7 +6,7 @@ function initGovMap() {
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL"],
-        visibleLayers: ["211923"],
+        visibleLayers: ["211923", '212703'],
         showXY: true,
         // identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -85,13 +85,13 @@ function selectFeaturesOnMap() {
         drawType: govmap.drawType.Polygon,
         filterLayer: false,
         isZoomToExtent: false,
-        layers: ['211923'],
+        layers: ['212703'],
         returnFields: {
-            '211923': ['value0', 'value1']
+            '212703': ['value0', 'value1']
         },
         selectOnMap: true,
         whereClause: {
-            '211923': "(value1 >= 10)"
+            '212703': "(value1 >= 10)"
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {

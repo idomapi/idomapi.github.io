@@ -4,9 +4,9 @@ function initGovMap() {
             populateDropdownAndCityList();
             populateDropdown();
         },
-        token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
-        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923", "PARCEL_ALL", "212703"],
-        visibleLayers: ["201923"],
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL", "212703"],
+        visibleLayers: ["211923", "212703"],
         showXY: true,
         // identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -55,8 +55,8 @@ function searchInLayer(address) {
 
 function filterLayers() {
     var params = {
-        layerName: '201923',
-        whereClause: "value1 = 'אא'",
+        layerName: '211923',
+        whereClause: "value2 = 'רמת-גן'",
         zoomToExtent: false
     };
     govmap.filterLayers(params);
@@ -85,13 +85,13 @@ function selectFeaturesOnMap() {
         drawType: govmap.drawType.Polygon,
         filterLayer: false,
         isZoomToExtent: false,
-        layers: ['201923'],
+        layers: ['212703'],
         returnFields: {
-            '201923': ['value0', 'value1']
+            '212703': ['value0', 'value1']
         },
         selectOnMap: true,
         whereClause: {
-            '201923': "(value0 >= 4)"
+            '212703': "(value1 >= 10)"
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {

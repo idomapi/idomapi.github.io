@@ -4,8 +4,8 @@ function initGovMap() {
             populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: ["GASSTATIONS", "201923", "202113", "PARCEL_ALL"],
-        visibleLayers: ["201923", "202113"],
+        layers: ["GASSTATIONS", "211923", "212703", "PARCEL_ALL", "SUB_GUSH_ALL"],
+        visibleLayers: ["211923", "212703"],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -47,6 +47,15 @@ function editDrawing() {
 
 function clearDrawings() {
     govmap.clearDrawings();
+}
+
+function clearFilterLayers() {
+    var params = {
+        layerName: '211923',
+        whereClause: "1 = 1",
+        zoomToExtent: false
+    };
+    govmap.filterLayers(params);
 }
 
 function selectFeaturesOnMap(company) {

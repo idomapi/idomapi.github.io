@@ -1,0 +1,149 @@
+/*
+  Location Guide Presentation Site Styles
+  - Desktop only, centered layout
+  - Simple, clear, color cues for demonstration
+*/
+
+body {
+    background-color: #d9e6f2;
+    font-family: Rubik, sans-serif;
+    color: #000;
+    margin: 0;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    background: #d9e6f2;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.header h1 {
+    color: #285c7e;
+    margin: 0;
+    font-size: 2.5em;
+    letter-spacing: 1px;
+}
+
+.content {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.map-container {
+    width: 100%;
+    height: 600px;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iframe-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #ccc;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    direction: rtl;
+    width: 25%;
+    padding: 15px;
+    background: #f9f9f9;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+.dropdown {
+    padding: 8px;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.city-list {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #fffbe7;
+}
+
+.city-list li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.city-list li:last-child {
+    border-bottom: none;
+}
+
+.city-list li.selected {
+    background: #f1f7ff;
+    font-weight: bold;
+}
+
+.city-list li:hover {
+    /* No style change on hover to prevent layout shift */
+}
+
+/* Sidebar button container and buttons */
+.sidebar-btn-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.draw-container {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 10px;
+}
+
+.draw-container select {
+    width: 100%;
+    padding: 8px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #b3c6d7;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.draw-container .sidebar-btn {
+    width: 100%;
+    margin: 0;
+}
+
+.sidebar-btn {
+    flex: 1;
+    padding: 10px 0;
+    background: #285c7e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(40,92,126,0.08);
+}
+.sidebar-btn:hover, .sidebar-btn:focus {
+    background: #1a3d54;
+    outline: none;
+}

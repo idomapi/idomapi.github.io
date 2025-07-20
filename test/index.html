@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--
+  Location Guide Presentation Site
+  - Styles are now in index.css
+  - JavaScript is in index.js (jQuery CDN included)
+  - Semantic tags used: <header>, <main>, <aside>
+  -->
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <!-- Header with title -->
+    <header class="header">
+        <h1>מפת לשכות האושר</h1>
+    </header>
+
+    <!-- Main content: map and sidebar -->
+    <main class="content">
+        <!-- Map container with iframe placeholder -->
+        <section class="map-container">
+            <div id="map" class="iframe-placeholder"></div>
+        </section>
+        <!-- Sidebar with dropdown and data list -->
+        <aside class="sidebar">
+            <select class="dropdown" id="cityDropdown">
+                <!-- Options will be populated by JS -->
+            </select>
+            <ul class="city-list" id="cityList">
+                <!-- City items will be populated by JS -->
+            </ul>
+            <!-- Button container -->
+            <div class="sidebar-btn-container">
+                <!-- Draw tool: select on top, button below -->
+<div class="draw-container">
+    <select id="drawType"></select>
+    <button class="sidebar-btn" onclick="draw()">צייר</button>
+</div>
+                <button class="sidebar-btn" onclick="filterLayers()">הצג רק את הלשכות ברמת-גן</button>
+                <button class="sidebar-btn" onclick="selectFeaturesOnMap()">סמן לשכות עם לפחות 10 אשנבי שירות
+                    בפוליגון</button>
+                    <p>לחלופין, ניתן להעביר WKT של היישות</p>
+                <button class="sidebar-btn" onclick="zoomToXY()">התמקד לתחנת רכבת השלום</button>
+                <button class="sidebar-btn" onclick="getLayerData()">פרטי לשכות ברדיוס של 500 מטרים מתחנת רכבת
+                    השלום</button>
+                <button class="sidebar-btn" onclick="displayGeometries()">הוסף בועיות מידע של מסעדות בקרבת לשכת
+                    הבורסה</button>
+                <button class="sidebar-btn" onclick="closeBubble()">סגירת בועית</button>
+                <button class="sidebar-btn" onclick="clearFilterLayers()">נקה סינון</button>
+                <button class="sidebar-btn" onclick="clearDrawings()">נקה ציור</button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Scripts: jQuery CDN and index.js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="index.js"></script>
+    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+</body>
+
+</html>

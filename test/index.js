@@ -5,8 +5,8 @@ function initGovMap() {
             populateDropdown();
         },
         token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
-        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "211923", "PARCEL_ALL", "SUB_GUSH_ALL", "212703"],
-        visibleLayers: ["211923", "212703"],
+        layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923", "PARCEL_ALL", "SUB_GUSH_ALL", "202113"],
+        visibleLayers: ["201923", "202113"],
         showXY: true,
         // identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -85,13 +85,13 @@ function selectFeaturesOnMap() {
         drawType: govmap.drawType.Polygon,
         filterLayer: false,
         isZoomToExtent: false,
-        layers: ['212703'],
+        layers: ['201923'],
         returnFields: {
-            '212703': ['value0', 'value1']
+            '201923': ['value0', 'value1']
         },
         selectOnMap: true,
         whereClause: {
-            '212703': "(value1 >= 10)"
+            '201923': "(value >= 7)"
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {
@@ -152,7 +152,7 @@ function closeBubble() {
 
 function clearFilterLayers() {
     var params = {
-        layerName: '211923',
+        layerName: '201923',
         whereClause: "1 = 1",
         zoomToExtent: false
     };

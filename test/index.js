@@ -19,7 +19,7 @@ function initGovMap() {
 
     });
 }
-
+//
 function populateDropdown() {
     const select = document.getElementById('drawType');
     for (let type in govmap.drawType) {

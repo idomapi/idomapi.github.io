@@ -1,6 +1,7 @@
 function initGovMap() {
     govmap.createMap('map', {
         onLoad: function (e) {
+            filterLayersOnLoad();
             populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
@@ -17,6 +18,15 @@ function initGovMap() {
         level: 9
 
     });
+}
+
+function filterLayersOnLoad() {
+    var params = {
+        layerName: 'SUB_GUSH_ALL',
+        whereClause: "objectid IS NOT NULL",
+        zoomToExtent: true
+    };
+    govmap.filterLayers(params);
 }
 
 function populateDropdown() {

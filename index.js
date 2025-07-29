@@ -22,7 +22,7 @@ function initGovMap() {
 
 function filterLayersOnLoad() {
     var params = {
-        layerName: 'SUB_GUSH_ALL',
+        layerName: '211923',
         whereClause: "objectid IS NOT NULL",
         zoomToExtent: true
     };

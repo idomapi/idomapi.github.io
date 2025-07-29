@@ -1,10 +1,10 @@
 function initGovMap() {
     govmap.createMap('map', {
         onLoad: function (e) {
-            setTimeout(function () {
+            // setTimeout(function () {
                 filterLayersOnLoad();
-            }, 1000); // Delay to ensure map is fully loaded
-            populateDropdown();
+            // }, 1000); // Delay to ensure map is fully loaded
+            // populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "211923", "212703", "PARCEL_ALL", "SUB_GUSH_ALL"],

@@ -1,9 +1,9 @@
 function initGovMap() {
     govmap.createMap('map', {
         onLoad: function (e) {
-            // setTimeout(function () {
+            setTimeout(function () {
                 filterLayersOnLoad();
-            // }, 1000); // Delay to ensure map is fully loaded
+            }, 1000); // Delay to ensure map is fully loaded
             populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',

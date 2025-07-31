@@ -15,7 +15,7 @@ function initGovMap() {
         bgButton: true,
         background: "0",
         layersMode: 1,
-        zoomButtons: false,
+        // zoomButtons: false,
         center: { x: 179487, y: 663941 },
         level: 9
 

@@ -8,16 +8,24 @@ function initGovMap() {
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923", "PARCEL_ALL", "SUB_GUSH_ALL", "202113"],
         visibleLayers: [],
         showXY: true,
-        // identifyOnClick: true,
         isEmbeddedToggle: false,
-        // bgButton: true,
         background: "0",
         layersMode: 1,
-        // zoomButtons: false,
         center: { x: 179487, y: 663941 },
-        level: 9
-
+        level: 9,
+        onLoad: function (e) {
+            extentAllFeatures();
+        }
     });
+}
+
+function extentAllFeatures() {
+    var params = {
+        layerName: '201923',
+        whereClause: "objectid IS NOT NULL",
+        zoomToExtent: true
+    };
+    govmap.filterLayers(Params);
 }
 
 function populateDropdown() {

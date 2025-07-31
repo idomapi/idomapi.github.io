@@ -25,7 +25,7 @@ function extentAllFeatures() {
         whereClause: "objectid IS NOT NULL",
         zoomToExtent: true
     };
-    govmap.filterLayers(Params);
+    govmap.filterLayers(params);
 }
 
 function populateDropdown() {

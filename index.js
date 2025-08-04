@@ -246,6 +246,30 @@ function intersectFeatures2() {
     });
 }
 
+function intersectFeatures3() {
+    var params = {
+        address: `הרב אויערבך משה 6,פתח תקווה`,
+        layerName: "neta_segment",
+        fields: ['code'],
+    }
+
+    govmap.intersectFeatures(params).then(function (response) {
+        console.log(response);
+    });
+}
+function intersectFeatures4() {
+    var params = {
+        address: `קרליבך 5 תל אביב-יפו`,
+        layerName: "neta_segment",
+        fields: ['code'],
+    }
+
+    govmap.intersectFeatures(params).then(function (response) {
+        console.log(response);
+    });
+}
+
+
 function searchInLayer() {
     var params = {
         layerName: '211923',

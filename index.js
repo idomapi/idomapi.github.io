@@ -234,6 +234,18 @@ function intersectFeatures(isWrongAddress) {
     });
 }
 
+function intersectFeatures2() {
+    var params = {
+        address: `לינקולן 3 תל אביב`,
+        layerName: "211923",
+        fields: ['value0'],
+    }
+
+    govmap.intersectFeatures(params).then(function (response) {
+        console.log(response);
+    });
+}
+
 function searchInLayer() {
     var params = {
         layerName: '211923',

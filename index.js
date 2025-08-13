@@ -13,7 +13,9 @@ function initGovMap() {
         center: { x: 179487, y: 663941 },
         level: 9,
         onLoad: function (e) {
-            filterLayersOnLoad();
+            setTimeout(() => {
+                filterLayersOnLoad();
+            }, 5000);
             populateDropdown();
         },
     });

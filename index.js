@@ -1,14 +1,12 @@
 function initGovMap() {
     govmap.createMap('map', {
         onLoad: function (e) {
-            // setTimeout(function () {
-                filterLayersOnLoad();
-            // }, 1000); // Delay to ensure map is fully loaded
-            // populateDropdown();
+            filterLayersOnLoad();
+            populateDropdown();
         },
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "211923", "212703", "PARCEL_ALL", "SUB_GUSH_ALL", '156'],
-        visibleLayers: ["layer_215212"],
+        visibleLayers: ["215212"],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -24,8 +22,8 @@ function initGovMap() {
 
 function filterLayersOnLoad() {
     var params = {
-        layerName: '211923',
-        whereClause: "objectid IS NOT NULL",
+        layerName: '215212',
+        whereClause: "id in (221112222)",
         zoomToExtent: true
     };
     govmap.filterLayers(params);

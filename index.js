@@ -24,8 +24,8 @@ function initGovMap() {
 function filterLayersOnLoad() {
     var params = {
         layerName: '215212',
-        // whereClause: "nta_infra_ in (221112222)",
-        whereClause: "id in (61)",
+        whereClause: "nta_infra_ in (221112222)",
+        // whereClause: "id in (61)",
         zoomToExtent: true
     };
     govmap.filterLayers(params);

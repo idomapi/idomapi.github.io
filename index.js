@@ -15,7 +15,7 @@ function initGovMap() {
         onLoad: function (e) {
             setTimeout(() => {
                 filterLayersOnLoad();
-            }, 5000);
+            }, 1000);
             populateDropdown();
         },
     });

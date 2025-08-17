@@ -13,7 +13,7 @@ function initGovMap() {
         center: { x: 179487, y: 663941 },
         level: 9,
         onLoad: function (e) {
-            // filterLayersOnLoad();
+            filterLayersOnLoad();
             populateDropdown();
         },
     });
@@ -22,8 +22,7 @@ function initGovMap() {
 function filterLayersOnLoad() {
     var params = {
         layerName: '215212',
-        whereClause: "nta_infra_ in (221112222)",
-        // whereClause: "id in (61)",
+        whereClause: "nta_infra_ LIKE '221112%'",
         zoomToExtent: true
     };
     govmap.filterLayers(params);

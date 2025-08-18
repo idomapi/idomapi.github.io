@@ -99,7 +99,7 @@ function selectFeaturesOnMap() {
         },
         selectOnMap: true,
         whereClause: {
-            '201923': "(value >= 7)"
+            '201923': "(value0 >= 4)"
         },
     }
     govmap.selectFeaturesOnMap(params).then(function (response) {

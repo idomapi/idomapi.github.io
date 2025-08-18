@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ["GASSTATIONS", "211923", "212703", "PARCEL_ALL", "SUB_GUSH_ALL", '156'],
-        visibleLayers: ["215212"],
+        visibleLayers: ["215212", "215219"],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -13,7 +13,7 @@ function initGovMap() {
         center: { x: 179487, y: 663941 },
         level: 9,
         onLoad: function (e) {
-            filterLayersOnLoad();
+            // filterLayersOnLoad();
             populateDropdown();
         },
     });

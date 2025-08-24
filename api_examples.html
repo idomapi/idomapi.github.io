@@ -272,9 +272,9 @@
                     צייר
                 </button>
                 <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Circle)">רדיוס</a>
-                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Polygon)">מצולע</a>
-                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.FreehandPolygon)">שרטוט חופשי</a>
+                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap(govmap.drawType.Circle)">רדיוס</a>
+                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap(govmap.drawType.Polygon)">מצולע</a>
+                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap(govmap.drawType.FreehandPolygon)">שרטוט חופשי</a>
                 </div>
             </div>
         </div>
@@ -298,7 +298,7 @@
             govmap.createMap('map', {
                 token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
                 visibleLayers: [],
-                layers: ["17", "18", "20"],
+                layers: ['kindergarten', 'school', 'bus_stops'],
                 layersMode: 2,
                 showXY: true,
                 identifyOnClick: true,
@@ -353,54 +353,78 @@
             govmap.zoomToXY({x, y, level: 10, marker: true});
         }
 
-        function draw(type) {
-            toggleDropdown();
-            govmap.draw(type).then(response => {
-                var wkt;
+        // function draw(drawType) {
+        //     toggleDropdown();
+        //     govmap.draw(type).then(response => {
+        //         var wkt;
                 
-                if (type === govmap.drawType.Circle) {
-                    wkt = `POINT (${response.x} ${response.y})`;
-                } else {
-                    wkt = response.wkt;
-                }
+        //         if (type === govmap.drawType.Circle) {
+        //             wkt = `POINT (${response.x} ${response.y})`;
+        //         } else {
+        //             wkt = response.wkt;
+        //         }
                 
-                console.log('000 draw wkt', wkt);
-                intersectFeatures(wkt);
-            });
-        }
+        //         console.log('000 draw wkt', wkt);
+        //         intersectFeatures(wkt);
+        //     });
+        // }
 
-        function intersectFeatures(wkt) {
-            var kindergarten = {
-                layerName: 'kids_g',
-                fields: ['shem_misgeret'],
+        function selectFeaturesOnMap(drawType) {
+            var params = {
+                continous: false,
+                drawType: govmap.drawType.Polygon,
+                filterLayer: false,
+                isZoomToExtent: true,
+                layers: ['kids_g', 'school'],
+                returnFields: {
+                    'kids_g': ['shem_misgeret', 'mispar_bait', 'ktovet', 'shem_yishuv'],
+                    'school': ['shem_misgeret', 'mispar_bait', 'ktovet', 'shem_yishuv']
+                },
+                whereClause: {
+                    'kids_g': "(1 = 1)",
+                    'school': "(1 = 1)"
+                },
+                getWkt: true
             };
-            var school = {
-                layerName: 'school',
-                fields: ['shem_misgeret'],
-            };
-
-            var promises = [kindergarten, school].map(layer => {
-                return new Promise((resolve, reject) => {
-                    govmap.intersectFeatures({geometry: wkt, fields: layer.fields, layerName: layer.layerName})
-                        .then(resolve)
-                        .catch(reject);
-                });
-            });
 
             var results = {kindergarten: null, school: null};
-            Promise.all(promises)
-                .then(results => {
-                    results.forEach((result, index) => {
-                        if (result.data.length > 0) {
-                            results[index === 0 ? 'kindergarten' : 'school'] = result.data.map(item => item.Values);
-                        }
-                    });
-
-                    console.log('00000 Intersect Results:', results);
+            govmap.selectFeaturesOnMap(params).then(function(response) {
+                response.forEach((layer, index) => {
+                    if (layer && layer.length > 0) {
+                        results[index === 0 ? 'kindergarten' : 'school'] = layer.map(item => {
+                            var xy = item.wkt.replace("POINT (", "").replace(")", "");
+                            var x, y = map(float, coords.split());
+                            return {
+                                name: item.shem_misgeret,
+                                address: `${item.ktovet} ${item.mispar_bait}, ${item.shem_yishuv}`,
+                                x,
+                                y
+                            };
+                        });
+                    }
                 })
-                .catch(error => {
-                    console.error('Error intersecting features:', error);
-                });
+            });
+
+            findNearbyBusStops(results);
+        }
+
+        function getLayerData(x, y) {
+            var params = {
+                LayerName: 'bus_stops',
+                Point: {x, y},
+                Radius: 200,
+            };
+
+            return new Promise(resolve => govmap.getLayerData(params).then(response => resolve(response)));
+        }
+
+        function findNearbyBusStops(layers) {
+            if (!layers.kindergarten && !layers.school) {
+                console.warn('No features selected');
+                return;
+            }
+
+            
         }
         </script>
         <script>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--
+  Location Guide Presentation Site
+  - Styles are now in index.css
+  - JavaScript is in index.js (jQuery CDN included)
+  - Semantic tags used: <header>, <main>, <aside>
+  -->
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <!-- Header with title -->
+    <header class="header">
+        <h1>מפת </h1>
+    </header>
+
+    <!-- Main content: map and sidebar -->
+    <main class="content">
+        <!-- Map container with iframe placeholder -->
+        <section class="map-container">
+            <div id="map" class="iframe-placeholder"></div>
+        </section>
+        <!-- Sidebar with dropdown and data list -->
+        <aside class="sidebar">
+            <select class="dropdown" id="cityDropdown">
+                <!-- Options will be populated by JS -->
+            </select>
+            <ul class="city-list" id="cityList">
+                <!-- City items will be populated by JS -->
+            </ul>
+            <!-- Button container -->
+            <div class="sidebar-btn-container">
+                <!-- Draw tool: select on top, button below -->
+<div class="draw-container">
+</div>
+
+
+            </div>
+        </aside>
+    </main>
+
+    <!-- Scripts: jQuery CDN and index.js -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="index.js"></script>
+    <script src="https://dev.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+</body>
+
+</html>

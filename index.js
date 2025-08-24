@@ -12,7 +12,7 @@ function initGovMap() {
         // zoomButtons: false,
         center: { x: 179487, y: 663941 },
         level: 9,
-        onLoad: function (e) {
+        onLoad: function () {
             // filterLayersOnLoad();
             populateDropdown();
         },

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Examples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .navbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1001;
+        }
+
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            direction: rtl;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f9fafb;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+
+        /* Input Field Styles */
+        .search-input {
+            direction: rtl;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            width: 200px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Button Styles */
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Main Content Styles */
+        .main {
+            flex: 1;
+            padding: 3rem 2rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Custom Footer Styles */
+        footer.custom-footer {
+            position: relative;
+            height: 2.5rem;
+            text-align: right;
+            padding: 0 1.5rem;
+        }
+        footer.custom-footer p {
+            font-size: 1.1rem;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+        footer.custom-footer a {
+            color: #0044cc;
+            text-decoration: none;
+        }
+        footer.custom-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
+    </head>
+    
+    <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <!-- <div class="navbar-brand">API Examples</div> -->
+        <div class="navbar-controls">
+
+        </div>
+        <div class="navbar-controls">
+            <!-- Button -->
+            <button class="btn" id="searchBtn" onclick="handleSearch()" disabled>חיפוש</button>
+
+            <!-- Text Input -->
+            <input type="text" class="search-input" placeholder="כתובת">
+
+            <!-- Dropdown Button -->
+            <select id="drawType" class="dropdown-menu"></select>
+            <div class="dropdown" id="dropdown">
+                <button class="dropdown-btn" onclick="toggleDropdown()">
+                    <span class="dropdown-arrow">▼</span>
+                    צייר
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Circle)">רדיוס</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Polygon)">מצולע</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.FreehandPolygon)">שרטוט חופשי</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div id="map" style="width: 100%; height: 80vh;"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="custom-footer">
+        <p>
+            <a href="https://www.govmap.gov.il/">המרכז למיפוי ישראל 2025, אתר המפות הממשלתי ©</a>
+        </p>
+    </footer>
+
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script>
+        function initGovMap() {
+            govmap.createMap('map', {
+                token: 'YOUR_API_TOKEN',
+                visibleLayers: [],
+                layers: ["18", "17", "20"],
+                layersMode: 2,
+                showXY: true,
+                identifyOnClick: true,
+                isEmbeddedToggle: true
+            });
+        }
+
+        var mockSearchResult = {
+            "active": false,
+            "data": [
+                {
+                    "Alert": null,
+                    "DescLayerID": "ADDR",
+                    "Gush": "",
+                    "ObjectID": "259764",
+                    "ObjectIDType": "number",
+                    "ObjectKey": "ObjectID",
+                    "Parcel": "",
+                    "ResultLable": "זמיר 4 כפר סבא",
+                    "ResultType": 1,
+                    "showLotAddress": false,
+                    "showLotParcel": false,
+                    "X": 193422.19,
+                    "Y": 676890.72
+                }
+            ],
+            "errorCode": 0,
+            "message": null,
+            "status": 0
+        };
+        // Search functionality
+        function handleSearch() {
+            const searchInput = document.querySelector('.search-input');
+            const searchTerm = searchInput.value.trim();
+            console.log(`Searching for: ${searchTerm}`);
+
+            govmap.geocode({keyword: searchTerm, type: govmap.geocodeType.AccuracyOnly})
+            .then(function(response) {
+            // var response = mockSearchResult; // Simulating the response for testing
+                console.log(response);
+                if (response.data.length > 0) {
+                    const firstResult = response.data[0];
+                    console.log(`Zooming to: ${firstResult.X}, ${firstResult.Y}`);
+                    zoomToXY(firstResult.X, firstResult.Y);
+                } else {
+                    console.warn('No results found');
+                }
+            });
+        }
+
+        function zoomToXY(x, y) {
+            govmap.zoomToXY({x, y, level: 10, marker: true});
+        }
+
+        function draw(type) {
+            toggleDropdown();
+            govmap.draw(type).then(response => {
+                var wkt;
+                
+                if (type === govmap.drawType.Circle) {
+                    wkt = `POINT (${response.x} ${response.y})`;
+                } else {
+                    wkt = response.wkt;
+                }
+                
+                console.log('000 draw wkt', wkt);
+                intersectFeatures(wkt);
+            });
+        }
+
+        function intersectFeatures(data) {
+            var kindergarten = {
+                layerName: 'kids_g',
+                fields: ['shem_misgeret'],
+            };
+            var school = {
+                layerName: 'school',
+                fields: ['shem_misgeret'],
+            };
+
+            var promises = [kindergarten, school].map(layer => {
+                return new Promise((resolve, reject) => {
+                    govmap.intersectFeatures({geometry: data.wkt, fields: layer.fields, layerName: layer.layerName})
+                        .then(resolve)
+                        .catch(reject);
+                });
+            });
+
+            var results = {kindergarten: null, school: null};
+            Promise.all(promises)
+                .then(results => {
+                    results.forEach((result, index) => {
+                        if (result.data.length > 0) {
+                            results[index === 0 ? 'kindergarten' : 'school'] = result.data.map(item => item.Values);
+                        }
+                    });
+
+                    console.log('00000 Intersect Results:', results);
+                })
+                .catch(error => {
+                    console.error('Error intersecting features:', error);
+                });
+        }
+        </script>
+        <script>
+        // Dropdown functionality
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('dropdown');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+
+
+        // Enable/disable Search button based on input
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.getElementById('searchBtn');
+        function updateSearchBtn() {
+            searchBtn.disabled = searchInput.value.trim() === '';
+        }
+        searchInput.addEventListener('input', updateSearchBtn);
+        // Initial state
+        updateSearchBtn();
+
+        // Handle Enter key in search input
+        searchInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter' && !searchBtn.disabled) {
+                handleSearch();
+            }
+        });
+    </script>
+</body>
+
+</html>

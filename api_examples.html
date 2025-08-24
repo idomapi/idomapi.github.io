@@ -272,9 +272,9 @@
                     צייר
                 </button>
                 <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap(govmap.drawType.Circle)">רדיוס</a>
-                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap(govmap.drawType.Polygon)">מצולע</a>
-                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap(govmap.drawType.FreehandPolygon)">שרטוט חופשי</a>
+                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap('Circle')">רדיוס</a>
+                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap('Polygon')">מצולע</a>
+                    <a href="#" class="dropdown-item" onclick="selectFeaturesOnMap('FreehandPolygon')">שרטוט חופשי</a>
                 </div>
             </div>
         </div>
@@ -329,7 +329,7 @@
             "message": null,
             "status": 0
         };
-        // Search functionality
+
         function handleSearch() {
             const searchInput = document.querySelector('.search-input');
             const searchTerm = searchInput.value.trim();
@@ -353,26 +353,15 @@
             govmap.zoomToXY({x, y, level: 10, marker: true});
         }
 
-        // function draw(drawType) {
-        //     toggleDropdown();
-        //     govmap.draw(type).then(response => {
-        //         var wkt;
-                
-        //         if (type === govmap.drawType.Circle) {
-        //             wkt = `POINT (${response.x} ${response.y})`;
-        //         } else {
-        //             wkt = response.wkt;
-        //         }
-                
-        //         console.log('000 draw wkt', wkt);
-        //         intersectFeatures(wkt);
-        //     });
-        // }
-
-        function selectFeaturesOnMap(drawType) {
+        function selectFeaturesOnMap(type) {
+            var drawType = {
+                Circle: govmap.drawType.Circle,
+                Polygon: govmap.drawType.Polygon,
+                FreehandPolygon: govmap.drawType.FreehandPolygon,
+            };
             var params = {
                 continous: false,
-                drawType: govmap.drawType.Polygon,
+                drawType: drawType[type],
                 filterLayer: false,
                 isZoomToExtent: true,
                 layers: ['kids_g', 'school'],
@@ -423,7 +412,6 @@
         }
 
         function findNearbyBusStops(layers) {
-            console.log('0000findNearbyBusStops', layers);
             var results = {kindergarten: [], school: []};
             
             // Collect unique (x, y) pairs
@@ -450,17 +438,17 @@
                         busStop = {
                             x: response.data[0].fields[0],
                             y: response.data[0].fields[1],
-                            stopName: response.data[0].fields[2]
+                            stopName: response.data[0].fields[2],
+                            distance: response.data[0].distance
                         }
                     }
 
                     featureList.forEach(({feature, layerKey}) => {
-                        // You can attach the busStops to the feature or handle as needed
                         results[layerKey].push({...feature, busStop});
                     });
-
-                    console.log('00000results', results);
                 });
+
+                console.log('00000results', results);
             });
 
 

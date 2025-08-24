@@ -298,7 +298,7 @@
             govmap.createMap('map', {
                 token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
                 visibleLayers: [],
-                layers: ["18", "17", "20"],
+                layers: ["17", "18", "20"],
                 layersMode: 2,
                 showXY: true,
                 identifyOnClick: true,
@@ -369,7 +369,7 @@
             });
         }
 
-        function intersectFeatures(data) {
+        function intersectFeatures(wkt) {
             var kindergarten = {
                 layerName: 'kids_g',
                 fields: ['shem_misgeret'],
@@ -381,7 +381,7 @@
 
             var promises = [kindergarten, school].map(layer => {
                 return new Promise((resolve, reject) => {
-                    govmap.intersectFeatures({geometry: data.wkt, fields: layer.fields, layerName: layer.layerName})
+                    govmap.intersectFeatures({geometry: wkt, fields: layer.fields, layerName: layer.layerName})
                         .then(resolve)
                         .catch(reject);
                 });

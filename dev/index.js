@@ -4,7 +4,7 @@ function initGovMap() {
             populateDropdownAndCityList();
             populateDropdown();
         },
-        token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
+        token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", 'bus_stops'],
         visibleLayers: [],
         showXY: true,

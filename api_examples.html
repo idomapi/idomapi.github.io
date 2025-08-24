@@ -390,7 +390,9 @@
             var results = {kindergarten: null, school: null};
             govmap.selectFeaturesOnMap(params).then(function(response) {
                 response.forEach((layer, index) => {
-                    if (layer && layer.length > 0) {
+                    if (!layer && layer.length === 0) {
+                        results[index === 0 ? 'kindergarten' : 'school'] = [];
+                    } else {
                         results[index === 0 ? 'kindergarten' : 'school'] = layer.map(item => {
                             var coords = item.wkt.replace("POINT (", "").replace(")", "").split(" ");
                             var x = parseFloat(coords[0]);
@@ -421,11 +423,35 @@
 
         function findNearbyBusStops(layers) {
             console.log('0000findNearbyBusStops', layers);
-            if (!layers.kindergarten && !layers.school) {
-                console.warn('No features selected');
-                return;
-            }
+            var results = {kindergarten: [], school: []};
+            
+            // Collect unique (x, y) pairs
+            const coordMap = new Map();
+            Object.keys(layers).forEach(layerKey => {
+                if (layers[layerKey] && layers[layerKey].length > 0) {
+                    layers[layerKey].forEach(feature => {
+                        const key = `${feature.x},${feature.y}`;
+                        if (!coordMap.has(key)) {
+                            coordMap.set(key, []);
+                        }
+                        coordMap.get(key).push({feature, layerKey});
+                    });
+                }
+            });
 
+            // Call getLayerData once per unique coordinate, then populate all features with the result
+            coordMap.forEach((featureList, key) => {
+                const [x, y] = key.split(',').map(Number);
+                getLayerData(x, y).then(busStops => {
+                    featureList.forEach(({feature, layerKey}) => {
+                        // You can attach the busStops to the feature or handle as needed
+                        console.log(`Nearby bus stops for ${feature.name} (${layerKey}):`, busStops);
+                        results[layerKey].push(feature);
+                    });
+                });
+            });
+
+            console.log('00000results', results);
 
         }
         </script>

@@ -392,8 +392,9 @@
                 response.forEach((layer, index) => {
                     if (layer && layer.length > 0) {
                         results[index === 0 ? 'kindergarten' : 'school'] = layer.map(item => {
-                            var xy = item.wkt.replace("POINT (", "").replace(")", "");
-                            var x, y = map(float, coords.split());
+                            var coords = item.wkt.replace("POINT (", "").replace(")", "").split(" ");
+                            var x = parseFloat(coords[0]);
+                            var y = parseFloat(coords[1]);
                             return {
                                 name: item.shem_misgeret,
                                 address: `${item.ktovet} ${item.mispar_bait}, ${item.shem_yishuv}`,
@@ -424,7 +425,7 @@
                 return;
             }
 
-            
+
         }
         </script>
         <script>

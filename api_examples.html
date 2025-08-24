@@ -443,16 +443,26 @@
             // Call getLayerData once per unique coordinate, then populate all features with the result
             coordMap.forEach((featureList, key) => {
                 const [x, y] = key.split(',').map(Number);
-                getLayerData(x, y).then(busStops => {
+                getLayerData(x, y).then(response => {
+                    var busStop = {};
+
+                    if (response.data && response.data.length > 0) {
+                        busStop = {
+                            x: response.data[0].fields[0],
+                            y: response.data[0].fields[1],
+                            stopName: response.data[0].fields[2]
+                        }
+                    }
+
                     featureList.forEach(({feature, layerKey}) => {
                         // You can attach the busStops to the feature or handle as needed
-                        console.log(`Nearby bus stops for ${feature.name} (${layerKey}):`, busStops);
-                        results[layerKey].push(feature);
+                        results[layerKey].push({...feature, busStop});
                     });
+
+                    console.log('00000results', results);
                 });
             });
 
-            console.log('00000results', results);
 
         }
         </script>

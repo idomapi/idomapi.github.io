@@ -428,17 +428,17 @@
                 }
             });
 
-            // Call getLayerData once per unique coordinate, then populate all features with the result
+            var promises = [];
             coordMap.forEach((featureList, key) => {
-                const [x, y] = key.split(',').map(Number);
-                getLayerData(x, y).then(response => {
+                var [x, y] = key.split(',').map(Number);
+                var p = getLayerData(x, y).then(response => {
                     var busStop = {};
 
                     if (response.data && response.data.length > 0) {
                         busStop = {
-                            x: response.data[0].fields[0],
-                            y: response.data[0].fields[1],
-                            stopName: response.data[0].fields[2],
+                            x: response.data[0].fields[0].value,
+                            y: response.data[0].fields[1].value,
+                            stopName: response.data[0].fields[2].value,
                             distance: response.data[0].distance
                         }
                     }
@@ -447,11 +447,17 @@
                         results[layerKey].push({...feature, busStop});
                     });
                 });
-
-                console.log('00000results', results);
+                promises.push(p);
             });
 
+            Promise.all(promises).then(() => {
+                console.log('00000results', results);
+                createTable(results);
+            });
+        }
 
+        function createTable() {
+            console.log('000 create table');
         }
         </script>
         <script>

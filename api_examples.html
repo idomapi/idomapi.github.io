@@ -378,6 +378,10 @@
 
             var results = {kindergarten: null, school: null};
             govmap.selectFeaturesOnMap(params).then(function(response) {
+                if (!response || response.length === 0) {
+                    alert('לא נמצאו תוצאות בשטח זה');
+                    return;
+                }
                 response.forEach((layer, index) => {
                     if (!layer && layer.length === 0) {
                         results[index === 0 ? 'kindergarten' : 'school'] = [];
@@ -395,12 +399,6 @@
                         });
                     }
                 });
-
-                if (results.kindergarten.length === 0 && results.school.length === 0) {
-                    alert('לא נמצאו תוצאות בשטח זה');
-                    return;
-                }
-
                 findNearbyBusStops(results);
             });
 
@@ -445,6 +443,10 @@
                             y: response.data[0].fields[1].value,
                             stopName: response.data[0].fields[2].value,
                             distance: response.data[0].distance
+                        }
+                    } else {
+                        busStop = {
+                            stopName: 'לא נמצאו תחנות אוטובוס בקרבת מקום'
                         }
                     }
 
@@ -565,6 +567,10 @@
         }
 
         function handleBusStopsClick(x, y) {
+            if (!x || !y) {
+                return;
+            }
+
             govmap.setVisibleLayers(['bus_stops']);
             zoomToXY(x, y);
         }

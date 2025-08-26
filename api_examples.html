@@ -169,61 +169,61 @@
         /* Main Content Styles */
         .main {
             flex: 1;
-            padding: 3rem 2rem;
             margin: 0 auto;
             width: 100%;
+            position: relative;
         }
 
-        .hero {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.125rem;
-            color: #6b7280;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .card {
-            background: #fff;
+        #results-table-container {
+            position: absolute;
+            top: 1rem;
+            right: 0.5rem;
+            max-height: 65vh;
+            background: rgba(255,255,255,0.97);
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 10;
+            padding: 1rem 0.5rem 1.5rem 0.5rem;
+            overflow: hidden;
         }
-
-        .card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
+        #results-table-container h3 {
+            direction: rtl;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
             color: #1f2937;
+        }
+        #results-table {
+            width: 40vw;
+            border-collapse: collapse;
             margin-bottom: 0.5rem;
         }
-
-        .card p {
-            color: #6b7280;
-            font-size: 0.875rem;
+        #results-table th, #results-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.4rem 0.6rem;
+            text-align: right;
+            font-size: 0.95rem;
+        }
+        #results-table tbody {
+            display: block;
+            max-height: 300px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        #results-table thead, #results-table tbody tr {
+            cursor: pointer;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        #results-table th {
+            background: #f3f4f6;
+            color: #2563eb;
+            position: sticky;
+        }
+        #results-table tr:hover {
+            background: #f1f5f9;
         }
 
         /* Custom Footer Styles */
@@ -297,8 +297,8 @@
         function initGovMap() {
             govmap.createMap('map', {
                 token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-                visibleLayers: [],
-                layers: ['kindergarten', 'school', 'bus_stops'],
+                visibleLayers: ['kids_g', 'school'],
+                layers: ['kids_g', 'school', 'bus_stops'],
                 layersMode: 2,
                 showXY: true,
                 identifyOnClick: true,
@@ -337,14 +337,13 @@
 
             govmap.geocode({keyword: searchTerm, type: govmap.geocodeType.AccuracyOnly})
             .then(function(response) {
-            // var response = mockSearchResult; // Simulating the response for testing
                 console.log(response);
-                if (response.data.length > 0) {
+                if (response.data && response.data.length > 0) {
                     const firstResult = response.data[0];
                     console.log(`Zooming to: ${firstResult.X}, ${firstResult.Y}`);
                     zoomToXY(firstResult.X, firstResult.Y);
                 } else {
-                    console.warn('No results found');
+                    console.warn('לא נמצאו תוצאות');
                 }
             });
         }
@@ -354,6 +353,7 @@
         }
 
         function selectFeaturesOnMap(type) {
+            toggleDropdown();
             var drawType = {
                 Circle: govmap.drawType.Circle,
                 Polygon: govmap.drawType.Polygon,
@@ -388,13 +388,18 @@
                             var y = parseFloat(coords[1]);
                             return {
                                 name: item.shem_misgeret,
-                                address: `${item.ktovet} ${item.mispar_bait}, ${item.shem_yishuv}`,
+                                address: `${item.ktovet}${' ' + item.mispar_bait || ''}, ${item.shem_yishuv}`,
                                 x,
                                 y
                             };
                         });
                     }
                 });
+
+                if (results.kindergarten.length === 0 && results.school.length === 0) {
+                    alert('לא נמצאו תוצאות בשטח זה');
+                    return;
+                }
 
                 findNearbyBusStops(results);
             });
@@ -455,13 +460,119 @@
                 createTable(results);
             });
         }
+        function createTable(data) {
+            // Remove old table if exists
+            let old = document.getElementById('results-table-container');
+            if (old) old.remove();
 
-        function createTable() {
-            console.log('000 create table');
+            // If no data, do nothing
+            if (!data || (!data.kindergarten && !data.school)) return;
+
+            // Create container
+            const container = document.createElement('div');
+            container.id = 'results-table-container';
+
+            // Add table title
+            const title = document.createElement('h3');
+            title.textContent = 'תוצאות חיפוש';
+            container.appendChild(title);
+
+            // Create tabs
+            const tabs = document.createElement('div');
+            tabs.style.cssText = 'display:flex;gap:0.5rem;';
+            const tabKindergarten = document.createElement('button');
+            tabKindergarten.textContent = 'גני ילדים';
+            tabKindergarten.style.cssText = 'flex:1;padding:0.4rem 0.2rem;border:none;border-bottom:2px solid #2563eb;background:#f3f4f6;color:#2563eb;font-size: 1rem;font-weight:bold;cursor:pointer;border-radius:0.5rem 0.5rem 0 0;';
+            const tabSchool = document.createElement('button');
+            tabSchool.textContent = 'בתי ספר';
+            tabSchool.style.cssText = 'flex:1;padding:0.4rem 0.2rem;border:none;border-bottom:2px solid transparent;background:#f3f4f6;color:#1f2937;font-size: 1rem;font-weight:bold;cursor:pointer;border-radius:0.5rem 0.5rem 0 0;';
+            tabs.appendChild(tabSchool);
+            tabs.appendChild(tabKindergarten);
+            container.appendChild(tabs);
+
+            // Create sheets
+            const sheetKindergarten = document.createElement('div');
+            const sheetSchool = document.createElement('div');
+            sheetKindergarten.style.display = '';
+            sheetSchool.style.display = 'none';
+
+            // Helper to create a table for a sheet
+            function makeTable(arr) {
+                const table = document.createElement('table');
+                table.id = 'results-table';
+                const thead = document.createElement('thead');
+                thead.innerHTML = `<tr><th>תחנת אוטובוס קרובה</th><th>כתובת</th><th>שם</th></tr>`;
+                table.appendChild(thead);
+                const tbody = document.createElement('tbody');
+                arr.forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    tr.id = `row-${index}`;
+                    tr.setAttribute('onclick', `handleBusStopsClick(${item.busStop.x}, ${item.busStop.y})`);
+                    tr.innerHTML = `
+                        <td>${item.busStop && item.busStop.stopName ? item.busStop.stopName : ''}</td>
+                        <td>${item.address || ''}</td>
+                        <td>${item.name || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                return table;
+            }
+
+            if (data.kindergarten && data.kindergarten.length) {
+                sheetKindergarten.appendChild(makeTable(data.kindergarten));
+            } else {
+                sheetKindergarten.textContent = 'אין נתונים.';
+            }
+
+            if (data.school && data.school.length) {
+                sheetSchool.appendChild(makeTable(data.school));
+            } else {
+                sheetSchool.textContent = 'אין נתונים.';
+            }
+
+            container.appendChild(sheetKindergarten);
+            container.appendChild(sheetSchool);
+
+            // Tab switching logic
+            tabKindergarten.onclick = function() {
+                sheetKindergarten.style.display = '';
+                sheetSchool.style.display = 'none';
+                tabKindergarten.style.borderBottom = '2px solid #2563eb';
+                tabKindergarten.style.color = '#2563eb';
+                tabSchool.style.borderBottom = '2px solid transparent';
+                tabSchool.style.color = '#1f2937';
+            };
+            tabSchool.onclick = function() {
+                sheetKindergarten.style.display = 'none';
+                sheetSchool.style.display = '';
+                tabKindergarten.style.borderBottom = '2px solid transparent';
+                tabKindergarten.style.color = '#1f2937';
+                tabSchool.style.borderBottom = '2px solid #2563eb';
+                tabSchool.style.color = '#2563eb';
+            };
+
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✕';
+            closeBtn.style.cssText = 'position:absolute;top:0.5rem;left:0.5rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#888;';
+            closeBtn.onclick = () => container.remove();
+            container.appendChild(closeBtn);
+
+            // Add to DOM
+            const main = document.querySelector('.main');
+            main.appendChild(container);
         }
+
+        function handleBusStopsClick(x, y) {
+            govmap.setVisibleLayers(['bus_stops']);
+            zoomToXY(x, y);
+        }
+
+        // Call with mock data for development
+        createTable();
         </script>
         <script>
-        // Dropdown functionality
         function toggleDropdown() {
             const dropdown = document.getElementById('dropdown');
             dropdown.classList.toggle('active');

@@ -111,7 +111,7 @@ function initGovMap() {
         isEmbeddedToggle: false,
         bgButton: true,
         background: "0",
-        layersMode: 1,
+        layersMode: 4,
         center: { x: 179487, y: 663941 },
         level: 2,
         onLoad: function () {

@@ -3,10 +3,11 @@ body {
     font-family: simplerregular, sans-serif;
     margin: 20px;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    min-height: 100vh;
 }
 
 #map {
+    width: 70%;
+    height: 100%;
     border: 2px solid #ddd;
     border-radius: 8px;
     margin-right: 20px;
@@ -235,6 +236,12 @@ body {
 .card-data.close {
     opacity: 0;
     max-height: 0;
+}
+
+.card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
 }
 
 /* Responsive design */

@@ -118,7 +118,7 @@ function initGovMap() {
         layers: ['216428'],
         visibleLayers: [],
         showXY: true,
-        identifyOnClick: true,
+        identifyOnClick: false,
         isEmbeddedToggle: false,
         bgButton: true,
         background: "0",

@@ -8,67 +8,7 @@
 </head>
 
 <body>
-    <div id="map" style="width: 70%; height: 650px;"></div>
-    <div class="controls">
-        <div>
-            <button onclick="draw()">צייר</button>
-            <select id="drawType"></select>
-            <button onclick="editDrawing()">ערוך ציור</button>
-            <button onclick="clearDrawings()">נקה ציור</button>
-            <button class="sidebar-btn" onclick="clearFilterLayers()">נקה סינון</button>
-        </div>
-        <button onclick="displayGeometries()">הוספת גיאומטריה מאתר מארח</button>
-        <button onclick="closeBubble()">סגירת בועית</button>
-        <section>
-            <p>פונקציות הדורשות טוקן אימות</p>
-            <div class="dropdown">
-                <button class="dropbtn">סימון ישויות על המפה לפי שם חברת דלק</button>
-                <div class="dropdown-content">
-                    <a href="#" onclick="selectFeaturesOnMap('דלק')">דלק</a>
-                    <a href="#" onclick="selectFeaturesOnMap('פז')">פז</a>
-                    <a href="#" onclick="selectFeaturesOnMap('סונול')">סונול</a>
-                    <a href="#" onclick='selectFeaturesOnMap("סד\"ש")'>סד"ש</a>
-                    <a href="#" onclick='selectFeaturesOnMap("דור אלון")'>דור אלון</a>
-                </div>
-            </div>
-            <button onclick="selectFeaturesOnMapParcel()">סימון ישויות על המפה לפי מספר גוש (7103, 7101) ולשכות אושר
-                (לפחות
-                18 אשנבים)</button>
-            <button onclick="filterLayers()">סינון שכבת לשכות אושר - הצגה לשכות עם לפחות עשרה אשנבים</button>
-            <div>
-                <input type="text" id="searchInput" placeholder="ערך לחיפוש">
-                <button onclick="geocode(false)">חיפוש תוצאות מלאות</button>
-                <button onclick="geocode(true)">חיפוש תוצאה מדויקת</button>
-            </div>
-            <div>
-                <button onclick="searchAndLocate(true)">חיפוש גוש/חלקה לכתובת וילסון 10, תל-אביב</button>
-                <button onclick="searchAndLocate()">חיפוש כתובת לגוש 7103, חלקה 90</button>
-            </div>
-            <div>
-                <button onclick="getLayerData()">קבלת מידע על בסיס מיקום - שרונה (אלוף קלמן מגן פינת רב אלוף דוד
-                    אלעזר)</button>
-            </div>
-            <div>
-                <button onclick="intersectFeatures2()">intersectFeatures שכבת משתמש</button>"
-            </div>
-            <div><p>
-                כתובת תקינה<button onclick="intersectFeatures()">חיפוש ישויות בשכבה לפי כתובת, מצולע, מרובע או קואורדינטות - סעדיה
-                    הגאון 24 תל אביב</button>
-            </p>
-            <p>
-                כתובת שגויה<button onclick="intersectFeatures(true)">חיפוש ישויות בשכבה לפי כתובת, מצולע, מרובע או קואורדינטות -
-                    סעדיה הגאון 26 תל אביב</button>
-            </p>
-            </div>
-            <button onclick="searchInLayer()">חיפוש ישויות בשכבה לפי שדה וערך - לשכות שרונה והכרמל בשכבת לשכות האושר</button>
-        </section>
-        <div id="data-display"></div>
-    </div>
-    <div>
-        intersectFeatures
-        <button onclick="intersectFeatures3()">הרב אויערבך משה 6,פתח תקווה</button>
-        <button onclick="intersectFeatures4()">קרליבך 5 תל אביב-יפו</button>
-    </div>
+    <div id="map" style="width: 70%; height: 650px;"></div>   
 </body>
 
 </html>

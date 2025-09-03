@@ -8,7 +8,22 @@
 </head>
 
 <body>
-    <div id="map" style="width: 70%; height: 650px;"></div>   
+    <div id="map" style="width: 70%; height: 650px;"></div>
+    <div id="side-container" style="visibility: hidden;">
+        <div class="player">
+            <div class="time" id="start-time"></div>
+            <div class="timeline" onclick="setHour(event)">
+                <div class="progress" id="progress"></div>
+                <div class="current-time" id="currentTime"></div>
+            </div>
+            <div class="time" id="end-time"></div>
+            <div class="controls">
+                <button onclick="prevHour()">⏪</button>
+                <button id="playPause" onclick="playPause()">▶</button>
+                <button onclick="nextHour()">⏩</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

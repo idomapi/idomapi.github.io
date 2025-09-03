@@ -11,7 +11,8 @@ function updateProgress() {
     const percentage = (currentHourIndex / (hours.length - 1)) * 100;
     progress.style.width = `${percentage}%`;
     currentTimeDisplay.textContent = currentTime;
-    currentTimeDisplay.style.left = `calc(${percentage}% - 15px)`;
+    currentTimeDisplay.style.left = `${percentage}%`;
+    updateSteps();
 }
 
 function prevHour() {
@@ -92,6 +93,7 @@ function handleOnLoad() {
     document.getElementById('end-time').innerText = hours[hours.length - 1];
     document.getElementById('side-container').style.visibility = 'initial';
     addTimelineLisenter();
+    updateSteps();
 }
 
 function turnOnTempatureApp() {
@@ -117,4 +119,20 @@ function initGovMap() {
             turnOnTempatureApp();
         },
     });
+}
+
+function updateSteps() {
+    const timeline = document.querySelector('.timeline');
+    const steps = document.querySelectorAll('.step');
+    steps.forEach(step => step.remove()); // Clear existing steps
+    for (let i = 0; i < hours.length; i++) {
+        const step = document.createElement('div');
+        step.className = 'step';
+        const percentage = (i / (hours.length - 1)) * 100;
+        step.style.left = `${percentage}%`;
+        if (i < currentHourIndex) {
+            step.style.backgroundColor = 'white'; // Change to white if passed
+        }
+        timeline.appendChild(step);
+    }
 }

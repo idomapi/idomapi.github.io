@@ -30,6 +30,7 @@ body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
 }
 
 .timeline-row {
@@ -54,7 +55,7 @@ body {
 }
 
 .timeline:hover {
-    transform: scaleY(1.1);
+    /* transform: scaleY(1.1); */
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
@@ -174,10 +175,11 @@ body {
 
 .tempature-wrapper {
     direction: rtl;
+    padding-top: 10px;
 }
 
 .tempature-wrapper .title,
-.tempature-wrapper .weather-data {
+.tempature-wrapper .card-data {
     display: flex;
     align-items: center;
     padding-right: 14px;
@@ -187,15 +189,44 @@ body {
     width: 100%
 }
 
-.tempature-wrapper .weather-data .celsius {
+.card .title .icon {
+    padding-right: 4px;;
+}
+
+.tempature-wrapper .card-data .celsius {
     font-family: simplerregular, sans-serif;
     font-size: 12px;
     font-weight: 400;
     margin-right: 8px;
 }
 
-.tempature-wrapper .weather-data .svg-tempature {
+.tempature-wrapper .card-data .svg-tempature {
     padding-right: 4px;
+}
+
+.windMenu .mainContainer {
+    display: flex;
+    height: 20px;
+    color: #828282;
+    fill: #828282;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.windMenu .mainContainer .container {
+    display: flex;
+    align-items: center
+}
+
+.windMenu .mainContainer .container .windMenuText {
+    font-family: simpler, sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.card-data.close {
+    display: none;
 }
 
 /* Responsive design */

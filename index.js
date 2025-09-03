@@ -136,3 +136,24 @@ function updateSteps() {
         timeline.appendChild(step);
     }
 }
+
+// Card toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.card').forEach(card => {
+        const cardData = card.querySelector('.card-data');
+        if (cardData) {
+            card.addEventListener('click', function() {
+                if (cardData.classList.contains('close')) {
+                    // Remove close from this card's data
+                    cardData.classList.remove('close');
+                    // Add close to all other card-data elements
+                    document.querySelectorAll('.card-data').forEach(otherData => {
+                        if (otherData !== cardData) {
+                            otherData.classList.add('close');
+                        }
+                    });
+                }
+            });
+        }
+    });
+});

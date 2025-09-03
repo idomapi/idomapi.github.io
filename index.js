@@ -1,4 +1,4 @@
-var hours = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00'];
+var hours = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00'];
 var date = '2025-08-06';
 let currentHourIndex = 0;
 let currentTime = hours[currentHourIndex];
@@ -18,6 +18,7 @@ function prevHour() {
     if (currentHourIndex > 0) {
         currentHourIndex--;
         currentTime = hours[currentHourIndex];
+        adjustLayerFeatures();
         updateProgress();
     }
 }
@@ -26,6 +27,7 @@ function nextHour() {
     if (currentHourIndex < hours.length - 1) {
         currentHourIndex++;
         currentTime = hours[currentHourIndex];
+        adjustLayerFeatures();
         updateProgress();
     }
 }
@@ -39,11 +41,7 @@ function playPause() {
             if (currentHourIndex < hours.length - 1) {
                 currentHourIndex++;
                 currentTime = hours[currentHourIndex];
-                var params = {
-                    layerName: '216428',
-                    whereClause: `(date='2025-08-06') AND (time='${currentTime}')`,
-                };
-                govmap.filterLayers(params);
+                adjustLayerFeatures();
                 updateProgress();
             } else {
                 clearInterval(intervalId);
@@ -65,39 +63,40 @@ function setHour(event) {
     const percentage = clickX / rect.width;
     currentHourIndex = Math.min(Math.max(Math.round(percentage * (hours.length - 1)), 0), hours.length - 1);
     currentTime = hours[currentHourIndex];
+    adjustLayerFeatures();
+    updateProgress();
+}
+
+function adjustLayerFeatures() {
     var params = {
         layerName: '216428',
         whereClause: `(date='2025-08-06') AND (time='${currentTime}')`,
     };
     govmap.filterLayers(params);
-    updateProgress();
 }
 
-document.querySelector('.timeline').addEventListener('wheel', (event) => {
-    event.preventDefault();
-    if (event.deltaY < 0 && currentHourIndex > 0) {
-        prevHour();
-    } else if (event.deltaY > 0 && currentHourIndex < hours.length - 1) {
-        nextHour();
-    }
-});
+function addTimelineLisenter() {
+    document.querySelector('.timeline').addEventListener('wheel', (event) => {
+        event.preventDefault();
+        if (event.deltaY < 0 && currentHourIndex > 0) {
+            prevHour();
+        } else if (event.deltaY > 0 && currentHourIndex < hours.length - 1) {
+            nextHour();
+        }
+    });
+}
 
 function handleOnLoad() {
     document.getElementById('currentTime').innerText = currentTime;
     document.getElementById('start-time').innerText = hours[0];
     document.getElementById('end-time').innerText = hours[hours.length - 1];
     document.getElementById('side-container').style.visibility = 'initial';
+    addTimelineLisenter();
 }
 
 function turnOnTempatureApp() {
     govmap.setVisibleLayers(['216428'], []);
-
-    var params = {
-        layerName: '216428',
-        whereClause: `(date='2025-08-06') AND (time='00:00')`,
-    };
-
-    govmap.filterLayers(params);
+    adjustLayerFeatures();
 }
 
 function initGovMap() {
@@ -112,7 +111,7 @@ function initGovMap() {
         background: "0",
         layersMode: 1,
         center: { x: 179487, y: 663941 },
-        level: 6,
+        level: 2,
         onLoad: function () {
             handleOnLoad();
             turnOnTempatureApp();

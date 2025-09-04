@@ -123,7 +123,7 @@ function turnOnTempatureApp() {
 
 function initGovMap() {
     govmap.createMap('map', {
-        token: '0fff9694-a045-4ede-b997-ee9927b0d56c',
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['216428'],
         visibleLayers: [],
         showXY: true,

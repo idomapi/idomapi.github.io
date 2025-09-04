@@ -13,12 +13,18 @@
     <div id="side-container" style="visibility: hidden;">
         <div id="timeline-card" class="card">
             <div class="timeline-row">
-                <div class="time" id="start-time"></div>
+                <div class="date-time-container">
+                    <div class="time" id="start-time"></div>
+                    <div class="date" id="start-date"></div>
+                </div>
                 <div class="timeline" onclick="setHour(event)">
                     <div class="progress" id="progress"></div>
                     <div class="current-time" id="currentTime"></div>
                 </div>
-                <div class="time" id="end-time"></div>
+                <div class="date-time-container">
+                    <div class="time" id="end-time"></div>
+                    <div class="date" id="end-date"></div>
+                </div>
             </div>
             <div class="controls">
                 <button onclick="prevHour()">⏪</button>

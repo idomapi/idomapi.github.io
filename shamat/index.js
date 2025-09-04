@@ -11,6 +11,13 @@ const layers = {
 }
 let currentLayerName = layers.tempature;
 
+function formatHebrewShort(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = new Intl.DateTimeFormat('he-IL', { month: 'short' }).format(date);
+    return `${day} ${month}`;
+}
+
 function updateProgress() {
     const progress = document.getElementById('progress');
     const currentTimeDisplay = document.getElementById('currentTime');
@@ -97,6 +104,8 @@ function handleOnLoad() {
     document.getElementById('currentTime').innerText = currentTime;
     document.getElementById('start-time').innerText = hours[0];
     document.getElementById('end-time').innerText = hours[hours.length - 1];
+    document.getElementById('start-date').innerText = formatHebrewShort(date);
+    document.getElementById('end-date').innerText = formatHebrewShort(date);
     document.getElementById('side-container').style.visibility = 'initial';
     addTimelineLisenter();
     updateSteps();

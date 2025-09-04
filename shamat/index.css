@@ -274,14 +274,19 @@ body {
     .timeline {
         margin: 0 5px;
     }
+
+    .controls {
+        justify-content: center;
+    }
+
     .time {
         font-size: 12px;
         margin: 0 5px;
     }
     .controls button {
         background-color: #f8fbff;
-        width: 32px;
-        height: 32px;
+        width: 62px;
+        height: 62px;
         font-size: 13px;
     }
     .data-container .title, .data-container .card-data {

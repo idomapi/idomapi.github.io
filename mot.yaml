@@ -1,0 +1,22 @@
+67809 - NO DOMAIN - b9993770-3b15-4cdf-a869-31cb2cfd8918 - nimbus@mapi.gov.il
+layer_speedcamera speedcamera -> add owner, createdAt
+
+39243 - geo.mot.gov.il - bdfe55cc-6d18-4a31-8d36-c6e75b59ff4e
+layer_213976 WRONG alias: layer_213976 instead of roadnumbers
+layer_mataan_jlm mataan_jlm
+layer_speed_survey_2022 speed_survey_2022 -> add owner, createdAt
+
+LOCATE THE FOLLOWING:
+
+AGG_CHARGE_STATIONS
+ROAD_STRAT_POINT_PRJ
+MATAAN_HDR_NTN
+ZMT_NAMES
+ROADNUMSHEETS
+SITES_TREE_KEEPER
+
+
+https://trello.com/c/8QGYFucO
+.slidesPanelsContainer {
+  padding-inline-end: calc(var(--panel-with-inner-panels-padding) * 0.25);
+}

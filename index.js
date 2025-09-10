@@ -10,7 +10,7 @@ function initGovMap() {
         background: "0",
         layersMode: 1,
         center: { x: 179487, y: 663941 },
-        level: 9,
+        level: 4,
         onLoad: function () {},
     });
 }

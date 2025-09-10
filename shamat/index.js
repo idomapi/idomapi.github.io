@@ -138,7 +138,7 @@ function turnOnTempatureApp() {
 
 function initGovMap() {
     govmap.createMap('map', {
-        token: '0fff9694-a045-4ede-b997-ee9927b0d56c',
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['216428'],
         visibleLayers: [],
         showXY: true,
@@ -160,7 +160,7 @@ function updateSteps() {
     const timeline = document.querySelector('.timeline');
     const steps = document.querySelectorAll('.step');
     steps.forEach(step => step.remove());
-    for (let i = 0; i < hours.length; i++) {
+    for (let i = 0; i <= hours.length; i++) {
         const step = document.createElement('div');
         step.id = `step-${i}`;
         step.className = i === currentHourIndex || (i == 0 && currentHourIndex === 0) ? 'step current' : 'step';

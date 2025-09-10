@@ -1,4 +1,7 @@
-const hours = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'];
+const hours = [
+    '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
+    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'
+];
 const date = '2025-08-06';
 let currentHourIndex = 0;
 let currentTime = hours[currentHourIndex];
@@ -23,11 +26,21 @@ function formatHebrewShort(dateStr) {
 function updateProgress() {
     const progress = document.getElementById('progress');
     const currentTimeDisplay = document.getElementById('currentTime');
-    const percentage = (currentHourIndex / (hours.length - 1)) * 100;
-    progress.style.width = `${percentage}%`;
-    currentTimeDisplay.textContent = currentTime;
-    currentTimeDisplay.style.left = `${percentage}%`;
     updateSteps();
+    const steps = document.querySelectorAll('.step');
+    const percentage = ((currentHourIndex + 1) / (hours.length)) * 100;
+    progress.style.width = `${percentage - 0.5}%`;
+    currentTimeDisplay.textContent = currentTime;
+    // Align #currentTime exactly above the current step
+    if (steps[currentHourIndex]) {
+        const step = steps[currentHourIndex];
+        const left = step.offsetLeft + step.offsetWidth / 2;
+        currentTimeDisplay.style.left = `${left}px`;
+        currentTimeDisplay.style.transform = 'translateX(-50%)';
+    } else {
+        currentTimeDisplay.style.left = `${percentage}%`;
+        currentTimeDisplay.style.transform = 'translateX(-50%)';
+    }
 }
 
 function prevHour() {
@@ -109,6 +122,7 @@ function handleOnLoad() {
     document.getElementById('end-date').innerText = formatHebrewShort(date);
     document.getElementById('side-container').style.visibility = 'initial';
     addTimelineLisenter();
+    updateProgress();
     updateSteps();
 }
 
@@ -148,11 +162,13 @@ function updateSteps() {
     steps.forEach(step => step.remove());
     for (let i = 0; i < hours.length; i++) {
         const step = document.createElement('div');
-        step.className = 'step';
-        const percentage = (i / (hours.length - 1)) * 100;
+        step.id = `step-${i}`;
+        step.className = i === currentHourIndex || (i == 0 && currentHourIndex === 0) ? 'step current' : 'step';
+        let percentage = (i / (hours.length - 1)) * 100;
         step.style.left = `${percentage}%`;
         if (i < currentHourIndex) {
             step.style.backgroundColor = 'white';
+            step.style.color = 'white';
         }
         timeline.appendChild(step);
     }

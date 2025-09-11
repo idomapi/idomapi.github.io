@@ -160,16 +160,28 @@ function updateSteps() {
     const timeline = document.querySelector('.timeline');
     const steps = document.querySelectorAll('.step');
     steps.forEach(step => step.remove());
-    for (let i = 0; i <= hours.length; i++) {
+    const END_PADDING_PERCENT = 6;
+
+    for (let i = 0; i < hours.length; i++) {
         const step = document.createElement('div');
         step.id = `step-${i}`;
         step.className = i === currentHourIndex || (i == 0 && currentHourIndex === 0) ? 'step current' : 'step';
-        let percentage = (i / (hours.length - 1)) * 100;
+        // For the last step, subtract END_PADDING_PERCENT from 100%
+        let percentage;
+
+        if (i === hours.length - 1) {
+            percentage = 100 - END_PADDING_PERCENT;
+        } else {
+            percentage = (i / (hours.length - 1)) * (100 - END_PADDING_PERCENT);
+        }
+
         step.style.left = `${percentage}%`;
+
         if (i < currentHourIndex) {
             step.style.backgroundColor = 'white';
             step.style.color = 'white';
         }
+
         timeline.appendChild(step);
     }
 }

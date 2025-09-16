@@ -8,10 +8,10 @@ let currentTime = hours[currentHourIndex];
 let isPlaying = false;
 let intervalId = null;
 const layers = {
-    tempature: '216428',
-    humidity: 'TBD',
-    wind: 'TBD'
-}
+    tempature: '216827',
+    humidity: '217097',
+    wind: '217098,217099'
+};
 let currentLayerName = layers.tempature;
 const playSvg = '<svg width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_3406_1192)"><circle cx="16.5" cy="16.5" r="16" fill="#CFE3FF"></circle><path d="M25.0714 15.6752C25.7063 16.0418 25.7063 16.9582 25.0714 17.3248L12.9286 24.3355C12.2936 24.702 11.5 24.2438 11.5 23.5107L11.5 9.48932C11.5 8.75617 12.2937 8.29796 12.9286 8.66453L25.0714 15.6752Z" fill="#0062EF"></path></g><defs><clipPath id="clip0_3406_1192"><rect width="32" height="32" fill="white" transform="translate(0.5 0.5)"></rect></clipPath></defs></svg>';
 const pauseSvg = '<svg width="33" height="32" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_3074_11085)"><circle cx="16.5" cy="16" r="16" fill="#CFE3FF"></circle><path d="M12 9L12 23" stroke="#0062EF" stroke-width="2" stroke-linecap="round"></path><path d="M20 9L20 23" stroke="#0062EF" stroke-width="2" stroke-linecap="round"></path></g><defs><clipPath id="clip0_3074_11085"><rect width="32" height="32" fill="white" transform="translate(0.5)"></rect></clipPath></defs></svg>';
@@ -139,7 +139,7 @@ function turnOnTempatureApp() {
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: ['216428'],
+        layers: ['217097', '217098', '217099', '216827'],
         visibleLayers: [],
         showXY: true,
         identifyOnClick: false,
@@ -187,9 +187,18 @@ function updateSteps() {
 }
 
 function changeLayer(layerName) {
-    if (layerType !== 'tempature') return;
+    if (layers.hasOwnProperty(layerName)) {
+        currentLayerName = layers[layerName];
+    }
+}
 
-    currentLayerName = layers[layerName];
+/**
+ * Toggle visibility of map layers.
+ * @param {string[]} layersOn - Array of layer IDs to turn on.
+ * @param {string[]} layersOff - Array of layer IDs to turn off.
+ */
+function togglesetActiveLayers(layersOn, layersOff) {
+    govmap.setVisibleLayers(layersOn, layersOff)
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -211,6 +220,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (card.id) {
                     changeLayer(card.id);
+                    // Log the card id to the console
+                    console.log('Card clicked:', card.id);
+                    const layersNamesToHide = Object.keys(layers).filter(k => k !== card.id);
+                    const layersToHide = layersNamesToHide.map(l => layers[l].split(',')).flat();
+                    togglesetActiveLayers([layers[card.id]], layersToHide);
                 }
             });
         }

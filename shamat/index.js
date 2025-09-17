@@ -8,7 +8,7 @@ let currentTime = hours[currentHourIndex];
 let isPlaying = false;
 let intervalId = null;
 const layers = {
-    tempature: '216827', // '216428'
+    tempature: '217158', // '216428'
     humidity: '217097',
     wind: '217098,217099'
 };
@@ -139,7 +139,7 @@ function turnOnTempatureApp() {
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: ['217097', '217098', '217099', '216827'],
+        layers: ['217097', '217098', '217099', '217158'],
         visibleLayers: [],
         showXY: true,
         identifyOnClick: false,

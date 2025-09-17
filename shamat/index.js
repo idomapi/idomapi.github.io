@@ -8,7 +8,7 @@ let currentTime = hours[currentHourIndex];
 let isPlaying = false;
 let intervalId = null;
 const layers = {
-    tempature: '216827',
+    tempature: '216827', // '216428'
     humidity: '217097',
     wind: '217098,217099'
 };
@@ -198,7 +198,7 @@ function changeLayer(layerName) {
  * @param {string[]} layersOff - Array of layer IDs to turn off.
  */
 function togglesetActiveLayers(layersOn, layersOff) {
-    govmap.setVisibleLayers(layersOn, layersOff)
+    govmap.setVisibleLayers(layersOn, layersOff);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -224,7 +224,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log('Card clicked:', card.id);
                     const layersNamesToHide = Object.keys(layers).filter(k => k !== card.id);
                     const layersToHide = layersNamesToHide.map(l => layers[l].split(',')).flat();
-                    togglesetActiveLayers([layers[card.id]], layersToHide);
+                    const layersToShow = layers[card.id].map(l => layers[l].split(',')).flat();
+                    togglesetActiveLayers(layersToShow, layersToHide);
                 }
             });
         }

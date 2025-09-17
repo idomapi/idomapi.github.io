@@ -222,9 +222,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     changeLayer(card.id);
                     // Log the card id to the console
                     console.log('Card clicked:', card.id);
-                    const layersNamesToHide = Object.keys(layers).filter(k => k !== card.id);
-                    const layersToHide = layersNamesToHide.map(l => layers[l].split(',')).flat();
-                    const layersToShow = layers[card.id].map(l => layers[l].split(',')).flat();
+                    const layerNames = (toShow) => Object.keys(layers).filter(k => toShow ? k === card.id : k !== card.id)
+                    const layersToHide = layerNames(false).map(l => layers[l].split(',')).flat();
+                    const layersToShow = layerNames(true).map(l => layers[l].split(',')).flat();
                     togglesetActiveLayers(layersToShow, layersToHide);
                 }
             });

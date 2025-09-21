@@ -136,6 +136,15 @@ function turnOnTempatureApp() {
     adjustLayerFeatures();
 }
 
+function listener() {
+    govmap.onEvent(govmap.events.CLICK).progress(e => {
+        govmap.clearMapMarker();
+        var x = e.mapPoint.x;
+        var y = e.mapPoint.y;
+        govmap.setMapMarker({ x, y });
+    });
+}
+
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
@@ -150,6 +159,7 @@ function initGovMap() {
         center: { x: 179487, y: 663941 },
         level: 2,
         onLoad: function () {
+            listener();
             handleOnLoad();
             turnOnTempatureApp();
         },

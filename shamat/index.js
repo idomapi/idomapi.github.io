@@ -136,13 +136,31 @@ function turnOnTempatureApp() {
     adjustLayerFeatures();
 }
 
+function listener() {
+    var params = {
+        // wkt: 'POINT(246804.41 657444.86)',
+        drawType: govmap.drawType.Circle,
+        layers: ['217158'],
+        selectOnMap: true,
+        whereClause: {'217158': '(1 = 1)'},
+        returnFields: {'217158': ['objectid', 'dn']},
+    };
+
+    govmap.onEvent(govmap.events.CLICK).progress(e => {
+        govmap.clearMapMarker();
+        var x = e.mapPoint.x;
+        var y = e.mapPoint.y;
+        govmap.setMapMarker({ x, y });
+    });
+}
+
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['217097', '217098', '217099', '217158'],
         visibleLayers: [],
         showXY: true,
-        identifyOnClick: true,
+        identifyOnClick: false,
         isEmbeddedToggle: false,
         bgButton: true,
         background: "0",
@@ -150,6 +168,7 @@ function initGovMap() {
         center: { x: 179487, y: 663941 },
         level: 2,
         onLoad: function () {
+            // listener();
             handleOnLoad();
             turnOnTempatureApp();
         },

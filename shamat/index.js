@@ -160,7 +160,7 @@ function initGovMap() {
         layers: ['217097', '217098', '217099', '217158'],
         visibleLayers: [],
         showXY: true,
-        identifyOnClick: false,
+        identifyOnClick: true,
         isEmbeddedToggle: false,
         bgButton: true,
         background: "0",

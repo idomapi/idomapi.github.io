@@ -73,25 +73,25 @@ function searchAndLocate() {
             label: 'type',
             options: [
                 { 
-                    value: govmap.locateType.addressToLotParcel,
-                    label: 'govmap.locateType.addressToLotParcel' 
-                },
-                { 
                     value: govmap.locateType.lotParcelToAddress,
                     label: 'govmap.locateType.lotParcelToAddress' 
+                },
+                { 
+                    value: govmap.locateType.addressToLotParcel,
+                    label: 'govmap.locateType.addressToLotParcel' 
                 }
             ],
             isOptional: false,
-            value: govmap.locateType.addressToLotParcel
+            value: govmap.locateType.lotParcelToAddress
          },
         { label: 'address', value: '', type: 'string', isOptional: true },
         { label: 'lot', value: '', type: 'number', isOptional: true },
         { label: 'parcel', value: '', type: 'number', isOptional: true },
     ]).then(values => {
         if (!values) return; // canceled or dismissed
-        const params = values[0] === govmap.locateType.addressToLotParcel ? {
-            lot: values[2],
-            parcel: values[3],
+        const params = Number(values[0]) === govmap.locateType.addressToLotParcel ? {
+            lot: Number(values[2]),
+            parcel: Number(values[3]),
             } : {
                 address: values[1]
             };

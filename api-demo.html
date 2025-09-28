@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Examples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .navbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Dropdown Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .dropdown-arrow, .sub-dropdown-arrow {
+            transition: transform 0.2s ease;
+            display: inline-block;
+            transform-origin: center;
+        }
+
+        .dropdown-parent.active .dropdown-arrow,
+        .dropdown-item.active .sub-dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1001;
+        }
+
+        .sub-dropdown .dropdown-menu {
+            top: 0;
+            right: 0;
+            transform: translateY(-10px);
+            min-width: 160px;
+        }
+
+        /* Show only the targeted submenu under the sub-dropdown */
+        .dropdown.sub-dropdown .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+        }
+        .dropdown.sub-dropdown.active .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown.sub-dropdown.active .dropdown-menu {
+            transform: translateY(0);
+        }
+        
+        .dropdown-parent .dropdown-menu {
+            min-width: 200px;
+        }
+
+        .dropdown.sub-dropdown {
+            position: absolute;
+            right: 100%;
+            top: 0;
+            margin-right: 5px;
+        }
+
+        /* Only the parent dropdown should show all its menu items when active */
+        .dropdown-parent.dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            direction: rtl;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f9fafb;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 0.375rem 0.375rem 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 0.375rem 0.375rem;
+        }
+
+        .dropdown-item.active .sub-dropdown-arrow {
+            transform: rotate(270deg);
+        }
+
+        /* Input Field Styles */
+        .search-input {
+            direction: rtl;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            width: 200px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Button Styles */
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Main Content Styles */
+        .main {
+            flex: 1;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+        }
+
+        #response-section {
+            display: none;
+            position: absolute;
+            top: 1rem;
+            left: 0.5rem;
+            width: 32vw;
+            max-width: 500px;
+            max-height: 70vh;
+            background: rgba(255,255,255,0.97);
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 20;
+            padding: 0.75rem 0.75rem 1rem 0.75rem;
+            overflow: auto;
+        }
+
+        #response-section .title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #response-section .title {
+            direction: rtl;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        #response-section .title-container .header-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #response-section .title-container svg {
+            cursor: pointer;
+            width: 24px;
+        }
+
+        #response-close {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+
+        /* Custom Footer Styles */
+        footer.custom-footer {
+            position: relative;
+            height: 2.5rem;
+            text-align: right;
+            padding: 0 1.5rem;
+        }
+        footer.custom-footer p {
+            font-size: 1.1rem;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+        footer.custom-footer a {
+            color: #0044cc;
+            text-decoration: none;
+        }
+        footer.custom-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
+    </head>
+    
+    <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <!-- <div class="navbar-brand">API Examples</div> -->
+        <div class="navbar-controls">
+
+        </div>
+        <div class="navbar-controls">
+            <!-- Button -->
+            <button class="btn" id="searchBtn" onclick="handleSearch()" disabled>חיפוש</button>
+
+            <!-- Text Input -->
+            <input type="text" class="search-input" placeholder="כתובת">
+
+            <!-- Nested Dropdown -->
+            <div class="dropdown dropdown-parent" id="search-functions">
+                <button class="dropdown-btn" onclick="toggleParentDropdown('search-functions')">
+                    <span class="dropdown-arrow">▼</span>
+                פונקציות חיפוש
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" id="intersect-features-link" onclick="toggleSubMenu(this.id)">
+                        intersectFeatures
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="searchAndLocate(this.id)">
+                        searchAndLocate
+                    </a>
+                </div>
+            </div>
+            <div class="dropdown dropdown-parent" id="general-functions">
+                <button class="dropdown-btn" onclick="toggleParentDropdown('general-functions')">
+                        <span class="dropdown-arrow">▼</span>
+                    פונקציות כלליות
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" id="onevent-link" onclick="toggleGeneralFunctionsSubMenu(this.id)">
+                        <span>onEvent</span>
+                        <span class="sub-dropdown-arrow">◀</span>
+                    </a>
+                    <a href="#" class="dropdown-item" id="unbindevent-link" onclick="toggleGeneralFunctionsSubMenu(this.id)">
+                        <span>unbindEvent</span>
+                        <span class="sub-dropdown-arrow">◀</span>
+                    </a>
+                    <a href="#" class="dropdown-item" id="draw-link" onclick="toggleGeneralFunctionsSubMenu(this.id)">
+                        <span>draw</span>
+                        <span class="sub-dropdown-arrow">◀</span>
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="zoomToXY()">zoomToXY</a>
+                </div>
+            </div>
+            <div class="dropdown sub-dropdown" id="general-functions-dropdown">
+                <div class="dropdown-menu submenu-container onevent-link">
+                    <a href="#" class="dropdown-item" onclick="handleEventAction(govmap.events.CLICK)">Click</a>
+                    <a href="#" class="dropdown-item" onclick="handleEventAction(govmap.events.DOUBLE_CLICK)">Double Click</a>
+                    <a href="#" class="dropdown-item" onclick="handleEventAction(govmap.events.EXTENT_CHANGE)">Extent Change</a>
+                    <a href="#" class="dropdown-item" onclick="handleEventAction(govmap.events.MOUSE_MOVE)">Mouse Move</a>
+                    <a href="#" class="dropdown-item" onclick="handleEventAction(govmap.events.MOUSE_OVER)">Mouse Over</a>
+                </div>
+                <div class="dropdown-menu submenu-container draw-link">
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Point)">נקודה</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Polyline)">קו</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Polygon)">מצולע</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Circle)">רדיוס</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.Rectangle)">מלבן</a>
+                    <a href="#" class="dropdown-item" onclick="draw(govmap.drawType.FreehandPolygon)">שרטוט חופשי</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div id="map" style="width: 100%; height: 80vh;"></div>
+        <div id="response-section">
+            <div class="title-container">
+                <button id="response-close" aria-label="Close" onclick="document.getElementById('response-section').style.display='none'">✕</button>
+                <div class="header-container">
+                    <svg onclick="copy()" width="100%" height="100%" viewBox="0 0 24 24" fill="none" currentColor="#1f2937" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 16V18.8C8 19.9201 8 20.4802 8.21799 20.908C8.40973 21.2843 8.71569 21.5903 9.09202 21.782C9.51984 22 10.0799 22 11.2 22H18.8C19.9201 22 20.4802 22 20.908 21.782C21.2843 21.5903 21.5903 21.2843 21.782 20.908C22 20.4802 22 19.9201 22 18.8V11.2C22 10.0799 22 9.51984 21.782 9.09202C21.5903 8.71569 21.2843 8.40973 20.908 8.21799C20.4802 8 19.9201 8 18.8 8H16M5.2 16H12.8C13.9201 16 14.4802 16 14.908 15.782C15.2843 15.5903 15.5903 15.2843 15.782 14.908C16 14.4802 16 13.9201 16 12.8V5.2C16 4.0799 16 3.51984 15.782 3.09202C15.5903 2.71569 15.2843 2.40973 14.908 2.21799C14.4802 2 13.9201 2 12.8 2H5.2C4.0799 2 3.51984 2 3.09202 2.21799C2.71569 2.40973 2.40973 2.71569 2.21799 3.09202C2 3.51984 2 4.07989 2 5.2V12.8C2 13.9201 2 14.4802 2.21799 14.908C2.40973 15.2843 2.71569 15.5903 3.09202 15.782C3.51984 16 4.07989 16 5.2 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <p class="title">פלט</p>
+                </div>
+            </div>
+            <div id="response"></div>
+        </main>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="custom-footer">
+        <p>
+            <a href="https://www.govmap.gov.il/">המרכז למיפוי ישראל 2025, אתר המפות הממשלתי ©</a>
+        </p>
+    </footer>
+
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script src="api-demo.js"></script>
+</body>
+
+</html>

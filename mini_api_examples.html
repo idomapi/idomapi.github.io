@@ -439,9 +439,9 @@
 
                     if (response.data && response.data.length > 0) {
                         busStop = {
-                            x: response.data[0].fields[0].value,
-                            y: response.data[0].fields[1].value,
-                            stopName: response.data[0].fields[2].value,
+                            x: response.data[0].Fields[0].Value,
+                            y: response.data[0].Fields[1].Value,
+                            stopName: response.data[0].Fields[2].Value,
                             distance: response.data[0].distance
                         }
                     } else {

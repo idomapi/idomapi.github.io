@@ -95,7 +95,7 @@ function searchAndLocate() {
             } : {
                 address: values[1]
             };
-        govmap.searchAndLocate(params)
+        govmap.searchAndLocate({type: Number(values[0], ...params)})
             .then(response => {
                 renderResponse(response);
             });

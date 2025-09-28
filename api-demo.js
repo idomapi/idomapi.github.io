@@ -20,7 +20,7 @@ function zoomToXY() {
         { label: 'level', value: '', type: 'number', isOptional: true },
         { label: 'marker', value: '', type: 'boolean', isOptional: true },
     ]).then(values => {
-        if (!values) return; // canceled or dismissed
+        if (!values) return;
         const x = parseFloat(values[0]);
         const y = parseFloat(values[1]);
         const levelVal = parseFloat(values[2]);
@@ -88,7 +88,7 @@ function searchAndLocate() {
         { label: 'lot', value: '', type: 'number', isOptional: true },
         { label: 'parcel', value: '', type: 'number', isOptional: true },
     ]).then(values => {
-        if (!values) return; // canceled or dismissed
+        if (!values) return;
         const params = Number(values[0]) === govmap.locateType.addressToLotParcel ? {
             lot: Number(values[2]),
             parcel: Number(values[3]),
@@ -96,6 +96,33 @@ function searchAndLocate() {
                 address: values[1]
             };
         govmap.searchAndLocate({type: Number(values[0]), ...params})
+            .then(response => {
+                renderResponse(response);
+            });
+    });
+}
+
+function intersectFeatures() {
+    toggleParentDropdown();
+    renderResponse(null);
+    openModal([
+        { label: 'layerName', value: '', type: 'string', isOptional: false },
+        { label: 'fields', value: '', type: 'string[]', isOptional: false },
+        { label: 'address', value: '', type: 'string', isOptional: true },
+        { label: 'geometry', value: '', type: 'string', isOptional: true },
+        { label: 'whereClause', value: '', type: 'string', isOptional: true },
+        { label: 'getShapes', value: '', type: 'boolean', isOptional: true },
+    ]).then(values => {
+        if (!values) return;
+        const params = {
+            layerName: values[0],
+            fields: values[1],
+            address: values[2],
+            geometry: values[3],
+            whereClause: values[4],
+            getShapes: values[5]
+        };
+        govmap.intersectFeatures(params)
             .then(response => {
                 renderResponse(response);
             });
@@ -283,6 +310,70 @@ function openModal(fields) {
                 optionEl.selected = (f.value !== undefined && (option.value === f.value || option === f.value));
                 input.appendChild(optionEl);
             });
+        } else if (f.type === 'string[]') {
+            // Create container for array items
+            const container = document.createElement('div');
+            container.style.flex = '1';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '8px';
+            
+            // Parse initial values
+            const values = Array.isArray(f.value) ? f.value : 
+                         (f.value ? String(f.value).split(',').map(s => s.trim()) : ['']);
+            
+            // Function to create an item row
+            const createItemRow = (value = '') => {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.gap = '4px';
+                row.style.alignItems = 'center';
+                
+                const itemInput = document.createElement('input');
+                itemInput.type = 'text';
+                itemInput.value = value;
+                itemInput.style.flex = '1';
+                itemInput.style.padding = '6px 8px';
+                itemInput.style.border = '1px solid #e5e7eb';
+                itemInput.style.borderRadius = '4px';
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.textContent = '×';
+                removeBtn.style.cssText = 'width:24px;height:24px;padding:0;border:none;background:none;cursor:pointer;color:#6b7280;font-size:18px;';
+                removeBtn.onclick = () => {
+                    if (container.querySelectorAll('.array-item').length > 1) {
+                        container.removeChild(row);
+                    } else {
+                        itemInput.value = '';
+                    }
+                };
+                
+                row.appendChild(itemInput);
+                row.appendChild(removeBtn);
+                row.classList.add('array-item');
+                
+                return row;
+            };
+            
+            // Add initial items
+            values.forEach(value => {
+                container.appendChild(createItemRow(value));
+            });
+            
+            // Add button to add new item
+            const addBtn = document.createElement('button');
+            addBtn.type = 'button';
+            addBtn.textContent = '+ הוסף פריט';
+            addBtn.style.cssText = 'margin-top:4px;padding:4px 8px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;font-size:12px;align-self:flex-start;';
+            addBtn.onclick = () => {
+                const newRow = createItemRow();
+                container.insertBefore(newRow, addBtn);
+                newRow.querySelector('input').focus();
+            };
+            
+            container.appendChild(addBtn);
+            input = container;
         } else if (f.type === 'number') {
             input = document.createElement('input');
             input.type = 'number';
@@ -326,7 +417,22 @@ function openModal(fields) {
         };
 
         const submit = () => {
-            const result = inputs.map(inp => inp.type === 'checkbox' ? (inp.checked ? 'true' : 'false') : inp.value);
+            const result = inputs.map((inp, idx) => {
+                const field = fields[idx];
+                if (field.type === 'boolean') {
+                    return inp.checked ? 'true' : 'false';
+                } else if (field.type === 'string[]') {
+                    // Collect all non-empty values from array inputs
+                    const items = [];
+                    const itemInputs = inp.querySelectorAll('input[type="text"]');
+                    itemInputs.forEach(itemInput => {
+                        const val = itemInput.value.trim();
+                        if (val) items.push(val);
+                    });
+                    return items;
+                }
+                return inp.value;
+            });
             cleanup();
             resolve(result);
         };

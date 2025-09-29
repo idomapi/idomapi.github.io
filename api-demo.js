@@ -4,7 +4,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         visibleLayers: [],
-        layers: ['kids_g', 'school', 'bus_stops', 'PARCEL_ALL', 'SUB_GUSH_ALL'],
+        layers: ['kids_g', 'school', 'bus_stops', 'PARCEL_ALL', 'SUB_GUSH_ALL', 'GASSTATIONS'],
         layersMode: 2,
         showXY: true,
         identifyOnClick: true,
@@ -393,8 +393,8 @@ function searchAndLocate() {
     ]).then(values => {
         if (!values) return;
         const params = Number(values[0]) === govmap.locateType.addressToLotParcel ? {
-            lot: Number(values[2]),
-            parcel: Number(values[3]),
+            lot: values[2],
+            parcel: values[3],
             } : {
                 address: values[1]
             };
@@ -498,7 +498,7 @@ function filterLayers() {
     openModal([
         { label: 'layerName', value: '', type: 'string', isOptional: false },
         { label: 'whereClause', value: '', type: 'string', isOptional: false },
-        { label: 'zoomToExtent', value: '', type: 'boolean', isOptional: true },
+        { label: 'zoomToExtent', value: false, type: 'boolean', isOptional: true },
     ]).then(values => {
         if (!values) return;
         const params = {
@@ -506,10 +506,7 @@ function filterLayers() {
             whereClause: values[1],
             zoomToExtent: values[2]
         };
-        govmap.filterLayers(params)
-            .then(response => {
-                renderResponse(response);
-            });
+        govmap.filterLayers(params);
     });
 }
 
@@ -542,7 +539,7 @@ function identifyByXY() {
         { label: 'y', value: 664037, type: 'number', isOptional: false },
     ]).then(values => {
         if (!values) return;
-        govmap.identifyByXY(Number(values[0]), Number(values[1]))
+        govmap.identifyByXY(values[0], values[1])
             .then(response => {
                 renderResponse(response);
             });
@@ -558,7 +555,7 @@ function identifyByXYAndLayer() {
         { label: 'layers', value: ['gasstations'], type: 'string[]', isOptional: false },
     ]).then(values => {
         if (!values) return;
-        govmap.identifyByXYAndLayer(Number(values[0]), Number(values[1]), values[2])
+        govmap.identifyByXYAndLayer(values[0], values[1], values[2])
             .then(response => {
                 renderResponse(response);
             });
@@ -946,7 +943,7 @@ function openModal(fields) {
             input.type = 'number';
             input.step = 'any';
             input.style.cssText = 'flex:1;padding:6px 8px;border:1px solid #e5e7eb;border-radius:6px;';
-            input.value = (f.value ?? '').toString();
+            input.value = (f.value ?? '');
         } else if (f.type === 'object' || f.type === 'object[]') {
             input = document.createElement('div');
             input.style.cssText = 'display:flex;flex-direction:column;gap:8px;direction: ltr;';
@@ -1068,22 +1065,32 @@ function openModal(fields) {
                 const result = inputs.map((inp, idx) => {
                 const field = fields[idx];
                 if (field.type === 'boolean') {
-                    return inp.checked ? 'true' : 'false';
-                } else if (field.type === 'string[]' || field.type === 'number[]') {
-                    // Collect all non-empty values from array inputs
+                    return inp.checked; // Return as boolean
+                } else if (field.type === 'number') {
+                    const num = parseFloat(inp.value);
+                    return isNaN(num) ? 0 : num; // Return as number
+                } else if (field.type === 'number[]') {
+                    // Collect all non-empty values from array inputs as numbers
                     const items = [];
-                    const itemInputs = inp.querySelectorAll('input[type="text"], input[type="number"]');
+                    const itemInputs = inp.querySelectorAll('input[type="number"]');
                     itemInputs.forEach(itemInput => {
                         const val = itemInput.value.trim();
                         if (val) {
-                            if (field.type === 'number[]') {
-                                const num = parseFloat(val);
-                                if (!isNaN(num)) {
-                                    items.push(num);
-                                }
-                            } else {
-                                items.push(val);
+                            const num = parseFloat(val);
+                            if (!isNaN(num)) {
+                                items.push(num);
                             }
+                        }
+                    });
+                    return items;
+                } else if (field.type === 'string[]') {
+                    // Collect all non-empty values from array inputs as strings
+                    const items = [];
+                    const itemInputs = inp.querySelectorAll('input[type="text"]');
+                    itemInputs.forEach(itemInput => {
+                        const val = itemInput.value.trim();
+                        if (val) {
+                            items.push(val);
                         }
                     });
                     return items;
@@ -1096,6 +1103,7 @@ function openModal(fields) {
                         return field.type === 'object' ? {} : [];
                     }
                 }
+                // Default: return as string (for 'string' type and fallback)
                 return inp.value;
             });
                 cleanup();

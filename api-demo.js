@@ -353,7 +353,6 @@ function removeGPSMarker() {
     govmap.removeGPSMarker();
 }
 
-
 function setVisibleLayers() {
     toggleParentDropdown();
     renderResponse(null);
@@ -364,6 +363,60 @@ function setVisibleLayers() {
         if (!values) return;
         govmap.setVisibleLayers(values[0]);
     });
+}
+
+function setHeatLayer() {
+    toggleParentDropdown();
+    renderResponse(null);
+    openModal([
+        { label: 'points', value: [
+            { point: { x: 100000, y: 200000 }, attributes: { val1: 50, val2: 800 } },
+            { point: { x: 200000, y: 400000 }, attributes: { val1: 100, val2: 700 } },
+        ],
+        type: 'object[]', isOptional: false },
+        { label: 'options', value: { valueField: 'val1' }, type: 'object', isOptional: true },
+    ]).then(values => {
+        if (!values) return;
+        const params = {
+            points: values[0],
+            options: values[1]
+        };
+        govmap.setHeatLayer(params);
+    });
+}
+
+function removeHeatLayer() {
+    toggleParentDropdown();
+    renderResponse(null);
+    govmap.removeHeatLayer();
+}
+
+function changeHeatLayerValueField() {
+    toggleParentDropdown();
+    renderResponse(null);
+    openModal([
+        { label: 'valueField', value: 'val2', type: 'string', isOptional: false },
+    ]).then(values => {
+        if (!values) return;
+        govmap.changeHeatLayerValueField(values[0]);
+    });
+}
+
+function setMapMarker() {
+    toggleParentDropdown();
+    renderResponse(null);
+    openModal([
+        { label: 'קוארדינטות של הסמן', value: {x: 179445, y: 663880}, type: 'object', isOptional: false }
+    ]).then(values => {
+        if (!values) return;
+        govmap.setMapMarker({x: values[0].x, y: values[0].y});
+    });
+}
+
+function clearMapMarker() {
+    toggleParentDropdown();
+    renderResponse(null);
+    govmap.clearMapMarker();
 }
 
 // search functions
@@ -774,7 +827,7 @@ function handleSearch() {
         .then(function (response) {
             if (response.data && response.data.length > 0) {
                 const firstResult = response.data[0];
-                govmap.zoomToXY({ x: firstResult.X, y: firstResult.Y, marker: true });
+                govmap.zoomToXY({ x: firstResult.X, y: firstResult.Y, level: 10, marker: true });
             } else {
                 console.warn('לא נמצאו תוצאות');
             }

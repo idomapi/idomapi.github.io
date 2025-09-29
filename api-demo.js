@@ -289,30 +289,44 @@ function setDefaultTool() {
 }
 
 function showPrint() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.showPrint();
 }
 
 function closePrint() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.closePrint();
 }
 
 function showExportMap() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.showExportMap();
 }
 
 function closeExportMap() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.closeExportMap();
 }
 
 function showMeasure() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.showMeasure();
 }
 
 function closeMeasure() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.closeMeasure();
 }
 
 function closeOpenApps() {
+    toggleParentDropdown();
+    renderResponse(null);
     govmap.closeOpenApps();
 }
 

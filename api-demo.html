@@ -136,6 +136,8 @@
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
+            overflow-y: auto;
+            max-height: 80vh;
         }
 
         .dropdown-item {
@@ -150,6 +152,14 @@
 
         .dropdown-item:hover {
             background: #f9fafb;
+        }
+
+        .menu-divider {
+            height: 1px;
+            margin: 0.25rem 0;
+            background-color: #e5e7eb;
+            border: none;
+            width: 100%;
         }
 
         .dropdown-item:first-child {
@@ -304,18 +314,80 @@
             <input type="text" class="search-input" placeholder="כתובת">
 
             <!-- Nested Dropdown -->
+            <div class="dropdown dropdown-parent" id="geometric-functions">
+                <button class="dropdown-btn" onclick="toggleParentDropdown('geometric-functions')">
+                    <span class="dropdown-arrow">▼</span>
+                פונקציות גיאומטריות
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" id="draw-link" onclick="toggleGeneralFunctionsSubMenu(this.id, event)">
+                        <span>draw</span>
+                        <span class="sub-dropdown-arrow">◀</span>
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="editDrawing()">
+                        editDrawing
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="zoomToDrawing()">
+                        zoomToDrawing
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="clearDrawings()">
+                        clearDrawings
+                    </a>
+                    <div class="menu-divider"></div>
+                    <a href="#" class="dropdown-item" onclick="displayGeometries()">
+                        displayGeometries
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="clearGeometriesByName()">
+                        clearGeometriesByName
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="clearGeometriesById()">
+                        clearGeometriesById
+                    </a>
+                </div>
+            </div>
             <div class="dropdown dropdown-parent" id="search-functions">
                 <button class="dropdown-btn" onclick="toggleParentDropdown('search-functions')">
                     <span class="dropdown-arrow">▼</span>
                 פונקציות חיפוש
                 </button>
                 <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item" id="intersect-features-link" onclick="intersectFeatures()">
+                    <a href="#" class="dropdown-item" onclick="filterLayers()">
+                        filterLayers
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="geocode()">
+                        geocode
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="getLayerData()">
+                        getLayerData
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="intersectFeatures()">
                         intersectFeatures
                     </a>
                     <a href="#" class="dropdown-item" onclick="searchAndLocate()">
                         searchAndLocate
                     </a>
+                    <a href="#" class="dropdown-item" onclick="searchInLayer()">
+                        searchInLayer
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="identifyByXY()">
+                        identifyByXY
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="identifyByXYAndLayer()">
+                        identifyByXYAndLayer
+                    </a>
+                </div>
+            </div>
+            <div class="dropdown dropdown-parent" id="zoom-functions">
+                <button class="dropdown-btn" onclick="toggleParentDropdown('zoom-functions')">
+                        <span class="dropdown-arrow">▼</span>
+                    פונקציות זום
+                </button>
+                <div class="dropdown-menu">
+                    <a href="#" class="dropdown-item" onclick="zoomIn()">zoomIn</a>
+                    <a href="#" class="dropdown-item" onclick="zoomOut()">zoomOut</a>
+                    <a href="#" class="dropdown-item" onclick="zoomToXY()">zoomToXY</a>
+                    <a href="#" class="dropdown-item" onclick="getZoomLevel()">getZoomLevel</a>
+                    <a href="#" class="dropdown-item" onclick="getMapTolerance()">getMapTolerance</a>
                 </div>
             </div>
             <div class="dropdown dropdown-parent" id="general-functions">
@@ -324,19 +396,40 @@
                     פונקציות כלליות
                 </button>
                 <div class="dropdown-menu">
-                    <a href="#" class="dropdown-item" id="onevent-link" onclick="toggleGeneralFunctionsSubMenu(this.id)">
+                    <!-- <a href="#" class="dropdown-item" onclick="createMap()">createMap</a> -->
+                    <a href="#" class="dropdown-item" id="onevent-link" onclick="toggleGeneralFunctionsSubMenu(this.id, event)">
                         <span>onEvent</span>
                         <span class="sub-dropdown-arrow">◀</span>
                     </a>
-                    <a href="#" class="dropdown-item" id="unbindevent-link" onclick="toggleGeneralFunctionsSubMenu(this.id)">
+                    <a href="#" class="dropdown-item" id="unbindevent-link" onclick="toggleGeneralFunctionsSubMenu(this.id, event)">
                         <span>unbindEvent</span>
                         <span class="sub-dropdown-arrow">◀</span>
                     </a>
-                    <a href="#" class="dropdown-item" id="draw-link" onclick="toggleGeneralFunctionsSubMenu(this.id)">
-                        <span>draw</span>
-                        <span class="sub-dropdown-arrow">◀</span>
-                    </a>
-                    <a href="#" class="dropdown-item" onclick="zoomToXY()">zoomToXY</a>
+                    <a href="#" class="dropdown-item" onclick="closeBubble()">closeBubble</a>
+                    <a href="#" class="dropdown-item" onclick="getBackground()">getBackground</a>
+                    <a href="#" class="dropdown-item" onclick="setBackground()">setBackground</a>
+                    <a href="#" class="dropdown-item" onclick="setLayerOpacity()">setLayerOpacity</a>
+                    <a href="#" class="dropdown-item" onclick="getCenter()">getCenter</a>
+                    <a href="#" class="dropdown-item" onclick="getMapUrl()">getMapUrl</a>
+                    <a href="#" class="dropdown-item" onclick="getXY()">getXY</a>
+                    <a href="#" class="dropdown-item" onclick="getLayerRenderer()">getLayerRenderer</a>
+                    <a href="#" class="dropdown-item" onclick="setVisibleLayers()">setVisibleLayers</a>
+                    <a href="#" class="dropdown-item" onclick="setMapCursor()">setMapCursor</a>
+                    <a href="#" class="dropdown-item" onclick="setDefaultTool()">setDefaultTool</a>
+                    <div class="menu-divider"></div>
+                    <a href="#" class="dropdown-item" onclick="showPrint()">showPrint</a>
+                    <a href="#" class="dropdown-item" onclick="closePrint()">closePrint</a>
+                    <a href="#" class="dropdown-item" onclick="showExportMap()">showExportMap</a>
+                    <a href="#" class="dropdown-item" onclick="closeExportMap()">closeExportMap</a>
+                    <a href="#" class="dropdown-item" onclick="showMeasure()">showMeasure</a>
+                    <a href="#" class="dropdown-item" onclick="closeMeasure()">closeMeasure</a>
+                    <a href="#" class="dropdown-item" onclick="closeOpenApps()">closeOpenApps</a>
+                    <div class="menu-divider"></div>
+                    <a href="#" class="dropdown-item" onclick="getGPSLocation()">getGPSLocation</a>
+                    <a href="#" class="dropdown-item" onclick="gpsOn()">gpsOn</a>
+                    <a href="#" class="dropdown-item" onclick="gpsOff()">gpsOff</a>
+                    <a href="#" class="dropdown-item" onclick="setGpsMarker()">setGpsMarker</a>
+                    <a href="#" class="dropdown-item" onclick="removeGPSMarker()">removeGPSMarker</a>
                 </div>
             </div>
             <div class="dropdown sub-dropdown" id="general-functions-dropdown">
@@ -380,7 +473,7 @@
     <!-- Footer -->
     <footer class="custom-footer">
         <p>
-            <a href="https://www.govmap.gov.il/">המרכז למיפוי ישראל 2025, אתר המפות הממשלתי ©</a>
+            <a href="https://www.govmap.gov.il/">המרכז למיפוי ישראל ה'תשפ"ו 2025, אתר המפות הממשלתי ©</a>
         </p>
     </footer>
 

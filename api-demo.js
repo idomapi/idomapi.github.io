@@ -542,7 +542,7 @@ function identifyByXY() {
         { label: 'y', value: 664037, type: 'number', isOptional: false },
     ]).then(values => {
         if (!values) return;
-        govmap.identifyByXY(values[0], values[1])
+        govmap.identifyByXY(Number(values[0]), Number(values[1]))
             .then(response => {
                 renderResponse(response);
             });
@@ -558,7 +558,7 @@ function identifyByXYAndLayer() {
         { label: 'layers', value: ['gasstations'], type: 'string[]', isOptional: false },
     ]).then(values => {
         if (!values) return;
-        govmap.identifyByXYAndLayer(values[0], values[1], values[2])
+        govmap.identifyByXYAndLayer(Number(values[0]), Number(values[1]), values[2])
             .then(response => {
                 renderResponse(response);
             });
@@ -777,7 +777,7 @@ function handleSearch() {
         .then(function (response) {
             if (response.data && response.data.length > 0) {
                 const firstResult = response.data[0];
-                zoomToXY(firstResult.X, firstResult.Y);
+                govmap.zoomToXY({ x: firstResult.X, y: firstResult.Y, marker: true });
             } else {
                 console.warn('לא נמצאו תוצאות');
             }

@@ -18,12 +18,18 @@
                 layerNumber: 5102010,
                 fieldName: 'value2'
             }
+        };
+        const activeLayer = {
+            id: layers.eshkolSharon.id,
+            layerNumber: layers.eshkolSharon.layerNumber,
+            fieldName: layers.eshkolSharon.fieldName
         }
+
         function initGovMap() {
                 govmap.createMap('map', {
                     token: 'fe827829-8b7a-4ef6-85ed-3ae1caebaf64',
-                    layers: [layers.eshkolSharon.id], // 216602
-                    visibleLayers: [layers.eshkolSharon.id],
+                    layers: [activeLayer.id],
+                    visibleLayers: [activeLayer.id],
                     showXY: true,
                     identifyOnClick: true,
                     isEmbeddedToggle: false,
@@ -38,8 +44,8 @@
 
         function filter() {
             const params = {
-                layerName: layers.eshkolSharon.id,
-                whereClause: `${layers.eshkolSharon.fieldName} LIKE '${layers.eshkolSharon.layerNumber || 22}%'`,
+                layerName: activeLayer.id,
+                whereClause: `${activeLayer.fieldName} LIKE '${activeLayer.layerNumber || 22}%'`,
                 zoomToExtent: true
             };
             govmap.filterLayers(params);
@@ -49,6 +55,7 @@
 
 <body>
     <div id="map" style="width:850px;height:750px"></div>
+
 </body>
 
 </html>

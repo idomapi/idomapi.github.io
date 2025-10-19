@@ -39,7 +39,7 @@
         function filter() {
             const params = {
                 layerName: layers.eshkolSharon.id,
-                whereClause: `internalid LIKE '${layers.eshkolSharon.fieldName || 22}%'`,
+                whereClause: `${layers.eshkolSharon.fieldName} LIKE '${layers.eshkolSharon.layerNumber || 22}%'`,
                 zoomToExtent: true
             };
             govmap.filterLayers(params);

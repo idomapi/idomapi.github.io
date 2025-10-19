@@ -10,11 +10,13 @@
         const layers = {
             blueJlm: {
                 id: '216600',
-                layerNumber: 3102
+                layerNumber: 3102020,
+                fieldName: 'value7'
             },
             eshkolSharon: {
                 id: '216602',
-                layerNumber: 5101
+                layerNumber: 5102010,
+                fieldName: 'value2'
             }
         }
         function initGovMap() {
@@ -36,8 +38,8 @@
 
         function filter() {
             const params = {
-                layerName: layers.eshkolSharon.id,
-                whereClause: `internalid LIKE '${layers.eshkolSharon.layerNumber || 22}%'`,
+                layerName: eshkolSharon.id,
+                whereClause: `internalid LIKE '${eshkolSharon.fieldName || 22}%'`,
                 zoomToExtent: true
             };
             govmap.filterLayers(params);

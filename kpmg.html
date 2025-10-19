@@ -20,10 +20,10 @@
             }
         };
         const activeLayer = {
-            id: layers.eshkolSharon.id,
-            layerNumber: layers.eshkolSharon.layerNumber,
-            fieldName: layers.eshkolSharon.fieldName
-        }
+            id: layers.blueLineJlm.id,
+            layerNumber: layers.blueLineJlm.layerNumber,
+            fieldName: layers.blueLineJlm.fieldName
+        };
 
         function initGovMap() {
                 govmap.createMap('map', {
@@ -50,12 +50,23 @@
             };
             govmap.filterLayers(params);
         }
+
+        function showAllFeatures() {
+            const params = {
+                layerName: activeLayer.id,
+                whereClause: `1 = 1`,
+                zoomToExtent: true
+            };
+            govmap.filterLayers(params);
+        }
     </script>
 </head>
 
 <body>
-    <div id="map" style="width:850px;height:750px"></div>
-
+    <div style="display: flex;">
+        <div id="map" style="width:850px;height:750px"></div>
+        <button onclick="showAllFeatures()" style="height: 50px;">הצג את כל הישויות בשכבה</button>
+    </div>
 </body>
 
 </html>

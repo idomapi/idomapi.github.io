@@ -7,22 +7,41 @@
     <title>kpmg</title>
     <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
     <script type="text/javascript">
+        const layers = {
+            blueJlm: {
+                id: '216600',
+                layerNumber: 3102
+            },
+            eshkolSharon: {
+                id: '216602',
+                layerNumber: 5101
+            }
+        }
         function initGovMap() {
                 govmap.createMap('map', {
                     token: 'fe827829-8b7a-4ef6-85ed-3ae1caebaf64',
-                    layers: ["216600"], // 216602
-                    visibleLayers: ['216600'],
+                    layers: [layers.eshkolSharon.id], // 216602
+                    visibleLayers: [layers.eshkolSharon.id],
                     showXY: true,
                     identifyOnClick: true,
                     isEmbeddedToggle: false,
                     background: "0",
                     layersMode: 2,
-                    zoomButtons:true,
+                    zoomButtons:false,
                     onLoad: () => {
-                        console.log('000 onLoad');
+                        filter();
                     }
                 });
             }
+
+        function filter() {
+            const params = {
+                layerName: layers.eshkolSharon.id,
+                whereClause: `internalid LIKE '${layers.eshkolSharon.layerNumber || 22}%'`,
+                zoomToExtent: true
+            };
+            govmap.filterLayers(params);
+        }
     </script>
 </head>
 

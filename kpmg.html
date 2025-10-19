@@ -45,16 +45,7 @@
         function filter() {
             const params = {
                 layerName: activeLayer.id,
-                whereClause: `${activeLayer.fieldName} LIKE '${activeLayer.layerNumber || 22}%'`,
-                zoomToExtent: true
-            };
-            govmap.filterLayers(params);
-        }
-
-        function showAllFeatures() {
-            const params = {
-                layerName: activeLayer.id,
-                whereClause: `${activeLayer.fieldName} LIKE '${activeLayer.layerNumber === layers.blueLineJlm.id ? 3 : 5}%'`,
+                whereClause: `${activeLayer.fieldName} LIKE '${activeLayer.layerNumber}%'`,
                 zoomToExtent: true
             };
             govmap.filterLayers(params);
@@ -65,7 +56,6 @@
 <body>
     <div style="display: flex;">
         <div id="map" style="width:850px;height:750px"></div>
-        <button onclick="showAllFeatures()" style="height: 50px;">הצג את כל הישויות בשכבה</button>
     </div>
 </body>
 

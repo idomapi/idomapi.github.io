@@ -8,7 +8,7 @@
     <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
     <script type="text/javascript">
         const layers = {
-            blueJlm: {
+            blueLineJlm: {
                 id: '216600',
                 layerNumber: 3102020,
                 fieldName: 'value7'
@@ -38,8 +38,8 @@
 
         function filter() {
             const params = {
-                layerName: eshkolSharon.id,
-                whereClause: `internalid LIKE '${eshkolSharon.fieldName || 22}%'`,
+                layerName: layers.eshkolSharon.id,
+                whereClause: `internalid LIKE '${layers.eshkolSharon.fieldName || 22}%'`,
                 zoomToExtent: true
             };
             govmap.filterLayers(params);

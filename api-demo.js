@@ -18,38 +18,16 @@ function createMap() {
     toggleParentDropdown();
     renderResponse(null);
     openModal([
-        { label: 'background', value: '', type: 'number', isOptional: false },
-        { label: 'center', value: {x: '', y: ''}, type: 'object', isOptional: true },
-        { label: 'setMapMarker', value: '', type: 'boolean', isOptional: true },
-        { label: 'visibleLayers', value: '', type: 'string[]', isOptional: true },
-        { label: 'layers', value: '', type: 'string[]', isOptional: false },
-        { label: 'layersMode', value: '', type: 'number', isOptional: false },
-        { label: 'level', value: '', type: 'number', isOptional: true },
-        { label: 'showXY', value: '', type: 'boolean', isOptional: false },
-        { label: 'identifyOnClick', value: '', type: 'boolean', isOptional: false },
-        { label: 'bgButton', value: '', type: 'boolean', isOptional: true },
-        { label: 'isEmbeddedToggle', value: '', type: 'boolean', isOptional: false },
-        { label: 'zoomButtons', value: '', type: 'boolean', isOptional: true },
-        { label: 'extent', value: {xmin: '', ymin: '', xmax: '', ymax: ''}, type: 'object', isOptional: true },
+        { label: '', value: {
+            token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
+            background: 0,
+            layers: ['PARCEL_ALL', 'SUB_GUSH_ALL'],
+            layersMode: 2
+        },
+        type: 'object', isOptional: false }
     ]).then(values => {
         if (!values) return;
-        const params = {
-            token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-            background: values[0],
-            center: values[1],
-            setMapMarker: values[2],
-            visibleLayers: values[3],
-            layers: values[4],
-            layersMode: values[5],
-            level: values[6],
-            showXY: values[7],
-            identifyOnClick: values[8],
-            bgButton: values[9],
-            isEmbeddedToggle: values[10],
-            zoomButtons: values[11],
-            extent: values[12],
-        };
-        govmap.createMap('map', params);
+        govmap.createMap('map', values[0]);
     });
 }
 
@@ -629,6 +607,8 @@ function identifyByXYAndLayer() {
     });
 }
 
+function selectFeaturesOnMap() {}
+
 // Geometric functions
 function draw(type) {
     const subContainer = document.getElementById('general-functions-dropdown');
@@ -1013,7 +993,7 @@ function openModal(fields) {
             input.value = (f.value ?? '');
         } else if (f.type === 'object' || f.type === 'object[]') {
             input = document.createElement('div');
-            input.style.cssText = 'display:flex;flex-direction:column;gap:8px;direction: ltr;';
+            input.style.cssText = 'display:flex;flex-direction:column;gap:8px;direction: ltr;width: 75%;';
             
             const textarea = document.createElement('textarea');
             textarea.style.cssText = 'min-height:100px;padding:8px;border:1px solid #e5e7eb;border-radius:4px;font-family:monospace;';

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kpmg</title>
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script type="text/javascript">
+        function initGovMap() {
+                govmap.createMap('map', {
+                    token: 'fe827829-8b7a-4ef6-85ed-3ae1caebaf64',
+                    layers: ["216600"],
+                    visibleLayers: ['216600'],
+                    showXY: true,
+                    identifyOnClick: true,
+                    isEmbeddedToggle: false,
+                    background: "0",
+                    layersMode: 2,
+                    zoomButtons:true,
+                    onLoad: () => {
+                        console.log('000 onLoad');
+                    }
+                });
+            }
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width:850px;height:750px"></div>
+</body>
+
+</html>

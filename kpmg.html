@@ -54,7 +54,7 @@
         function showAllFeatures() {
             const params = {
                 layerName: activeLayer.id,
-                whereClause: `1 = 1`,
+                whereClause: `${activeLayer.fieldName} LIKE '${activeLayer.layerNumber === layers.blueLineJlm.id ? 3 : 5}%'`,
                 zoomToExtent: true
             };
             govmap.filterLayers(params);

@@ -1,9 +1,5 @@
 function initGovMap() {
     govmap.createMap('map', {
-        onLoad: function (e) {
-            populateDropdownAndCityList();
-            populateDropdown();
-        },
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", 'bus_stops', '154006'],
         visibleLayers: [],

@@ -4,7 +4,7 @@ function initGovMap() {
             populateDropdownAndCityList();
             populateDropdown();
         },
-        token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
+        token: '1d76ef7b-da77-481e-aa83-f00f2e2e6334',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923", "PARCEL_ALL", "202113"],
         visibleLayers: ['201923'],
         showXY: true,

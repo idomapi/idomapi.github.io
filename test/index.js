@@ -4,7 +4,7 @@ function initGovMap() {
             populateDropdownAndCityList();
             populateDropdown();
         },
-        token: '1d76ef7b-da77-481e-aa83-f00f2e2e6334',
+        token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "201923", "PARCEL_ALL", "202113"],
         visibleLayers: ['201923'],
         showXY: true,
@@ -26,65 +26,6 @@ function extentAllFeatures() {
         zoomToExtent: true
     };
     govmap.filterLayers(params);
-}
-
-function populateDropdown() {
-    const select = document.getElementById('drawType');
-    for (let type in govmap.drawType) {
-        const option = document.createElement('option');
-        option.value = govmap.drawType[type];
-        option.text = type;
-        select.appendChild(option);
-    }
-    generateDrawFunction();
-}
-
-function generateDrawFunction() {
-    window.draw = function () {
-        const select = document.getElementById('drawType');
-        const selectedValue = select.value;
-        govmap.draw(selectedValue).then(response => {
-            console.log('Drawn:', response);
-        });
-    }
-}
-
-function searchInLayer(address) {
-    var params = {
-        layerName: '211923',
-        fieldName: 'value3',
-        fieldValues: [address],
-        showBubble: true,
-        highlight: false,
-    };
-    govmap.searchInLayer(params);
-    setTimeout(() => clearFilterLayers(), 250);
-}
-
-function filterLayers() {
-    var params = {
-        layerName: '211923',
-        whereClause: "value2 = 'רמת-גן'",
-        zoomToExtent: false
-    };
-    govmap.filterLayers(params);
-}
-
-var hashalomTrainStation = { x: 180620, y: 664501 };
-
-function zoomToXY() {
-    govmap.zoomToXY({ ...hashalomTrainStation, level: 10, marker: true });
-}
-
-function getLayerData() {
-    var params = {
-        LayerName: '211923',
-        Point: hashalomTrainStation,
-        Radius: 500
-    };
-    govmap.getLayerData(params).then(function (response) {
-        console.log(response);
-    });
 }
 
 function selectFeaturesOnMap() {
@@ -169,91 +110,4 @@ function clearFilterLayers() {
 
 function clearDrawings() {
     govmap.clearDrawings();
-}
-
-// Page Setup
-
-// Hardcoded city data
-const cityData = [
-  { name: 'שרונה', city: 'תל-אביב', address: 'דרך בגין 125', id: 1, area: 'נפת גוש דן' },
-  { name: 'מפ/"י', city: 'תל-אביב', address: 'לינקולן 3', id: 2, area: 'נפת גוש דן' },
-  { name: 'שרקוטרי', city: 'תל-אביב', address: 'וילסון 10', id: 3, area: 'נפת גוש דן' },
-  { name: 'נחמני', city: 'תל-אביב', address: 'שדרות רוטשילד 80', id: 4, area: 'נפת גוש דן' },
-  { name: 'הכרמל', city: 'תל-אביב', address: 'אלנבי 58', id: 5, area: 'נפת גוש דן' },
-  { name: 'הבורסה', city: 'רמת-גן', address: 'דרך אבא הלל 1', id: 6, area: 'נפת גוש דן' },
-];
-
-function populateDropdownAndCityList() {
-  const $dropdown = $('#cityDropdown');
-  const $cityList = $('#cityList');
-
-  const $placeholder = $('<option>', {
-    value: -1,
-    text: 'בחר כתובת',
-    selected: true,
-    disabled: false
-  });
-
-  $dropdown.append($placeholder);
-  cityData.forEach(function(item) {
-    $dropdown.append(
-      $('<option>', { value: item.id, text: item.address })
-    );
-  });
-  setTimeout(() => $dropdown.val("-1"), 0);
-
-  // Remove placeholder on first interaction
-  $dropdown.one('change', function() {
-    $dropdown.find('option[value="-1"]').prop('disabled', true);
-  });
-
-
-  // Populate city list
-  cityData.forEach(function(item) {
-    $cityList.append(
-      $('<li>', {
-        class: 'city-item',
-        'data-id': item.id,
-        tabindex: 0,
-        html: `<strong>${item.city}</strong>: ${item.address} <span style="color:#888;font-size:0.95em">(${item.area})</span>`
-      })
-    );
-  });
-
-  // On city list item click or keyboard enter
-  $cityList.on('click', '.city-item', function() {
-    const id = $(this).data('id');
-    selectCityById(id);
-  });
-  $cityList.on('keydown', '.city-item', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const id = $(this).data('id');
-      selectCityById(id);
-    }
-  });
-
-  // Unified selection logic for dropdown and sidebar
-  function selectCityById(id) {
-    // Highlight correct city in sidebar
-    $cityList.children().removeClass('selected');
-    $cityList.children(`[data-id="${id}"]`).addClass('selected');
-    // Set dropdown value by id
-    $dropdown.val(id);
-    // For demo: log selection
-    const city = cityData.find(c => c.id == id);
-    if (city) {
-      console.log(`Selected: ${city.city} (${city.address}, ${city.area})`);
-      searchInLayer(city.address);
-    }
-  }
-  // On dropdown change (select)
-  $dropdown.on('change', function() {
-    const id = $(this).val();
-    selectCityById(id);
-  });
-
-  // Initial selection (first city)
-  if (cityData.length > 0) {
-    selectCityById(cityData[0].id);
-  }
 }

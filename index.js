@@ -9,14 +9,8 @@ function initGovMap() {
         bgButton: true,
         background: "0",
         layersMode: 1,
-        center: { x: 191919, y: 666569 },
-        extent: {
-            xmax: 199530,
-            xmin: 185395,
-            ymax: 670534,
-            ymin: 662376
-        },
-        level: 8,
+        center: { x: 179487, y: 663941 },
+        level: 4,
         onLoad: function () {},
     });
 }

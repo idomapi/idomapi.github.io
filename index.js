@@ -10,7 +10,7 @@ function initGovMap() {
         background: "0",
         layersMode: 1,
         center: { x: 191919, y: 666569 },
-        exteextent: {
+        extent: {
             xmax: 199530,
             xmin: 185395,
             ymax: 670534,

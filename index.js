@@ -14,3 +14,16 @@ function initGovMap() {
         onLoad: function () {},
     });
 }
+
+function showMeasure() {
+    govmap.showMeasure();
+    setTimeout(() => {
+        const iframe = document.querySelector('iframe');
+        const closeButton = iframe.contentDocument.querySelector('[data-testid="close-button"]');
+        closeButton.addEventListener('click', function () {
+            // Your code here
+            console.log('Button clicked!');
+        });
+        removeEventListener('click', closeButton);
+    }, 2000);
+}

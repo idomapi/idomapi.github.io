@@ -235,7 +235,7 @@ function setLayerOpacity() {
     toggleParentDropdown();
     renderResponse(null);
     openModal([
-        { label: '', value: {layerName: '', opacity: 1}, type: 'object', isOptional: false },
+        { label: '', value: { layerName: '', opacity: 50 }, type: 'object', isOptional: false },
     ]).then(values => {
         if (!values) return;
         govmap.setLayerOpacity(values[0]);

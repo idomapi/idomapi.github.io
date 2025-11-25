@@ -5,6 +5,8 @@ function initGovMap() {
 
     if (window.location.hostname.includes("govmap.gov.il")) {
         token = "0fff9694-a045-4ede-b997-ee9927b0d56c";
+    } else if (window.location.hostname.includes("idomapi.github.io")) {
+        token = "8afbb7f6-f247-4b73-9366-635aaa7c9b1f";
     }
 
     govmap.createMap('map', {

@@ -32,7 +32,7 @@
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 10;
         }
 
         .navbar-brand {
@@ -82,6 +82,10 @@
             transform: rotate(180deg);
         }
 
+        .dropdown-parent.active .dropdown-menu {
+            display: block;
+        }
+
         .dropdown-menu {
             position: absolute;
             top: 100%;
@@ -96,6 +100,7 @@
             transform: translateY(-10px);
             transition: all 0.2s ease;
             z-index: 1001;
+            display: none
         }
 
         .sub-dropdown .dropdown-menu {
@@ -240,14 +245,19 @@
             border-radius: 0.5rem;
             box-shadow: 0 4px 16px rgba(0,0,0,0.12);
             z-index: 20;
-            padding: 0.75rem 0.75rem 1rem 0.75rem;
+            padding: 0 0.75rem 1rem 0.75rem;
             overflow: auto;
         }
 
         #response-section .title-container {
+            background: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 0.75rem;
+            position: sticky;
+            top: 0px;
+            width: 100%;
         }
 
         #response-section .title {
@@ -490,7 +500,7 @@
     </footer>
 
     <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
-    <script src="api-demo.js"></script>
+    <script src="index.js"></script>
 </body>
 
 </html>

@@ -1,10 +1,16 @@
 // govmap functions
 
 function initGovMap() {
+    var token = "5a4b8472-b95b-4687-8179-0ccb621c7990";
+
+    if (window.location.hostname.includes("govmap.gov.il")) {
+        token = "0fff9694-a045-4ede-b997-ee9927b0d56c";
+    }
+
     govmap.createMap('map', {
-        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
+        token,
         visibleLayers: [],
-        layers: ['kids_g', 'school', 'bus_stops', 'PARCEL_ALL', 'SUB_GUSH_ALL', 'GASSTATIONS'],
+        layers: ['GASSTATIONS', 'kids_g', 'school', 'bus_stops', 'PARCEL_ALL', 'SUB_GUSH_ALL'],
         layersMode: 2,
         showXY: true,
         identifyOnClick: true,
@@ -607,7 +613,45 @@ function identifyByXYAndLayer() {
     });
 }
 
-function selectFeaturesOnMap() {}
+function selectFeaturesOnMap() {
+    toggleParentDropdown();
+    renderResponse(null);
+    openModal([
+        { label: 'layers', value: [], type: 'string[]', isOptional: false },
+        { label: 'drawType', value: govmap.drawType.Polygon, type: 'number', isOptional: true },
+        { label: 'wkt', value: '', type: 'string', isOptional: true },
+        {
+            label: 'returnFields', value: {},
+            type: 'object', isOptional: false
+        },
+        {
+            label: 'whereClause', value: {},
+            type: 'object', isOptional: false
+        },
+        { label: 'selectOnMap', value: true, type: 'boolean', isOptional: true },
+        { label: 'continous', value: false, type: 'boolean', isOptional: true },
+        { label: 'filterLayer', value: false, type: 'boolean', isOptional: true },
+        { label: 'isZoomToExtent', value: true, type: 'boolean', isOptional: true },
+        { label: 'getWkt', value: false, type: 'boolean', isOptional: true },
+    ]).then(values => {
+        if (!values) return;
+        govmap.selectFeaturesOnMap({
+            layers: values[0],
+            drawType: values[1],
+            wkt: values[2],
+            returnFields: values[3],
+            whereClause: values[4],
+            selectOnMap: values[5],
+            continous: values[6],
+            filterLayer: values[7],
+            isZoomToExtent: values[8],
+            getWkt: values[9]
+        })
+            .then(response => {
+                renderResponse(response);
+            });
+    });
+}
 
 // Geometric functions
 function draw(type) {

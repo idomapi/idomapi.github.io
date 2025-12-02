@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['PARCEL_ALL', 'GASSTATIONS', '210126', '218193', '211923'],
-        visibleLayers: [],
+        visibleLayers: ['PARCEL_ALL'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -13,17 +13,4 @@ function initGovMap() {
         level: 4,
         onLoad: function () {},
     });
-}
-
-function showMeasure() {
-    govmap.showMeasure();
-    setTimeout(() => {
-        const iframe = document.querySelector('iframe');
-        const closeButton = iframe.contentDocument.querySelector('[data-testid="close-button"]');
-        closeButton.addEventListener('click', function () {
-            // Your code here
-            console.log('Button clicked!');
-        });
-        removeEventListener('click', closeButton);
-    }, 2000);
 }

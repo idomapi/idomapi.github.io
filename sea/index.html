@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script type="text/javascript">
+        function initGovMap() {
+            govmap.createMap('map', {
+                center: { x: 176505, y: 662250 },
+                token: 'ben',
+                level: 5,
+                showXY: true,
+                identifyOnClick: true,
+                isEmbeddedToggle: false,
+                background: 0,
+                layersMode: 2,
+                zoomButtons: false,
+                onLoad: () => displayGeometries()
+            });
+        }
+
+        async function displayGeometries() {
+            try {
+                const dataFromServer = await fetch('http://5.102.231.16:30886/stations/map?end_date=2025-11-27');
+                const dataJson = await dataFromServer.json();
+                const tuple = dataJson.data;
+                var wkts = tuple.map(item => `POINT(${item.x} ${item.y})`);
+                var stationName = tuple.map(item => item.Station);
+                var data = {
+                    wkts,
+                    names: stationName,
+                    geometryType: govmap.geometryType.POINT,
+                    defaultSymbol:
+                    {
+                        url: 'https://upload.wikimedia.org/wikipedia/he/thumb/8/8d/Super_Pharm_Logo.svg/1280px-Super_Pharm_Logo.svg.png',
+                        width: 150,
+                        height: 150
+                    },
+                    clearExisting: true,
+                    data: {
+                        tooltips: stationName,
+                        labels: stationName
+                    }
+                };
+
+                govmap.displayGeometries(data).then(function (response) {
+                    console.log('displayGeometries', response.data);
+                });
+            } catch (error) {
+                console.error('Error displaying geometries:', error);
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width:600px;height:600px;"></div>
+</body>
+
+</html>

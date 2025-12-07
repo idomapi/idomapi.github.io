@@ -1257,22 +1257,78 @@ function toggleGeneralFunctionsSubMenu(triggerId, event) {
     
     if (!targetMenu) return;
 
-    // Check if the same menu is already open
-    const isSameMenuOpen = subContainer.classList.contains('active') && 
-                          targetMenu.classList.contains('active');
-
-    // Close all dropdowns first
-    closeAllDropdowns();
+    // Get the parent dropdown that contains the trigger
+    const parentDropdown = trigger.closest('.dropdown-parent');
     
-    // If clicking the same menu that's already open, don't reopen it
+    // Check if the same menu and trigger is already open
+    const isSameMenuOpen = subContainer.classList.contains('active') && 
+                          targetMenu.classList.contains('active') &&
+                          subContainer.dataset.currentTrigger === triggerId &&
+                          parentDropdown && parentDropdown.classList.contains('active');
+
+    // If clicking the same menu that's already open, toggle it closed but keep parent dropdown open
     if (isSameMenuOpen) {
+        // Close only the submenu, keep parent dropdown open
+        subContainer.classList.remove('active');
+        targetMenu.classList.remove('active');
+        trigger.classList.remove('active');
+        delete subContainer.dataset.currentTrigger;
         return;
     }
 
-    // Position the submenu next to the trigger
-    const rect = trigger.getBoundingClientRect();
-    subContainer.style.top = `${rect.bottom}px`;
-    subContainer.style.left = `${rect.left}px`;
+    // Close other dropdowns but keep the parent dropdown open
+    document.querySelectorAll('.dropdown-parent').forEach(dropdown => {
+        if (dropdown !== parentDropdown) {
+            dropdown.classList.remove('active');
+        }
+    });
+    
+    // Always close all submenus first (within the same parent dropdown)
+    // This ensures that if a submenu is open and user clicks another button, it closes first
+    if (parentDropdown && parentDropdown.classList.contains('active')) {
+        // Close all submenus in the subContainer
+        subContainer.classList.remove('active');
+        subContainer.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('active');
+        });
+        // Remove active class from all dropdown items in the same parent
+        parentDropdown.querySelectorAll('.dropdown-item').forEach(item => {
+            item.classList.remove('active');
+        });
+    }
+    
+    // Close other submenus in other parent dropdowns
+    document.querySelectorAll('.sub-dropdown').forEach(sub => {
+        if (sub !== subContainer) {
+            sub.classList.remove('active');
+            sub.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        }
+    });
+    
+    // Ensure parent dropdown is open
+    if (parentDropdown) {
+        parentDropdown.classList.add('active');
+    }
+
+    // Position the submenu container relative to the trigger item
+    // Use fixed positioning to place it to the left of the parent menu (RTL layout)
+    const triggerRect = trigger.getBoundingClientRect();
+    const parentMenu = parentDropdown ? parentDropdown.querySelector('.dropdown-menu') : null;
+    const parentMenuRect = parentMenu ? parentMenu.getBoundingClientRect() : null;
+    
+    subContainer.style.position = 'fixed';
+    subContainer.style.top = `${triggerRect.top}px`;
+    
+    // Position to the left of the parent menu (RTL: right side of screen)
+    if (parentMenuRect) {
+        subContainer.style.right = `${window.innerWidth - parentMenuRect.left}px`;
+    } else {
+        subContainer.style.right = `${window.innerWidth - triggerRect.right}px`;
+    }
+    subContainer.style.left = 'auto';
+    subContainer.style.marginRight = '5px';
 
     // Set the current trigger for action handling
     subContainer.dataset.currentTrigger = triggerId;
@@ -1281,12 +1337,6 @@ function toggleGeneralFunctionsSubMenu(triggerId, event) {
     subContainer.classList.add('active');
     targetMenu.classList.add('active');
     trigger.classList.add('active');
-    
-    // Add active class to parent dropdown
-    const parentDropdown = trigger.closest('.dropdown-parent');
-    if (parentDropdown) {
-        parentDropdown.classList.add('active');
-    }
 }
 
 // Use the currentTrigger stored on the submenu container to decide whether to bind or unbind

@@ -115,15 +115,21 @@
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
+            display: block;
         }
         .dropdown.sub-dropdown.active .dropdown-menu.active {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
+            display: block;
         }
 
         .dropdown.sub-dropdown.active .dropdown-menu {
             transform: translateY(0);
+        }
+        
+        .dropdown.sub-dropdown.active {
+            display: block;
         }
         
         .dropdown-parent .dropdown-menu {
@@ -135,6 +141,7 @@
             right: 100%;
             top: 0;
             margin-right: 5px;
+            z-index: 1002;
         }
 
         /* Only the parent dropdown should show all its menu items when active */

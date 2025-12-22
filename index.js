@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['PARCEL_ALL', 'GASSTATIONS', '210126', '218193', '211923'],
-        visibleLayers: ['PARCEL_ALL'],
+        visibleLayers: [],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,

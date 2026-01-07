@@ -1,0 +1,25 @@
+body {
+    font-family: simplerregular, sans-serif;
+    margin: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+#map {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin-right: 20px;
+    float: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 70%;
+    height: 650px;
+}
+
+@media screen and (max-width: 768px) {
+  #map {
+    width: 100%;
+    height: 400px;
+    margin-right: 0;
+    float: none;
+  }
+}

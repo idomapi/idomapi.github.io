@@ -1,8 +1,8 @@
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: ['PARCEL_ALL', 'GASSTATIONS', '210126', '218193', '211923'],
-        visibleLayers: [],
+        layers: ['PARCEL_ALL'],
+        visibleLayers: ['PARCEL_ALL'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -24,5 +24,17 @@ function searchAndLocateWrapperFn() {
     }
     govmap.searchAndLocate(params).then(function (response) {
         console.log('searchAndLocate', response);
+        const objectId = response.data[0].ObjectId;
+        searchInLayer(objectId);
     });
+}
+
+function searchInLayer(objectId) {
+    const objectIdString = objectId.toString();
+    var params = {
+        layerName: 'PARCEL_ALL',
+        fieldName: 'objectid',
+        fieldValues: [objectIdString]
+    };
+    govmap.searchInLayer(params);
 }

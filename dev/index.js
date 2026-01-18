@@ -1,11 +1,10 @@
-const map1 = 'map1';
+const map1 = 'map';
 const map2 = 'map2';
 
 function initGovMap() {
     govmap.createMap(map1, {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["layer_153830", 'ra_gvulot_rm'],
-        visibleLayers: ['layer_153830'],
         showXY: true,
         isEmbeddedToggle: false,
         background: "0",
@@ -19,7 +18,6 @@ function initGovMap() {
     govmap.createMap(map2, {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ['23','152617'],
-        visibleLayers: ['23','152617'],
         showXY: true,
         isEmbeddedToggle: false,
         background: "0",

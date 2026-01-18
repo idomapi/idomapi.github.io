@@ -33,3 +33,7 @@ function initGovMap() {
 function listener(map) {
     govmap.onEvent(govmap.events.CLICK, map).progress(e => console.log(map, 'listener - CLICK', e));
 }
+
+function unbindEvent(map) {
+    govmap.unbindEvent(govmap.events.CLICK, map);
+}

@@ -40,11 +40,11 @@ body {
 
 .map-container {
     width: 100%;
-    height: 600px;
+    height: 651px;
     background: #e0e0e0;
-    display: flex;
+    /* display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
 }
 
 .iframe-placeholder {

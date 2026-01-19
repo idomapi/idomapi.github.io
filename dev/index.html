@@ -14,14 +14,25 @@
 <body>
     <!-- Header with title -->
     <header class="header">
-        <h1>מפת </h1>
+        <h1>מפה </h1>
     </header>
 
     <!-- Main content: map and sidebar -->
     <main class="content">
+        <div>
+            <button onclick="onClickBinding()"> onClickBinding</button>
+            <button onclick="unBindClick('map1')"> unBindClick map1</button>
+            <button onclick="unBindClick('map2')"> unBindClick map2</button>
+            <button onclick="unBindClick('map3')"> unBindClick map3</button>
+            <button onclick="unBindClick('map4')"> unBindClick map4</button>
+        </div>
+    </body>
         <!-- Map container with iframe placeholder -->
         <section class="map-container">
-            <div id="map" class="iframe-placeholder"></div>
+            <div id="map1" class="iframe-placeholder"></div>
+            <div id="map2" class="iframe-placeholder"></div>
+            <div id="map3" class="iframe-placeholder"></div>
+            <div id="map4" class="iframe-placeholder"></div>
         </section>
         <!-- Sidebar with dropdown and data list -->
         <aside class="sidebar">

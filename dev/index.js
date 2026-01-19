@@ -6,7 +6,9 @@ const centers = [
     { x: 193897, y: 685822 }
 ];
 
-function initGovMap() {
+async function initGovMap() {
+    let canProcceed = false;
+
     govmap.createMap('map1', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["layer_153830", 'ra_gvulot_rm'],
@@ -17,8 +19,15 @@ function initGovMap() {
         center: centers[0],
         level: 9,
         onLoad: function () {
+            canProcceed = !canProcceed;
         }
     });
+
+    while (!canProcceed) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    canProcceed = !canProcceed;
+
     govmap.createMap('map2', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["bus_stops"],
@@ -29,11 +38,18 @@ function initGovMap() {
         center: centers[1],
         level: 9,
         onLoad: function () {
+            canProcceed = !canProcceed;
         }
     });
+
+    while (!canProcceed) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    canProcceed = !canProcceed;
+
     govmap.createMap('map3', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
-        layers: ["PARCEL_HOKS"],
+        layers: ["PARCEL_ALL"],
         showXY: true,
         isEmbeddedToggle: false,
         background: "0",
@@ -41,8 +57,15 @@ function initGovMap() {
         center: centers[2],
         level: 9,
         onLoad: function () {
+            canProcceed = !canProcceed;
         }
     });
+
+    while (!canProcceed) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    canProcceed = !canProcceed;
+
     govmap.createMap('map4', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["GASSTATIONS"],
@@ -53,6 +76,7 @@ function initGovMap() {
         center: centers[3],
         level: 9,
         onLoad: function () {
+            canProcceed = !canProcceed;
         }
     });
 }

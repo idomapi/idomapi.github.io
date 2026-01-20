@@ -22,6 +22,7 @@ async function initGovMap() {
             canProcceed = !canProcceed;
         }
     });
+    return;
 
     while (!canProcceed) {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -83,11 +84,19 @@ async function initGovMap() {
 
 function onClickBinding() {
     govmap.onEvent(govmap.events.CLICK, "map1").progress(e => console.log("click event map1"));
-    govmap.onEvent(govmap.events.CLICK, "map2").progress(e => console.log("click event map2"));
-    govmap.onEvent(govmap.events.CLICK, "map3").progress(e => console.log("click event map3"));
-    govmap.onEvent(govmap.events.CLICK, "map4").progress(e => console.log("click event map4"));
+    // govmap.onEvent(govmap.events.CLICK, "map2").progress(e => console.log("click event map2"));
+    // govmap.onEvent(govmap.events.CLICK, "map3").progress(e => console.log("click event map3"));
+    // govmap.onEvent(govmap.events.CLICK, "map4").progress(e => console.log("click event map4"));
 }
 
 function unBindClick(map) {
     govmap.unbindEvent(govmap.events.CLICK, map);
+}
+
+function bindClickNoId() {
+    govmap.onEvent(govmap.events.CLICK).progress(e => console.log("click event no id"));
+}
+
+function unBindClickNoId() {
+    govmap.unbindEvent(govmap.events.CLICK);
 }

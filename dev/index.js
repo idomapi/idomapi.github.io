@@ -22,7 +22,6 @@ async function initGovMap() {
             canProcceed = !canProcceed;
         }
     });
-    return;
 
     while (!canProcceed) {
         await new Promise(resolve => setTimeout(resolve, 500));

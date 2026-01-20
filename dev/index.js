@@ -82,11 +82,8 @@ async function initGovMap() {
     });
 }
 
-function onClickBinding() {
-    govmap.onEvent(govmap.events.CLICK, "map1").progress(e => console.log("click event map1"));
-    // govmap.onEvent(govmap.events.CLICK, "map2").progress(e => console.log("click event map2"));
-    // govmap.onEvent(govmap.events.CLICK, "map3").progress(e => console.log("click event map3"));
-    // govmap.onEvent(govmap.events.CLICK, "map4").progress(e => console.log("click event map4"));
+function onClickBinding(map) {
+        govmap.onEvent(govmap.events.CLICK, map).progress(e => console.log("click event " + map));
 }
 
 function unBindClick(map) {

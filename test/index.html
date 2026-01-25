@@ -2,44 +2,39 @@
 <html>
 
 <head>
-    <!--
-  Location Guide Presentation Site
-  - Styles are now in index.css
-  - JavaScript is in index.js (jQuery CDN included)
-  - Semantic tags used: <header>, <main>, <aside>
-  -->
     <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
     <!-- Header with title -->
     <header class="header">
-        <h1>מפת לשכות האושר</h1>
+        <h1>סביבת טסט</h1>
     </header>
 
     <!-- Main content: map and sidebar -->
     <main class="content">
         <!-- Map container with iframe placeholder -->
         <section class="map-container">
-            <div id="map" class="iframe-placeholder"></div>
+            <div id="map1" class="iframe-placeholder"></div>
+            <div id="map2" class="iframe-placeholder"></div>
+            <div id="map3" class="iframe-placeholder"></div>
+            <div id="map4" class="iframe-placeholder"></div>
         </section>
-        <!-- Sidebar with dropdown and data list -->
-        <aside class="sidebar">
-            <ul class="city-list" id="cityList">
-                <!-- City items will be populated by JS -->
-            </ul>
-            <!-- Button container -->
-            <div class="sidebar-btn-container">
-                <!-- Draw tool: select on top, button below -->
-                <button class="sidebar-btn" onclick="closeBubble()">סגירת בועית</button>
-                <button class="sidebar-btn" onclick="clearFilterLayers()">נקה סינון</button>
-                <button class="sidebar-btn" onclick="clearDrawings()">נקה ציור</button>
+        <section>
+            <div>
+                <button onclick="bindEvent('map1')">Bind Event map1</button>
+                <button onclick="bindEvent('map2')">Bind Event map2</button>
+                <button onclick="bindEvent('map3')">Bind Event map3</button>
+                <button onclick="bindEvent('map4')">Bind Event map4</button>
             </div>
-        </aside>
+            <div>
+                <button onclick="unBindEvent('map1')">Unbind Event map1</button>
+                <button onclick="unBindEvent('map2')">Unbind Event map2</button>
+                <button onclick="unBindEvent('map3')">Unbind Event map3</button>
+                <button onclick="unBindEvent('map4')">Unbind Event map4</button>
+            </div>
+        </section>
     </main>
-
-    <!-- Scripts: jQuery CDN and index.js -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="index.js"></script>
     <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
 </body>

@@ -1,4 +1,4 @@
-const maps = ['map1'];//, 'map2', 'map3', 'map4'];
+const maps = ['map1', 'map2', 'map3', 'map4'];
 let mapIndex = 0;
 
 function initGovMap() {

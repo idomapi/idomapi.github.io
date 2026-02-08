@@ -7,7 +7,7 @@ function initGovMap() {
         identifyOnClick: true,
         isEmbeddedToggle: false,
         bgButton: true,
-        background: "0",
+        background: "40",
         layersMode: 1,
         center: { x: 163868, y: 578293 }, // { x: 179487, y: 663941 },
         level: 4,

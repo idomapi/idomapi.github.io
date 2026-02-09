@@ -29,6 +29,6 @@ function searchInLayer(values) {
     govmap.searchInLayer(params);
 }
 
-changeBackground() {
+function changeBackground() {
     govmap.setBackground(40);
 }

@@ -14,7 +14,6 @@ function createMap() {
 }
 
 function displayGeometriesPolygon() {
-    var bubbleContent = "<div style='border: 1px solid #525252; margin: 10px;padding: 10px;'><div style='background-color: yellow;'>{0}</div><div               style='background-color: blue;'>{1}</div></div>";
     var data = {
         wkts: ["POLYGON((151612.40 534674.88, 215112.52 538643.64, 98431.04 445774.70, 74618.49 521974.85, 80968.50 552931.17, 151612.40 533881.13,151612.40 534674.88))"],
         names: ['p1'],
@@ -29,16 +28,16 @@ function displayGeometriesPolygon() {
         clearExisting: false,
         data: {
             tooltips: ['רֶמֶז צָץ מצולע 1'],
-            headers: ['מצולע 1 כותרת'],
-            bubbleHTML: bubbleContent,
-            bubbleHTMLParameters: [['מצולע 1', 'מידע נוסף...']],
             labels: ['label1'],
             fontLabel: [{
                 font: 'Arial',
                 fontSize: 40,
                 fill: 'yellow',
                 stroke: 'blue',
-            }]
+            }],
+            headers: ['מצולע'],
+            bubbles: ['מצולע'],
+            bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A9%D7%95%D7%95%D7%90%D7%A8%D7%9E%D7%94'
         }
     };
     govmap.displayGeometries(data).then(function (response) {
@@ -62,9 +61,9 @@ function displayGeometriesPoint() {
         ],
         clearExisting: false,
         data: {
-            tooltips: ['סודות מאכל הפלאפל הלאומי'],
-            headers: ['פלאפל'],
-            bubbles: [''],
+            tooltips: ['נקודה 2'],
+            headers: ['נקודה'],
+            bubbles: ['נקודה'],
             bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A4%D7%9C%D7%90%D7%A4%D7%9C'
         }
     };
@@ -86,10 +85,9 @@ function displayGeometriesCircle() {
         symbols: [],
         clearExisting: false,
         data: {
-            tooltips: ['סודות מאכל הפלאפל הלאומי'],
-            headers: ['פלאפל'],
-            bubbles: [''],
-            bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A4%D7%9C%D7%90%D7%A4%D7%9C'
+            headers: ['מעגל'],
+            bubbles: ['מעגל'],
+            bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A1%D7%91%D7%99%D7%97'
         }
     };
     govmap.displayGeometries(data).then(function (response) {

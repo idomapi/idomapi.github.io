@@ -5,7 +5,7 @@ async function initGovMap() {
         visibleLayers: ["layer_153830", 'layer_154112'],
         showXY: true,
         isEmbeddedToggle: false,
-        background: "0",
+        background: 40,
         layersMode: 1,
         center: { x: 179479, y: 663973 },
         level: 10,

@@ -45,6 +45,7 @@ body {
 
 .panel-log-header {
     display: flex;
+    direction: rtl;
     align-items: center;
     gap: 10px;
     margin-bottom: 6px;
@@ -130,7 +131,7 @@ body {
 
 .panel-log label {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 #eventLog {

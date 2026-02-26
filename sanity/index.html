@@ -1,0 +1,361 @@
+<html>
+
+<head>
+    <title>אתר דמו לפונקציות API - גובמאפ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <script src="const.js"></script>
+    <script src="index.js"></script>
+    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+</head>
+
+<body>
+    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a></p>
+    <div class="map-and-log">
+        <div id="map1"></div>
+        <div class="panel panel-log">
+            <div class="panel-log-header">
+                <label>לוג:</label>
+                <button type="button" id="btnClearLog">ניקוי לוג (Clear logs)</button>
+            </div>
+            <pre id="eventLog"></pre>
+        </div>
+    </div>
+    <div class="panels">
+        <details class="panel-section" open>
+            <summary>אירועי מפה (Map events)</summary>
+            <div class="panel-body">
+                <label for="eventSelect">אירוע:</label>
+                <select id="eventSelect">
+                    <option value="CLICK">CLICK</option>
+                    <option value="RIGHT_CLICK">RIGHT_CLICK</option>
+                    <option value="DOUBLE_CLICK">DOUBLE_CLICK</option>
+                    <option value="PAN">PAN</option>
+                    <option value="EXTENT_CHANGE">EXTENT_CHANGE</option>
+                    <option value="MOUSE_MOVE">MOUSE_MOVE</option>
+                    <option value="MOUSE_OVER">MOUSE_OVER</option>
+                </select>
+                <button type="button" id="btnRegister">הרשמה (Register)</button>
+                <button type="button" id="btnUnbind">הסרת רישום (Unbind)</button>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>הצרה / הרחבה / זום (Zoom)</summary>
+            <div class="panel-body">
+                <button type="button" id="btnZoomIn">הצרה (Zoom in)</button>
+                <button type="button" id="btnZoomOut">הרחבה (Zoom out)</button>
+                <button type="button" id="btnGetZoomLevel">קבלת רמת זום (Get zoom level)</button>
+                <button type="button" id="btnGetMapTolerance">דרגת דיוק מיפוי (Get map tolerance)</button>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>מפה ושכבות (Map state &amp; layers)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>getBackground / getCenter / getMapUrl</legend>
+                    <button type="button" id="btnGetBackground">getBackground</button>
+                    <button type="button" id="btnGetCenter">getCenter</button>
+                    <button type="button" id="btnGetMapUrl">getMapUrl</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>getXY (click map; use setDefaultTool to exit)</legend>
+                    <button type="button" id="btnGetXY">getXY</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>getLayerRenderer(param)</legend>
+                    <label for="layerNames">LayerNames (comma-separated):</label>
+                    <input type="text" id="layerNames" value="GASSTATIONS" placeholder="GASSTATIONS">
+                    <button type="button" id="btnGetLayerRenderer">getLayerRenderer</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>geocode(params)</legend>
+                    <label for="geocodeKeyword">keyword:</label>
+                    <input type="text" id="geocodeKeyword" value="הרוקמים" placeholder="כתובת">
+                    <label for="geocodeType">type:</label>
+                    <select id="geocodeType">
+                        <option value="AccuracyOnly">AccuracyOnly</option>
+                        <option value="FullResult">FullResult</option>
+                    </select>
+                    <button type="button" id="btnGeocode">geocode</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setVisibleLayers(layersOn, layersOff)</legend>
+                    <label for="layersOn">layersOn (comma-separated):</label>
+                    <input type="text" id="layersOn" value="GASSTATIONS,topocad_parcel_all" placeholder="GASSTATIONS">
+                    <label for="layersOff">layersOff (comma-separated):</label>
+                    <input type="text" id="layersOff" value="bus_stops" placeholder="bus_stops">
+                    <button type="button" id="btnSetVisibleLayers">setVisibleLayers</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>מפת חום (Heat layer)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>setHeatLayer / removeHeatLayer / changeHeatLayerValueField</legend>
+                    <button type="button" id="btnSetHeatLayer">setHeatLayer (doc example)</button>
+                    <button type="button" id="btnRemoveHeatLayer">removeHeatLayer</button>
+                    <label for="heatValueField">valueField:</label>
+                    <input type="text" id="heatValueField" value="val1" placeholder="val1">
+                    <button type="button" id="btnChangeHeatLayerValueField">changeHeatLayerValueField</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>מידע, סינון, בועית (Layer data, filter, bubble)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>getLayerData(params)</legend>
+                    <label for="layerDataLayerName">LayerName:</label>
+                    <input type="text" id="layerDataLayerName" value="bus_stops" placeholder="bus_stops">
+                    <label for="layerDataX">Point x:</label>
+                    <input type="number" id="layerDataX" value="178622" step="any">
+                    <label for="layerDataY">Point y:</label>
+                    <input type="number" id="layerDataY" value="663148" step="any">
+                    <label for="layerDataRadius">Radius (m):</label>
+                    <input type="number" id="layerDataRadius" value="30" min="0" step="any">
+                    <button type="button" id="btnGetLayerData">getLayerData</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>filterLayers(params)</legend>
+                    <label for="filterLayerName">layerName:</label>
+                    <input type="text" id="filterLayerName" value="GASSTATIONS" placeholder="GASSTATIONS">
+                    <label for="filterWhereClause">whereClause:</label>
+                    <input type="text" id="filterWhereClause" value="objectid in (782, 783, 784, 785, 786, 787)" placeholder="objectid in (782, 783)">
+                    <label><input type="checkbox" id="filterZoomToExtent" checked> zoomToExtent</label>
+                    <button type="button" id="btnFilterLayers">filterLayers</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>selectFeaturesOnMap(params) – doc example</legend>
+                    <button type="button" id="btnSelectFeaturesOnMap">Run doc example (GASSTATIONS name=רשף)</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>closeBubble</legend>
+                    <button type="button" id="btnCloseBubble">closeBubble</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>searchInLayer(params)</legend>
+                    <label for="searchInLayerName">layerName:</label>
+                    <input type="text" id="searchInLayerName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
+                    <label for="searchInFieldName">fieldName:</label>
+                    <input type="text" id="searchInFieldName" value="ID" placeholder="ID">
+                    <label for="searchInFieldValues">fieldValues (comma-separated):</label>
+                    <input type="text" id="searchInFieldValues" value="7103--46" placeholder="7103--46">
+                    <label><input type="checkbox" id="searchInHighlight"> highlight</label>
+                    <button type="button" id="btnSearchInLayer">searchInLayer</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>getLayerEntities(params)</legend>
+                    <label for="layerEntitiesName">layerName:</label>
+                    <input type="text" id="layerEntitiesName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
+                    <button type="button" id="btnGetLayerEntities">getLayerEntities</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>זיהוי וחיפוש (Identify &amp; search)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>identifyByXY(x, y)</legend>
+                    <label for="identifyX">x:</label>
+                    <input type="number" id="identifyX" value="179681" step="any">
+                    <label for="identifyY">y:</label>
+                    <input type="number" id="identifyY" value="664037" step="any">
+                    <button type="button" id="btnIdentifyByXY">זיהוי לפי קוארדינטות</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>identifyByXYAndLayer(x, y, layers)</legend>
+                    <label for="identifyLayerX">x:</label>
+                    <input type="number" id="identifyLayerX" value="179681" step="any">
+                    <label for="identifyLayerY">y:</label>
+                    <input type="number" id="identifyLayerY" value="664037" step="any">
+                    <label for="identifyLayers">layers (comma-separated):</label>
+                    <input type="text" id="identifyLayers" value="GASSTATIONS" placeholder="GASSTATIONS, gasstations">
+                    <button type="button" id="btnIdentifyByXYAndLayer">זיהוי לפי קוארדינטות ושכבות</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>intersectFeatures(params)</legend>
+                    <label for="intersectAddress">address:</label>
+                    <input type="text" id="intersectAddress" value="וילסון 10 תל אביב" placeholder="כתובת">
+                    <label for="intersectLayerName">layerName:</label>
+                    <input type="text" id="intersectLayerName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
+                    <label for="intersectFields">fields (comma-separated):</label>
+                    <input type="text" id="intersectFields" value="GUSH_NUM,PARCEL" placeholder="GUSH_NUM, PARCEL">
+                    <label for="intersectWhere">whereClause (optional):</label>
+                    <input type="text" id="intersectWhere" placeholder="(gush_num = 7103) AND (parcel = 43)">
+                    <label for="intersectRadius">radius (optional, meters):</label>
+                    <input type="number" id="intersectRadius" value="0" min="0" step="any">
+                    <label><input type="checkbox" id="intersectGetShapes"> getShapes</label>
+                    <button type="button" id="btnIntersectFeatures">חיפוש ישויות (intersectFeatures)</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>searchAndLocate(params)</legend>
+                    <label for="locateType">type:</label>
+                    <select id="locateType">
+                        <option value="lotParcelToAddress">lotParcelToAddress (כתובת → גוש/חלקה)</option>
+                        <option value="addressToLotParcel">addressToLotParcel (גוש/חלקה → כתובת)</option>
+                    </select>
+                    <span id="locateAddressWrap">
+                        <label for="locateAddress">address:</label>
+                        <input type="text" id="locateAddress" value="עין גדי 32, אילת" placeholder="כתובת">
+                    </span>
+                    <span id="locateLotParcelWrap" class="hidden">
+                        <label for="locateLot">lot (גוש):</label>
+                        <input type="number" id="locateLot" value="40095">
+                        <label for="locateParcel">parcel (חלקה):</label>
+                        <input type="number" id="locateParcel" value="13">
+                    </span>
+                    <button type="button" id="btnSearchAndLocate">חיפוש גוש/חלקה (searchAndLocate)</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>רקע, כלים, הדפסה (Background, tools, print)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>setBackground(backroundTypeID)</legend>
+                    <label for="backgroundId">מפת רקע:</label>
+                    <select id="backgroundId">
+                        <option value="0">0 – רחובות ומבנים</option>
+                        <option value="1">1 – תצלום אוויר 2023</option>
+                        <option value="2">2 – משולב</option>
+                        <option value="3">3 – CIR</option>
+                        <option value="5">5 – מפה היסטורית תל אביב 1930</option>
+                        <option value="6">6 – מפה היסטורית 1935</option>
+                        <option value="7">7 – מפה היסטורית ירושלים 1926</option>
+                        <option value="8">8 – מפה היסטורית חיפה 1919</option>
+                        <option value="9">9 – מפה טופוגרפית</option>
+                        <option value="11">11 – ללא רקע</option>
+                        <option value="15">15 – רחובות ומבנים באנגלית</option>
+                        <option value="16">16 – תצלום אוויר 2003</option>
+                        <option value="17">17 – תצלום אוויר 2004</option>
+                        <option value="18">18 – תצלום אוויר 2006</option>
+                        <option value="19">19 – תצלום אוויר 2013</option>
+                        <option value="20">20 – תצלום אוויר 2005</option>
+                        <option value="21">21 – תצלום אוויר 2008</option>
+                        <option value="24">24 – תצלום אוויר 2019</option>
+                        <option value="27">27 – תצלום אוויר 2022</option>
+                        <option value="32">32 – תצלום אוויר 2021</option>
+                    </select>
+                    <button type="button" id="btnSetBackground">setBackground</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setLayerOpacity(params)</legend>
+                    <label for="opacityLayerName">layerName:</label>
+                    <input type="text" id="opacityLayerName" value="GASSTATIONS" placeholder="GASSTATIONS">
+                    <label for="opacityValue">opacity (0–100):</label>
+                    <input type="number" id="opacityValue" value="50" min="0" max="100">
+                    <button type="button" id="btnSetLayerOpacity">setLayerOpacity</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setMapCursor(cursorType)</legend>
+                    <label for="cursorType">cursor:</label>
+                    <select id="cursorType">
+                        <option value="DEFAULT">DEFAULT</option>
+                        <option value="TARGET">TARGET</option>
+                        <option value="POLYGON">POLYGON</option>
+                        <option value="CIRCLE">CIRCLE</option>
+                        <option value="RECTANGLE">RECTANGLE</option>
+                        <option value="SELECT_FEATURES">SELECT_FEATURES</option>
+                    </select>
+                    <button type="button" id="btnSetMapCursor">setMapCursor</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setDefaultTool / הדפסה / ייצוא / מדידות</legend>
+                    <button type="button" id="btnSetDefaultTool">setDefaultTool</button>
+                    <button type="button" id="btnShowPrint">showPrint</button>
+                    <button type="button" id="btnClosePrint">closePrint</button>
+                    <button type="button" id="btnShowExportMap">showExportMap</button>
+                    <button type="button" id="btnCloseExportMap">closeExportMap</button>
+                    <button type="button" id="btnShowMeasure">showMeasure</button>
+                    <button type="button" id="btnCloseMeasure">closeMeasure</button>
+                    <button type="button" id="btnCloseOpenApps">closeOpenApps</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>GPS</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>getGPSLocation / gpsOn / gpsOff</legend>
+                    <button type="button" id="btnGetGPSLocation">getGPSLocation</button>
+                    <button type="button" id="btnGpsOn">gpsOn</button>
+                    <button type="button" id="btnGpsOff">gpsOff</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setGpsMarker(param) – רשת ישראל החדשה</legend>
+                    <label for="gpsMarkerX">x:</label>
+                    <input type="number" id="gpsMarkerX" value="222259" step="any">
+                    <label for="gpsMarkerY">y:</label>
+                    <input type="number" id="gpsMarkerY" value="631530" step="any">
+                    <label for="gpsMarkerAccuracy">accuracy:</label>
+                    <input type="number" id="gpsMarkerAccuracy" value="500" min="0" step="any">
+                    <button type="button" id="btnSetGpsMarker">setGpsMarker</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>removeGPSMarker</legend>
+                    <button type="button" id="btnRemoveGpsMarker">removeGPSMarker</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>ציור וגאומטריה (Draw &amp; geometry)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>draw(drawType) / editDrawing / zoomToDrawing / clearDrawings</legend>
+                    <label for="drawType">drawType:</label>
+                    <select id="drawType">
+                        <option value="Point">Point</option>
+                        <option value="Polyline">Polyline</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="Circle">Circle</option>
+                        <option value="Rectangle">Rectangle</option>
+                        <option value="FreehandPolygon">FreehandPolygon</option>
+                    </select>
+                    <button type="button" id="btnDraw">draw</button>
+                    <button type="button" id="btnEditDrawing">editDrawing</button>
+                    <button type="button" id="btnZoomToDrawing">zoomToDrawing</button>
+                    <button type="button" id="btnClearDrawings">clearDrawings</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>displayGeometries (doc examples)</legend>
+                    <button type="button" id="btnDisplayPoints">Add 3 points</button>
+                    <button type="button" id="btnDisplayCircle">Add circle</button>
+                    <button type="button" id="btnDisplayPolygon">Add polygon</button>
+                    <button type="button" id="btnDisplayPolyline">Add polyline</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>clearGeometriesByName(names) / clearGeometriesById(ids)</legend>
+                    <label for="clearNames">names (comma-separated):</label>
+                    <input type="text" id="clearNames" value="p1,p2,p3" placeholder="p1, p2, p3">
+                    <button type="button" id="btnClearGeometriesByName">clearGeometriesByName</button>
+                    <label for="clearIds">ids (comma-separated):</label>
+                    <input type="text" id="clearIds" placeholder="0, 1, 2">
+                    <button type="button" id="btnClearGeometriesById">clearGeometriesById</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>zoomToXY(params)</legend>
+                    <label for="zoomToX">x:</label>
+                    <input type="number" id="zoomToX" value="176085" step="any">
+                    <label for="zoomToY">y:</label>
+                    <input type="number" id="zoomToY" value="657600" step="any">
+                    <label for="zoomToLevel">level:</label>
+                    <input type="number" id="zoomToLevel" value="10" min="0" max="10" step="1">
+                    <label><input type="checkbox" id="zoomToMarker" checked> marker</label>
+                    <button type="button" id="btnZoomToXY">zoomToXY</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setMapMarker / clearMapMarker</legend>
+                    <label for="markerX">x:</label>
+                    <input type="number" id="markerX" value="179445" step="any">
+                    <label for="markerY">y:</label>
+                    <input type="number" id="markerY" value="663880" step="any">
+                    <button type="button" id="btnSetMapMarker">setMapMarker</button>
+                    <button type="button" id="btnClearMapMarker">clearMapMarker</button>
+                </fieldset>
+            </div>
+        </details>
+    </div>
+</body>
+
+</html>

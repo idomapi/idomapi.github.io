@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <title>GovMap API – ללא מפה (search, getSearchResultData, getLayerFeaturesByLocation)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <script src="const.js"></script>
+    <script src="no-map.js"></script>
+    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initNoMap()"></script>
+</head>
+
+<body>
+    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a></p>
+    <div class="no-map-layout">
+        <div class="panel panel-log">
+            <div class="panel-log-header">
+                <label>לוג:</label>
+                <button type="button" id="btnClearLog">ניקוי לוג (Clear logs)</button>
+            </div>
+            <pre id="eventLog"></pre>
+        </div>
+        <div class="panels">
+            <details class="panel-section" open>
+                <summary>מנוע חיפוש (search)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.search(params)</legend>
+                        <label for="searchText">searchText:</label>
+                        <input type="text" id="searchText" value="דרך מצדה 6 באר שבע" placeholder="מלל לחיפוש">
+                        <label for="searchLanguage">language:</label>
+                        <select id="searchLanguage">
+                            <option value="he">he</option>
+                            <option value="en">en</option>
+                        </select>
+                        <label for="searchMaxResults">maxResults:</label>
+                        <input type="number" id="searchMaxResults" value="5" min="1" max="50">
+                        <label><input type="checkbox" id="searchIsAccurate" checked> isAccurate</label>
+                        <button type="button" id="btnSearch">search</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>אחזור מידע מפורט לתוצאת חיפוש (getSearchResultData)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.getSearchResultData(searchResult, apiToken)</legend>
+                        <p class="hint">בצע חיפוש תחילה. בחר תוצאה מהרשימה או הזן אינדקס (0-based) מתוצאות החיפוש האחרון.</p>
+                        <label for="searchResultIndex">אינדקס תוצאה (0-based):</label>
+                        <input type="number" id="searchResultIndex" value="0" min="0">
+                        <button type="button" id="btnGetSearchResultData">getSearchResultData</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>ניתוח מרחבי – קבלת ישויות לפי מיקום (getLayerFeaturesByLocation)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.getLayerFeaturesByLocation(params, apiToken)</legend>
+                        <label for="locationGeometry">geometry (WKT):</label>
+                        <input type="text" id="locationGeometry" value="POINT(179614.81 663968.73)" placeholder="POINT(x y)">
+                        <label for="locationRadius">radius (מטרים):</label>
+                        <input type="number" id="locationRadius" value="100" min="0" step="any">
+                        <label for="locationLayers">layers – name:fields (שורה אחת לכל שכבה, לדוגמה gasstations:name,company):</label>
+                        <textarea id="locationLayers" rows="3" placeholder="gasstations:name,company">gasstations:name,company</textarea>
+                        <button type="button" id="btnGetLayerFeaturesByLocation">getLayerFeaturesByLocation</button>
+                    </fieldset>
+                </div>
+            </details>
+        </div>
+    </div>
+</body>
+
+</html>

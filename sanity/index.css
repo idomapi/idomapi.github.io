@@ -1,0 +1,189 @@
+body {
+    font-family: simplerregular, sans-serif;
+    margin: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.page-nav {
+    margin: 0 0 12px 0;
+}
+
+.page-nav a {
+    color: #1a5490;
+    text-decoration: none;
+}
+
+.page-nav a:hover {
+    text-decoration: underline;
+}
+
+.map-and-log {
+    float: left;
+    width: 70%;
+    margin-right: 20px;
+}
+
+#map1 {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 650px;
+}
+
+.panels {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100vh;
+    margin-top: 0;
+}
+
+.map-and-log .panel-log {
+    margin-top: 12px;
+}
+
+.panel-log-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.panel-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 8px;
+}
+
+.panel-section summary {
+    padding: 12px 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.panel-section summary::-webkit-details-marker {
+    display: none;
+}
+
+.panel-section summary::before {
+    content: '▸ ';
+    margin-left: 4px;
+}
+
+.panel-section[open] summary::before {
+    content: '▾ ';
+}
+
+.panel-body {
+    padding: 0 14px 12px;
+}
+
+.panel-body label {
+    margin-left: 8px;
+}
+
+.panel-body select,
+.panel-body button {
+    margin-left: 8px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+}
+
+.panel-body input[type='number'],
+.panel-body input[type='text'] {
+    margin-left: 8px;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    min-width: 120px;
+}
+
+.form-block {
+    margin-bottom: 16px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+.form-block legend {
+    font-weight: 600;
+    padding: 0 6px;
+}
+
+.form-block label {
+    margin-left: 8px;
+}
+
+.hidden {
+    display: none;
+}
+
+.panel-log {
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.panel-log label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+#eventLog {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    max-height: 220px;
+    overflow: auto;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+@media screen and (max-width: 768px) {
+    .map-and-log {
+        width: 100%;
+        margin-right: 0;
+        float: none;
+    }
+
+    #map1 {
+        height: 400px;
+    }
+}
+
+/* No-map page: log + panels, no map element */
+.no-map-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.no-map-layout .panel-log {
+    flex: 0 1 400px;
+    min-width: 280px;
+}
+
+.no-map-layout .panels {
+    flex: 1 1 360px;
+}
+
+.no-map-layout .form-block .hint {
+    margin: 0 0 8px 8px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.no-map-layout .form-block textarea {
+    margin-left: 8px;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    min-width: 200px;
+    display: block;
+}

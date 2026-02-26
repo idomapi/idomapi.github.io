@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Govmap – מפות מרובות</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .multi-maps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .multi-maps-grid .map-cell {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 250px;
+        }
+        .multi-maps-grid .map-cell label {
+            display: block;
+            padding: 6px 10px;
+            background: #f0f0f0;
+            font-weight: 600;
+        }
+        .multi-maps-grid .map-cell .map-inner {
+            width: 100%;
+            height: 300px;
+        }
+        .multi-maps-options {
+            margin-bottom: 12px;
+        }
+        .multi-maps-options input[type="checkbox"] {
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-nav">
+        <a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a>
+    </div>
+
+    <div class="multi-maps-options panel-section">
+        <div class="panel-body">
+            <label>
+                <input type="checkbox" id="enableOnClick" checked>
+                הפעל onClick על המפות (הדפסת פלט בלחיצה)
+            </label>
+            <button type="button" id="btnCreateMaps">צור מפות</button>
+            <p class="hint" style="margin: 8px 0 0 8px; font-size: 0.9rem; color: #555;">
+                לחיצה על מפה (כש-onClick מופעל) תדפיס למטה ולקונסול.
+            </p>
+        </div>
+    </div>
+
+    <details class="panel-section">
+        <summary>הרשמה לאירועי מפה (onEvent)</summary>
+        <div class="panel-body">
+            <label for="eventSelect">אירוע:</label>
+            <select id="eventSelect">
+                <option value="CLICK">CLICK</option>
+                <option value="RIGHT_CLICK">RIGHT_CLICK</option>
+                <option value="DOUBLE_CLICK">DOUBLE_CLICK</option>
+                <option value="PAN">PAN</option>
+                <option value="EXTENT_CHANGE">EXTENT_CHANGE</option>
+                <option value="MOUSE_MOVE">MOUSE_MOVE</option>
+                <option value="MOUSE_OVER">MOUSE_OVER</option>
+            </select>
+            <fieldset class="form-block" style="margin-top: 8px;">
+                <legend>מפות</legend>
+                <label><input type="checkbox" id="eventMapsAll" checked> כל המפות</label>
+                <label><input type="checkbox" name="eventMap" value="map1" id="eventMap_map1"> מפה 1</label>
+                <label><input type="checkbox" name="eventMap" value="map2" id="eventMap_map2"> מפה 2</label>
+                <label><input type="checkbox" name="eventMap" value="map3" id="eventMap_map3"> מפה 3</label>
+                <label><input type="checkbox" name="eventMap" value="map4" id="eventMap_map4"> מפה 4</label>
+            </fieldset>
+            <button type="button" id="btnRegisterEvent">הרשמה (Register)</button>
+            <button type="button" id="btnUnbindEvent">הסרת רישום (Unbind)</button>
+        </div>
+    </details>
+
+    <div class="multi-maps-grid">
+        <div class="map-cell">
+            <label>מפה 1</label>
+            <div id="map1" class="map-inner"></div>
+        </div>
+        <div class="map-cell">
+            <label>מפה 2</label>
+            <div id="map2" class="map-inner"></div>
+        </div>
+        <div class="map-cell">
+            <label>מפה 3</label>
+            <div id="map3" class="map-inner"></div>
+        </div>
+        <div class="map-cell">
+            <label>מפה 4</label>
+            <div id="map4" class="map-inner"></div>
+        </div>
+    </div>
+
+    <div class="panel-log">
+        <div class="panel-log-header">
+            <label>פלט אירועים:</label>
+            <button type="button" id="btnClearLog">ניקוי לוג</button>
+        </div>
+        <pre id="eventLog"></pre>
+    </div>
+
+    <script src="const.js"></script>
+    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script src="multi-maps.js"></script>
+</body>
+</html>

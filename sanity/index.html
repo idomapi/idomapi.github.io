@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="index.css">
     <script src="const.js"></script>
     <script src="index.js"></script>
-    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
 </head>
 
 <body>
@@ -149,39 +149,6 @@
                     <label for="layerEntitiesName">layerName:</label>
                     <input type="text" id="layerEntitiesName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
                     <button type="button" id="btnGetLayerEntities">getLayerEntities</button>
-                </fieldset>
-            </div>
-        </details>
-        <details class="panel-section">
-            <summary>שכבת משתמש – getAddEntitiesSample / saveLayerEntities</summary>
-            <div class="panel-body">
-                <fieldset class="form-block">
-                    <legend>getAddEntitiesSample(params)</legend>
-                    <label for="addEntitiesSampleLayerName">layerName:</label>
-                    <input type="text" id="addEntitiesSampleLayerName" value="layer_204093" placeholder="user_layer_name">
-                    <button type="button" id="btnGetAddEntitiesSample">getAddEntitiesSample</button>
-                </fieldset>
-                <fieldset class="form-block">
-                    <legend>saveLayerEntities(params) – הוספה (New)</legend>
-                    <label for="saveLayerName">layerName:</label>
-                    <input type="text" id="saveLayerName" value="layer_204093" placeholder="user_layer_name">
-                    <button type="button" id="btnSaveLayerNew">saveLayerEntities – Add</button>
-                </fieldset>
-                <fieldset class="form-block">
-                    <legend>saveLayerEntities(params) – עדכון (Update)</legend>
-                    <label for="saveUpdateEntityId">entityID:</label>
-                    <input type="text" id="saveUpdateEntityId" value="3" placeholder="objectid">
-                    <label for="saveUpdateField">field (e.g. Field2Value):</label>
-                    <input type="text" id="saveUpdateField" value="value0" placeholder="value0">
-                    <label for="saveUpdateValue">value:</label>
-                    <input type="text" id="saveUpdateValue" value="new value" placeholder="new value">
-                    <button type="button" id="btnSaveLayerUpdate">saveLayerEntities – Update</button>
-                </fieldset>
-                <fieldset class="form-block">
-                    <legend>saveLayerEntities(params) – מחיקה (Delete)</legend>
-                    <label for="saveDeleteEntityIds">entityIDs (comma-separated):</label>
-                    <input type="text" id="saveDeleteEntityIds" value="4" placeholder="objectid">
-                    <button type="button" id="btnSaveLayerDelete">saveLayerEntities – Delete</button>
                 </fieldset>
             </div>
         </details>
@@ -383,6 +350,39 @@
                     <input type="number" id="markerY" value="663880" step="any">
                     <button type="button" id="btnSetMapMarker">setMapMarker</button>
                     <button type="button" id="btnClearMapMarker">clearMapMarker</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>שכבת משתמש – getAddEntitiesSample / saveLayerEntities</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>getAddEntitiesSample(params)</legend>
+                    <label for="addEntitiesSampleLayerName">layerName:</label>
+                    <input type="text" id="addEntitiesSampleLayerName" value="layer_204093" placeholder="user_layer_name">
+                    <button type="button" id="btnGetAddEntitiesSample">getAddEntitiesSample</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>saveLayerEntities(params) – הוספה (New)</legend>
+                    <label for="saveLayerName">layerName:</label>
+                    <input type="text" id="saveLayerName" value="layer_204093" placeholder="user_layer_name">
+                    <button type="button" id="btnSaveLayerNew">saveLayerEntities – Add</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>saveLayerEntities(params) – עדכון (Update)</legend>
+                    <label for="saveUpdateEntityId">entityID:</label>
+                    <input type="text" id="saveUpdateEntityId" value="3" placeholder="objectid">
+                    <label for="saveUpdateField">field (e.g. Field2Value):</label>
+                    <input type="text" id="saveUpdateField" value="value0" placeholder="value0">
+                    <label for="saveUpdateValue">value:</label>
+                    <input type="text" id="saveUpdateValue" value="new value" placeholder="new value">
+                    <button type="button" id="btnSaveLayerUpdate">saveLayerEntities – Update</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>saveLayerEntities(params) – מחיקה (Delete)</legend>
+                    <label for="saveDeleteEntityIds">entityIDs (comma-separated):</label>
+                    <input type="text" id="saveDeleteEntityIds" value="4" placeholder="objectid">
+                    <button type="button" id="btnSaveLayerDelete">saveLayerEntities – Delete</button>
                 </fieldset>
             </div>
         </details>

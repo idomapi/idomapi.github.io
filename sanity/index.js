@@ -297,7 +297,7 @@ function setupLayerDataFilterPanel() {
                 logEvent('getLayerEntities error', { message: 'Missing layerName' });
                 return;
             }
-            govmap.getLayerEntities({ layerName }).then((response) => {
+            govmap.getLayerEntities({ layerName, token: GOVMAP_TOKEN }).then((response) => {
                 logEvent('getLayerEntities', response);
             });
         });

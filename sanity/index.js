@@ -20,6 +20,7 @@ function initGovMap() {
     setupZoomPanel();
     setupMapStateLayersPanel();
     setupLayerDataFilterPanel();
+    setupUserLayerSavePanel();
     setupIdentifyPanel();
     setupBackgroundToolsPanel();
     setupGpsPanel();
@@ -31,7 +32,7 @@ function createMap(map) {
     govmap.createMap(map, {
         token: GOVMAP_TOKEN,
         layers: ['GASSTATIONS', 'SUB_GUSH_ALL', 'PARCEL_ALL'],
-        visibleLayers: [],
+        visibleLayers: ['204093'],
         showXY: true,
         isEmbeddedToggle: false,
         background: '0',
@@ -299,6 +300,118 @@ function setupLayerDataFilterPanel() {
             }
             govmap.getLayerEntities({ layerName, token: GOVMAP_TOKEN }).then((response) => {
                 logEvent('getLayerEntities', response);
+            });
+        });
+    }
+}
+
+function setupUserLayerSavePanel() {
+    const btnGetAddEntitiesSample = document.getElementById('btnGetAddEntitiesSample');
+    const btnSaveLayerNew = document.getElementById('btnSaveLayerNew');
+    const btnSaveLayerUpdate = document.getElementById('btnSaveLayerUpdate');
+    const btnSaveLayerDelete = document.getElementById('btnSaveLayerDelete');
+
+    if (btnGetAddEntitiesSample) {
+        btnGetAddEntitiesSample.addEventListener('click', () => {
+            const layerName = document.getElementById('addEntitiesSampleLayerName').value.trim();
+            if (!layerName) {
+                logEvent('getAddEntitiesSample error', { message: 'Missing layerName' });
+                return;
+            }
+            govmap.getAddEntitiesSample({ layerName, token: GOVMAP_TOKEN }).then((response) => {
+                logEvent('getAddEntitiesSample', response);
+            });
+        });
+    }
+
+    if (btnSaveLayerNew) {
+        btnSaveLayerNew.addEventListener('click', () => {
+            const layerName = document.getElementById('saveLayerName').value.trim();
+            if (!layerName) {
+                logEvent('saveLayerEntities error', { message: 'Missing layerName' });
+                return;
+            }
+            const data = {
+                action: govmap.saveAction.New,
+                layerName: layerName,
+                token: GOVMAP_TOKEN,
+                entities: [
+                    {
+                        fields: {
+                            Field2Value: '12',
+                            Field3Value: '1697',
+                            Field4Value: '1699',
+                            Field5Value: 'link',
+                            Field6Value: 'linklink',
+                            Field8Value: 'abcd',
+                            Field1Value: '25/06/2017',
+                            SHAPE: 'POINT(196062.48 621458.39)'
+                        }
+                    },
+                    {
+                        fields: {
+                            Field2Value: '1',
+                            Field3Value: '1696',
+                            Field4Value: '1699',
+                            Field5Value: 'link',
+                            Field6Value: 'linklink',
+                            Field8Value: 'abcd',
+                            Field1Value: '25/06/2017',
+                            SHAPE: 'POINT(196062.48 600000.39)'
+                        }
+                    }
+                ]
+            };
+            govmap.saveLayerEntities(data).then((result) => {
+                logEvent('saveLayerEntities (New)', result);
+            });
+        });
+    }
+
+    if (btnSaveLayerUpdate) {
+        btnSaveLayerUpdate.addEventListener('click', () => {
+            const layerName = document.getElementById('saveLayerName').value.trim();
+            const entityID = document.getElementById('saveUpdateEntityId').value.trim();
+            const fieldName = document.getElementById('saveUpdateField').value.trim();
+            const fieldValue = document.getElementById('saveUpdateValue').value;
+            if (!layerName || !entityID || !fieldName) {
+                logEvent('saveLayerEntities error', { message: 'Missing layerName, entityID or field' });
+                return;
+            }
+            const data = {
+                action: govmap.saveAction.Update,
+                layerName: layerName,
+                token: GOVMAP_TOKEN,
+                entities: [{
+                    entityID: entityID,
+                    fields: {
+                        [fieldName]: fieldValue
+                    }
+                }]
+            };
+            govmap.saveLayerEntities(data).then((result) => {
+                logEvent('saveLayerEntities (Update)', result);
+            });
+        });
+    }
+
+    if (btnSaveLayerDelete) {
+        btnSaveLayerDelete.addEventListener('click', () => {
+            const layerName = document.getElementById('saveLayerName').value.trim();
+            const idsStr = document.getElementById('saveDeleteEntityIds').value.trim();
+            const entityIds = idsStr ? idsStr.split(',').map((s) => s.trim()).filter(Boolean) : [];
+            if (!layerName || entityIds.length === 0) {
+                logEvent('saveLayerEntities error', { message: 'Missing layerName or entityIDs' });
+                return;
+            }
+            const data = {
+                action: govmap.saveAction.Delete,
+                layerName: layerName,
+                token: GOVMAP_TOKEN,
+                entities: entityIds.map((id) => ({ entityID: id }))
+            };
+            govmap.saveLayerEntities(data).then((result) => {
+                logEvent('saveLayerEntities (Delete)', result);
             });
         });
     }

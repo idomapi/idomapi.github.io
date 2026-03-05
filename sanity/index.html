@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="index.css">
     <script src="const.js"></script>
     <script src="index.js"></script>
-    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script src="https://wwww.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
 </head>
 
 <body>
@@ -153,10 +153,41 @@
             </div>
         </details>
         <details class="panel-section">
-            <summary>זיהוי וחיפוש (Identify &amp; search)</summary>
+            <summary>שכבת משתמש – getAddEntitiesSample / saveLayerEntities</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
-                    <legend>identifyByXY(x, y)</legend>
+                    <legend>getAddEntitiesSample(params)</legend>
+                    <label for="addEntitiesSampleLayerName">layerName:</label>
+                    <input type="text" id="addEntitiesSampleLayerName" value="layer_204093" placeholder="user_layer_name">
+                    <button type="button" id="btnGetAddEntitiesSample">getAddEntitiesSample</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>saveLayerEntities(params) – הוספה (New)</legend>
+                    <label for="saveLayerName">layerName:</label>
+                    <input type="text" id="saveLayerName" value="layer_204093" placeholder="user_layer_name">
+                    <button type="button" id="btnSaveLayerNew">saveLayerEntities – Add</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>saveLayerEntities(params) – עדכון (Update)</legend>
+                    <label for="saveUpdateEntityId">entityID:</label>
+                    <input type="text" id="saveUpdateEntityId" value="3" placeholder="objectid">
+                    <label for="saveUpdateField">field (e.g. Field2Value):</label>
+                    <input type="text" id="saveUpdateField" value="value0" placeholder="value0">
+                    <label for="saveUpdateValue">value:</label>
+                    <input type="text" id="saveUpdateValue" value="new value" placeholder="new value">
+                    <button type="button" id="btnSaveLayerUpdate">saveLayerEntities – Update</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>saveLayerEntities(params) – מחיקה (Delete)</legend>
+                    <label for="saveDeleteEntityIds">entityIDs (comma-separated):</label>
+                    <input type="text" id="saveDeleteEntityIds" value="4" placeholder="objectid">
+                    <button type="button" id="btnSaveLayerDelete">saveLayerEntities – Delete</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>זיהוי וחיפוש (Identify &amp; search)</summary>
+            <div class="panel-body">
                     <label for="identifyX">x:</label>
                     <input type="number" id="identifyX" value="179681" step="any">
                     <label for="identifyY">y:</label>

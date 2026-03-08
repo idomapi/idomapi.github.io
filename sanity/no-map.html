@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="index.css">
     <script src="const.js"></script>
     <script src="no-map.js"></script>
-    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initNoMap()"></script>
+    <script>
+    (function () {
+        var s = document.createElement('script');
+        s.src = GOVMAP_API_URL;
+        s.defer = true;
+        s.onload = initNoMap;
+        document.head.appendChild(s);
+    })();
+    </script>
 </head>
 
 <body>

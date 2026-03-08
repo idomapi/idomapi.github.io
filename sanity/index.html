@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="index.css">
     <script src="const.js"></script>
     <script src="index.js"></script>
-    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script>
+    (function () {
+        var s = document.createElement('script');
+        s.src = GOVMAP_API_URL;
+        s.defer = true;
+        s.onload = initGovMap;
+        document.head.appendChild(s);
+    })();
+    </script>
 </head>
 
 <body>
@@ -211,29 +219,28 @@
             <summary>רקע, כלים, הדפסה (Background, tools, print)</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
-                    <legend>setBackground(backroundTypeID)</legend>
+                    <legend>setBackground(backgroundTypeID)</legend>
                     <label for="backgroundId">מפת רקע:</label>
                     <select id="backgroundId">
                         <option value="0">0 – רחובות ומבנים</option>
-                        <option value="1">1 – תצלום אוויר 2023</option>
+                        <option value="1">1 – תצלום אוויר</option>
                         <option value="2">2 – משולב</option>
                         <option value="3">3 – CIR</option>
                         <option value="5">5 – מפה היסטורית תל אביב 1930</option>
-                        <option value="6">6 – מפה היסטורית 1935</option>
-                        <option value="7">7 – מפה היסטורית ירושלים 1926</option>
+                        <option value="6">6 – מפה היסטורית ירושלים 1926</option>
                         <option value="8">8 – מפה היסטורית חיפה 1919</option>
                         <option value="9">9 – מפה טופוגרפית</option>
                         <option value="11">11 – ללא רקע</option>
                         <option value="15">15 – רחובות ומבנים באנגלית</option>
-                        <option value="16">16 – תצלום אוויר 2003</option>
-                        <option value="17">17 – תצלום אוויר 2004</option>
-                        <option value="18">18 – תצלום אוויר 2006</option>
-                        <option value="19">19 – תצלום אוויר 2013</option>
-                        <option value="20">20 – תצלום אוויר 2005</option>
-                        <option value="21">21 – תצלום אוויר 2008</option>
-                        <option value="24">24 – תצלום אוויר 2019</option>
-                        <option value="27">27 – תצלום אוויר 2022</option>
-                        <option value="32">32 – תצלום אוויר 2021</option>
+                        <option value="33">33 – תצלום אוויר 2003</option>
+                        <option value="34">34 – תצלום אוויר 2004</option>
+                        <option value="37">37 – תצלום אוויר 2005</option>
+                        <option value="35">35 – תצלום אוויר 2006</option>
+                        <option value="38">38 – תצלום אוויר 2008</option>
+                        <option value="36">36 – תצלום אוויר 2013</option>
+                        <option value="39">39 – תצלום אוויר 2019</option>
+                        <option value="41">41 – תצלום אוויר 2021</option>
+                        <option value="42">42 – תצלום אוויר 2022</option>
                     </select>
                     <button type="button" id="btnSetBackground">setBackground</button>
                 </fieldset>

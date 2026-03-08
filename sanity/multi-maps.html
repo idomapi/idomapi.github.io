@@ -109,7 +109,15 @@
     </div>
 
     <script src="const.js"></script>
-    <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script>
+    (function () {
+        var s = document.createElement('script');
+        s.src = GOVMAP_API_URL;
+        s.defer = true;
+        s.onload = initGovMap;
+        document.head.appendChild(s);
+    })();
+    </script>
     <script src="multi-maps.js"></script>
 </body>
 </html>

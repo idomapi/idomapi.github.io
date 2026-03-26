@@ -31,7 +31,7 @@ function initGovMap() {
 function createMap(map) {
     govmap.createMap(map, {
         token: GOVMAP_TOKEN,
-        layers: ['GASSTATIONS', 'SUB_GUSH_ALL', 'PARCEL_ALL'],
+        layers: ['GASSTATIONS', 'SUB_GUSH_ALL', 'PARCEL_ALL', 'layer_228867'],
         visibleLayers: ['204093'],
         showXY: true,
         isEmbeddedToggle: false,
@@ -240,10 +240,10 @@ function setupLayerDataFilterPanel() {
     if (btnFilterLayers) {
         btnFilterLayers.addEventListener('click', () => {
             const layerName = document.getElementById('filterLayerName').value.trim();
-            const whereClause = document.getElementById('filterWhereClause').value.trim();
+            // const whereClause = document.getElementById('filterWhereClause').value.trim();
             const zoomToExtent = document.getElementById('filterZoomToExtent').checked;
-            govmap.filterLayers({ layerName, whereClause, zoomToExtent });
-            logEvent('filterLayers', { layerName, whereClause, zoomToExtent });
+            govmap.filterLayers({ layerName,  zoomToExtent });
+            logEvent('filterLayers', { layerName, zoomToExtent });
         });
     }
 
@@ -251,13 +251,12 @@ function setupLayerDataFilterPanel() {
         btnSelectFeaturesOnMap.addEventListener('click', () => {
             const params = {
                 continous: false,
-                drawType: getDrawTypeEnum('Polygon'),
+                wkt: 'POINT(179598 663933)',
                 filterLayer: false,
                 isZoomToExtent: true,
-                layers: ['GASSTATIONS'],
-                returnFields: { GASSTATIONS: ['objectid', 'company'] },
+                layers: ['gasstations'],
+                returnFields: { gasstations: ['value0', 'value1', 'value2', 'value3'], },
                 selectOnMap: true,
-                whereClause: { GASSTATIONS: "(name = 'רשף')" }
             };
             govmap.selectFeaturesOnMap(params).then((response) => {
                 logEvent('selectFeaturesOnMap', response);

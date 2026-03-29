@@ -251,11 +251,11 @@ function setupLayerDataFilterPanel() {
         btnSelectFeaturesOnMap.addEventListener('click', () => {
             const params = {
                 continous: false,
-                wkt: 'POINT(179598 663933)',
+                drawType: getDrawTypeEnum('Polygon'),
                 filterLayer: false,
                 isZoomToExtent: true,
                 layers: ['gasstations'],
-                returnFields: { gasstations: ['value0', 'value1', 'value2', 'value3'], },
+                returnFields: { gasstations: ['value0', 'value1', 'value2', 'value3'] },
                 selectOnMap: true,
             };
             govmap.selectFeaturesOnMap(params).then((response) => {

@@ -17,7 +17,7 @@ function selectFeaturesOnMap() {
         continous: false,
         // drawType: govmap.drawType.Point,
         wkt: 'POINT(199390 624673)',
-        radius: 100,
+        // radius: 100,
         filterLayer: false,
         isZoomToExtent: false,
         layers: ['statistic_areas_2011'],

@@ -90,9 +90,9 @@
                 <fieldset class="form-block">
                     <legend>setVisibleLayers(layersOn, layersOff)</legend>
                     <label for="layersOn">layersOn (comma-separated):</label>
-                    <input type="text" id="layersOn" value="GASSTATIONS,topocad_parcel_all" placeholder="GASSTATIONS">
+                    <input type="text" id="layersOn" value="GASSTATIONS" placeholder="GASSTATIONS">
                     <label for="layersOff">layersOff (comma-separated):</label>
-                    <input type="text" id="layersOff" value="bus_stops" placeholder="bus_stops">
+                    <input type="text" id="layersOff" value="busstops" placeholder="busstops">
                     <button type="button" id="btnSetVisibleLayers">setVisibleLayers</button>
                 </fieldset>
             </div>
@@ -123,7 +123,7 @@
                 </fieldset>
                 <fieldset class="form-block">
                     <legend>selectFeaturesOnMap(params) – doc example</legend>
-                    <button type="button" id="btnSelectFeaturesOnMap">Run doc example (GASSTATIONS name=רשף)</button>
+                    <button type="button" id="btnSelectFeaturesOnMap">Invoke</button>
                 </fieldset>
                 <fieldset class="form-block">
                     <legend>closeBubble</legend>
@@ -143,7 +143,7 @@
                 <fieldset class="form-block">
                     <legend>getLayerEntities(params)</legend>
                     <label for="layerEntitiesName">layerName:</label>
-                    <input type="text" id="layerEntitiesName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
+                    <input type="text" id="layerEntitiesName" value="layer_207126" placeholder="layer_207126">
                     <button type="button" id="btnGetLayerEntities">getLayerEntities</button>
                 </fieldset>
             </div>
@@ -293,7 +293,7 @@
             <summary>displayGeometries</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
-                    <legend>displayGeometries (doc examples)</legend>
+                    <legend>displayGeometries</legend>
                         <p style="margin: 0 0 8px 0; font-size: 0.9rem; color: #555;"><code>data.labels</code> and <code>data.tooltips</code> are optional for each example—use the toggles per row (together or separately). When tooltips are on, every feature uses <code>tooltip1</code> from <code>const.js</code>.</p>
                         <div style="margin: 0 0 8px 0;">
                             <strong>3 points</strong>

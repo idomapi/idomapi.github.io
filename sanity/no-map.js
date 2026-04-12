@@ -34,6 +34,18 @@ function setupSearchPanel() {
             isAccurate
         };
 
+        const includeLayersEl = document.getElementById('searchIncludeLayers');
+
+        if (includeLayersEl && includeLayersEl.checked) {
+            const layersEl = document.getElementById('searchLayers');
+            const layersRaw = layersEl ? layersEl.value : '';
+            const layers = layersRaw.split(',').map((s) => s.trim()).filter(Boolean);
+
+            if (layers.length > 0) {
+                params.layers = layers;
+            }
+        }
+
         govmap.search(params).then((response) => {
             lastSearchResults = response.results || [];
             logEvent('search', response);

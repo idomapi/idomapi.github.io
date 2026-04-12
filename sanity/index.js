@@ -38,7 +38,7 @@ function createMap(map) {
         background: '0',
         layersMode: 1,
         center: { x: 179487, y: 663941 },
-        level: 9,
+        level: 8,
         onLoad: function () {},
     });
 }
@@ -715,6 +715,25 @@ function setupDrawAndGeometryPanel() {
 
     if (btnDisplayPoints) {
         btnDisplayPoints.addEventListener('click', () => {
+            const labelsEl = document.getElementById('displayPointsIncludeLabels');
+            const tooltipsEl = document.getElementById('displayPointsIncludeTooltips');
+            const includeLabels = labelsEl ? labelsEl.checked : true;
+            const includeTooltips = tooltipsEl ? tooltipsEl.checked : true;
+
+            const innerData = {
+                headers: ['חדשות', 'כלכלה', 'בארץ'],
+                bubbles: ['categories/1', 'categories/78', 'categories/132'],
+                bubbleUrl: 'https://www.0404.co.il/'
+            };
+
+            if (includeLabels) {
+                innerData.labels = ['label1', 'label2', 'label3'];
+            }
+
+            if (includeTooltips) {
+                innerData.tooltips = [tooltip1, 'tooltip2', 'tooltip3'];
+            }
+
             const data = {
                 wkts: ['POINT(179714.32 663772.17)', 'POINT(179621.05 663704.57)', 'POINT(179376.26 663907.7)'],
                 names: ['p1', 'p2', 'p3'],
@@ -730,103 +749,172 @@ function setupDrawAndGeometryPanel() {
                     { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Challenger_II_Basra_2008.jpg/1280px-Challenger_II_Basra_2008.jpg', width: 15, height: 15 }
                 ],
                 clearExisting: true,
-                data: {
-                    tooltips: ['0404 חדשות', '0404 כלכלה', '0404 בארץ'],
-                    headers: ['חדשות', 'כלכלה', 'בארץ'],
-                    bubbles: ['categories/1', 'categories/78', 'categories/132'],
-                    bubbleUrl: 'https://www.0404.co.il/'
-                }
+                data: innerData
             };
+
             govmap.displayGeometries(data).then((response) => {
-                logEvent('displayGeometries (3 points)', response);
+                logEvent('displayGeometries (3 points)', {
+                    response,
+                    includeLabels,
+                    includeTooltips
+                });
             });
         });
     }
 
     if (btnDisplayCircle) {
         btnDisplayCircle.addEventListener('click', () => {
+            const labelsEl = document.getElementById('displayCircleIncludeLabels');
+            const tooltipsEl = document.getElementById('displayCircleIncludeTooltips');
+            const includeLabels = labelsEl ? labelsEl.checked : false;
+            const includeTooltips = tooltipsEl ? tooltipsEl.checked : true;
+
+            const innerData = {
+                headers: ['פלאפל'],
+                bubbles: [''],
+                bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A4%D7%9C%D7%90%D7%A4%D7%9C'
+            };
+
+            if (includeLabels) {
+                innerData.labels = ['label1', 'label2'];
+            }
+
+            if (includeTooltips) {
+                innerData.tooltips = [tooltip1];
+            }
+
             const data = {
-                circleGeometries: [{ x: 179290, y: 664338, radius: 500 }],
-                names: ['p1'],
+                circleGeometries: [{ x: 179290, y: 664338, radius: 500 }, {x: 178749, y: 663823, radius: 100}],
+                names: ['p1', 'p2'],
                 geometryType: govmap.geometryType.CIRCLE,
                 defaultSymbol: {
-                    outlineColor: [0, 0, 255, 1],
+                    outlineColor: [0, 0, 255, 1], // blue
                     outlineWidth: 1,
-                    fillColor: [0, 255, 0, 0.5]
+                    fillColor: [0, 255, 0, 0.5] // green
                 },
-                symbols: [],
+                symbols: [{
+                    outlineColor: [255, 67, 0, 1], // red
+                    outlineWidth: 15,
+                    fillColor: [36, 48, 205, 0.58], // blue
+                }],
                 clearExisting: true,
-                data: {
-                    tooltips: ['סודות מאכל הפלאפל הלאומי'],
-                    headers: ['פלאפל'],
-                    bubbles: [''],
-                    bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A4%D7%9C%D7%90%D7%A4%D7%9C'
-                }
+                data: innerData
             };
+
             govmap.displayGeometries(data).then((response) => {
-                logEvent('displayGeometries (circle)', response);
+                logEvent('displayGeometries (circle)', {
+                    response,
+                    includeLabels,
+                    includeTooltips
+                });
             });
         });
     }
 
     if (btnDisplayPolygon) {
         btnDisplayPolygon.addEventListener('click', () => {
+            const labelsEl = document.getElementById('displayPolygonIncludeLabels');
+            const tooltipsEl = document.getElementById('displayPolygonIncludeTooltips');
+            const includeLabels = labelsEl ? labelsEl.checked : true;
+            const includeTooltips = tooltipsEl ? tooltipsEl.checked : true;
+
             const bubbleContent = "<div style='border: 1px solid #525252; margin: 10px;padding: 10px;'><div style='background-color: yellow;'>{0}</div><div style='background-color: blue;'>{1}</div></div>";
+
+            const innerData = {
+                headers: ['מצולע 1 כותרת', 'מצולע 2 כותרת'],
+                bubbleHTML: bubbleContent,
+                bubbleHTMLParameters: [['מצולע 1', 'מידע נוסף...'], ['מצולע 2', 'מידע נוסף...']]
+            };
+
+            if (includeTooltips) {
+                innerData.tooltips = [tooltip1, tooltip1];
+            }
+
+            if (includeLabels) {
+                innerData.labels = ['label1', 'label2'];
+                innerData.fontLabel = [{
+                    font: 'Arial',
+                    fontSize: 40,
+                    fill: 'yellow',
+                    stroke: 'blue'
+                }];
+            }
+
             const data = {
                 wkts: [
-                    'POLYGON((151612.40 534674.88, 215112.52 538643.64, 98431.04 445774.70, 74618.49 521974.85, 80968.50 552931.17, 151612.40 533881.13,151612.40 534674.88))',
-                    'POLYGON((196062.48 621458.39, 196591.65 622516.72, 197649.99 659293.88, 229929.22 665379.31, 243423.00 632306.33, 196062.48 621458.39))'
+                    'POLYGON((179208.59 663951.83, 179195.27 663913.57, 179221.55 663898.35, 179233.89 663943.67, 179208.59 663951.83))',
+                    'POLYGON((179590.55 663854.42, 179541.04 663835.25, 179574.17 663811.71, 179590.55 663854.42))'
                 ],
                 names: ['p1', 'p2'],
                 geometryType: govmap.geometryType.POLYGON,
                 defaultSymbol: {
-                    outlineColor: [0, 80, 255, 1],
+                    outlineColor: [0, 0, 255, 1], // blue
                     outlineWidth: 1,
-                    fillColor: [138, 43, 226, 0.5]
+                    fillColor: [0, 255, 0, 0.5] // green
                 },
-                symbols: [],
+                symbols: [{
+                    outlineColor: [255, 67, 0, 1], // red
+                    outlineWidth: 15,
+                    fillColor: [36, 48, 205, 0.58], // blue
+                }],
                 clearExisting: true,
-                data: {
-                    tooltips: ['רֶמֶז צָץ מצולע 1', 'רֶמֶז צָץ מצולע 2'],
-                    headers: ['מצולע 1 כותרת', 'מצולע 2 כותרת'],
-                    bubbleHTML: bubbleContent,
-                    bubbleHTMLParameters: [['מצולע 1', 'מידע נוסף...'], ['מצולע 2', 'מידע נוסף...']],
-                    labels: ['label1', 'label2'],
-                    fontLabel: [{
-                        font: 'Arial',
-                        fontSize: 40,
-                        fill: 'yellow',
-                        stroke: 'blue'
-                    }]
-                }
+                data: innerData
             };
+
             govmap.displayGeometries(data).then((response) => {
-                logEvent('displayGeometries (polygon)', response);
+                logEvent('displayGeometries (polygon)', {
+                    response,
+                    includeLabels,
+                    includeTooltips
+                });
             });
         });
     }
 
     if (btnDisplayPolyline) {
         btnDisplayPolyline.addEventListener('click', () => {
+            const labelsEl = document.getElementById('displayPolylineIncludeLabels');
+            const tooltipsEl = document.getElementById('displayPolylineIncludeTooltips');
+            const includeLabels = labelsEl ? labelsEl.checked : false;
+            const includeTooltips = tooltipsEl ? tooltipsEl.checked : true;
+
+            const innerData = {
+                headers: ['שווארמה'],
+                bubbles: ['%D7%A9%D7%95%D7%95%D7%90%D7%A8%D7%9E%D7%94'],
+                bubbleUrl: 'https://he.wikipedia.org/wiki/'
+            };
+
+            if (includeTooltips) {
+                innerData.tooltips = [tooltip1];
+            }
+
+            if (includeLabels) {
+                innerData.labels = ['label1', 'label2'];
+            }
+
             const data = {
-                wkts: ['LINESTRING(217457.62 749119.89, 158039.27 583337.66, 239075.64 633825.69)'],
-                names: ['p1'],
+                wkts: ['LINESTRING(179366.09 664072.36, 179324.24 663941, 179412.92 664025.38, 179378.48 663923.84)', 'LINESTRING(179526.45 663836.11, 179417.25 663890.6, 179459.07 663808.94, 179348.63 663753.69)'],
+                names: ['p1', 'p2'],
                 geometryType: govmap.geometryType.POLYLINE,
                 defaultSymbol: {
                     color: [255, 0, 80, 1],
-                    width: 10
+                    width: 5
                 },
-                symbols: [],
+                symbols: [{
+                    color: [255, 255, 0, 1], // yellow rgba
+                    width: 10
+               
+                }],
                 clearExisting: true,
-                data: {
-                    tooltips: ['שווארמה המאכל הלאומי'],
-                    headers: ['שווארמה'],
-                    bubbles: ['%D7%A9%D7%95%D7%95%D7%90%D7%A8%D7%9E%D7%94'],
-                    bubbleUrl: 'https://he.wikipedia.org/wiki/'
-                }
+                data: innerData
             };
+
             govmap.displayGeometries(data).then((response) => {
-                logEvent('displayGeometries (polyline)', response);
+                logEvent('displayGeometries (polyline)', {
+                    response,
+                    includeLabels,
+                    includeTooltips
+                });
             });
         });
     }

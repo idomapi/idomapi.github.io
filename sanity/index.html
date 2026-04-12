@@ -97,19 +97,6 @@
             </div>
         </details>
         <details class="panel-section">
-            <summary>מפת חום (Heat layer)</summary>
-            <div class="panel-body">
-                <fieldset class="form-block">
-                    <legend>setHeatLayer / removeHeatLayer / changeHeatLayerValueField</legend>
-                    <button type="button" id="btnSetHeatLayer">setHeatLayer (doc example)</button>
-                    <button type="button" id="btnRemoveHeatLayer">removeHeatLayer</button>
-                    <label for="heatValueField">valueField:</label>
-                    <input type="text" id="heatValueField" value="val1" placeholder="val1">
-                    <button type="button" id="btnChangeHeatLayerValueField">changeHeatLayerValueField</button>
-                </fieldset>
-            </div>
-        </details>
-        <details class="panel-section">
             <summary>מידע, סינון, בועית (Layer data, filter, bubble)</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
@@ -279,31 +266,6 @@
             </div>
         </details>
         <details class="panel-section">
-            <summary>GPS</summary>
-            <div class="panel-body">
-                <fieldset class="form-block">
-                    <legend>getGPSLocation / gpsOn / gpsOff</legend>
-                    <button type="button" id="btnGetGPSLocation">getGPSLocation</button>
-                    <button type="button" id="btnGpsOn">gpsOn</button>
-                    <button type="button" id="btnGpsOff">gpsOff</button>
-                </fieldset>
-                <fieldset class="form-block">
-                    <legend>setGpsMarker(param) – רשת ישראל החדשה</legend>
-                    <label for="gpsMarkerX">x:</label>
-                    <input type="number" id="gpsMarkerX" value="222259" step="any">
-                    <label for="gpsMarkerY">y:</label>
-                    <input type="number" id="gpsMarkerY" value="631530" step="any">
-                    <label for="gpsMarkerAccuracy">accuracy:</label>
-                    <input type="number" id="gpsMarkerAccuracy" value="500" min="0" step="any">
-                    <button type="button" id="btnSetGpsMarker">setGpsMarker</button>
-                </fieldset>
-                <fieldset class="form-block">
-                    <legend>removeGPSMarker</legend>
-                    <button type="button" id="btnRemoveGpsMarker">removeGPSMarker</button>
-                </fieldset>
-            </div>
-        </details>
-        <details class="panel-section">
             <summary>ציור וגאומטריה (Draw &amp; geometry)</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
@@ -322,13 +284,40 @@
                     <button type="button" id="btnZoomToDrawing">zoomToDrawing</button>
                     <button type="button" id="btnClearDrawings">clearDrawings</button>
                 </fieldset>
-                <fieldset class="form-block">
-                    <legend>displayGeometries (doc examples)</legend>
-                    <button type="button" id="btnDisplayPoints">Add 3 points</button>
-                    <button type="button" id="btnDisplayCircle">Add circle</button>
-                    <button type="button" id="btnDisplayPolygon">Add polygon</button>
-                    <button type="button" id="btnDisplayPolyline">Add polyline</button>
                 </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>displayGeometries</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>displayGeometries (doc examples)</legend>
+                        <p style="margin: 0 0 8px 0; font-size: 0.9rem; color: #555;"><code>data.labels</code> and <code>data.tooltips</code> are optional for each example—use the toggles per row (together or separately). When tooltips are on, every feature uses <code>tooltip1</code> from <code>const.js</code>.</p>
+                        <div style="margin: 0 0 8px 0;">
+                            <strong>3 points</strong>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayPointsIncludeLabels" checked> <code>labels</code></label>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayPointsIncludeTooltips" checked> <code>tooltips</code></label>
+                            <button type="button" id="btnDisplayPoints" style="margin-left: 8px;">Add 3 points</button>
+                        </div>
+                        <div style="margin: 0 0 8px 0;">
+                            <strong>Circle</strong>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayCircleIncludeLabels"> <code>labels</code></label>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayCircleIncludeTooltips" checked> <code>tooltips</code></label>
+                            <button type="button" id="btnDisplayCircle" style="margin-left: 8px;">Add circle</button>
+                        </div>
+                        <div style="margin: 0 0 8px 0;">
+                            <strong>Polygon</strong>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayPolygonIncludeLabels" checked> <code>labels</code></label>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayPolygonIncludeTooltips" checked> <code>tooltips</code></label>
+                            <button type="button" id="btnDisplayPolygon" style="margin-left: 8px;">Add polygon</button>
+                        </div>
+                        <div style="margin: 0 0 8px 0;">
+                            <strong>Polyline</strong>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayPolylineIncludeLabels"> <code>labels</code></label>
+                            <label style="margin-left: 8px;"><input type="checkbox" id="displayPolylineIncludeTooltips" checked> <code>tooltips</code></label>
+                            <button type="button" id="btnDisplayPolyline" style="margin-left: 8px;">Add polyline</button>
+                        </div>
+                    </fieldset>
                 <fieldset class="form-block">
                     <legend>clearGeometriesByName(names) / clearGeometriesById(ids)</legend>
                     <label for="clearNames">names (comma-separated):</label>
@@ -390,6 +379,44 @@
                     <label for="saveDeleteEntityIds">entityIDs (comma-separated):</label>
                     <input type="text" id="saveDeleteEntityIds" value="4" placeholder="objectid">
                     <button type="button" id="btnSaveLayerDelete">saveLayerEntities – Delete</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>GPS</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>getGPSLocation / gpsOn / gpsOff</legend>
+                    <button type="button" id="btnGetGPSLocation">getGPSLocation</button>
+                    <button type="button" id="btnGpsOn">gpsOn</button>
+                    <button type="button" id="btnGpsOff">gpsOff</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>setGpsMarker(param) – רשת ישראל החדשה</legend>
+                    <label for="gpsMarkerX">x:</label>
+                    <input type="number" id="gpsMarkerX" value="222259" step="any">
+                    <label for="gpsMarkerY">y:</label>
+                    <input type="number" id="gpsMarkerY" value="631530" step="any">
+                    <label for="gpsMarkerAccuracy">accuracy:</label>
+                    <input type="number" id="gpsMarkerAccuracy" value="500" min="0" step="any">
+                    <button type="button" id="btnSetGpsMarker">setGpsMarker</button>
+                </fieldset>
+                <fieldset class="form-block">
+                    <legend>removeGPSMarker</legend>
+                    <button type="button" id="btnRemoveGpsMarker">removeGPSMarker</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>מפת חום (Heat layer)</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>setHeatLayer / removeHeatLayer / changeHeatLayerValueField</legend>
+                    <button type="button" id="btnSetHeatLayer">setHeatLayer (doc example)</button>
+                    <button type="button" id="btnRemoveHeatLayer">removeHeatLayer</button>
+                    <label for="heatValueField">valueField:</label>
+                    <input type="text" id="heatValueField" value="val1" placeholder="val1">
+                    <button type="button" id="btnChangeHeatLayerValueField">changeHeatLayerValueField</button>
                 </fieldset>
             </div>
         </details>

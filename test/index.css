@@ -39,6 +39,14 @@ body {
     box-sizing: border-box;
 }
 
+.actions {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+}
+
 .map-container {
     width: 100%;
     height: 600px;

@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['statistic_areas_2011'],
-        visibleLayers: [],
+        visibleLayers: ['GASSTATIONS'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -40,7 +40,7 @@ function displayGeometries() {
         // circleGeometries: [{ x: 179290, y: 664338, radius: 500 }, {x: 179588, y: 665177, radius: 500}],
         wkts: ['POINT(179290 664338)', 'POINT(179588 665177)'],
         names: ['p1'],
-        geometryType: govmap.geometryType.CIRCLE,
+        geometryType: govmap.geometryType.POINT,
         defaultSymbol:
         {
             outlineColor: [0, 0, 255, 1],
@@ -59,5 +59,17 @@ function displayGeometries() {
     };
     govmap.displayGeometries(data).then(function (response) {
         console.log(response.data);
+    });
+}
+
+function intersectFeatures() {
+    var params = {
+        geometry: "POLYGON((178913.45 662158.23, 183817.6 662139.91, 183831.7 666172.6, 178929.49 666190.93, 178913.45 662158.23))",
+        layerName: "GASSTATIONS",
+        fields: ['value1', 'value2', 'value3'],
+        whereClause: "(value1 LIKE %ד%) AND (value2 LIKE %אבי%)"
+    };
+    govmap.intersectFeatures(params).then(function (response) {
+        console.log(response);
     });
 }

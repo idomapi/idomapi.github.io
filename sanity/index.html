@@ -19,6 +19,7 @@
 
 <body>
     <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a></p>
+    <div class="page-content">
     <div class="map-and-log">
         <div id="map1"></div>
         <div class="panel panel-log">
@@ -150,6 +151,8 @@
         <details class="panel-section">
             <summary>זיהוי וחיפוש (Identify &amp; search)</summary>
             <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>identifyByXY(x, y)</legend>
                     <label for="identifyX">x:</label>
                     <input type="number" id="identifyX" value="179681" step="any">
                     <label for="identifyY">y:</label>
@@ -284,14 +287,13 @@
                     <button type="button" id="btnZoomToDrawing">zoomToDrawing</button>
                     <button type="button" id="btnClearDrawings">clearDrawings</button>
                 </fieldset>
-                </fieldset>
-                </div>
-            </details>
-            <details class="panel-section">
-                <summary>displayGeometries</summary>
-                <div class="panel-body">
-                    <fieldset class="form-block">
-                        <legend>displayGeometries (doc examples)</legend>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>displayGeometries</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>displayGeometries (doc examples)</legend>
                         <p style="margin: 0 0 8px 0; font-size: 0.9rem; color: #555;"><code>data.labels</code> and <code>data.tooltips</code> are optional for each example—use the toggles per row (together or separately). When tooltips are on, every feature uses <code>tooltip1</code> from <code>const.js</code>.</p>
                         <div style="margin: 0 0 8px 0;">
                             <strong>3 points</strong>
@@ -420,6 +422,7 @@
                 </fieldset>
             </div>
         </details>
+    </div>
     </div>
 </body>
 

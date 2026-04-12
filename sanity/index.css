@@ -18,10 +18,17 @@ body {
     text-decoration: underline;
 }
 
+.page-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+}
+
 .map-and-log {
-    float: left;
-    width: 70%;
-    margin-right: 20px;
+    flex: 7 1 280px;
+    min-width: 0;
+    margin-right: 0;
 }
 
 #map1 {
@@ -33,6 +40,8 @@ body {
 }
 
 .panels {
+    flex: 3 1 240px;
+    min-width: 0;
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 100vh;
@@ -52,6 +61,11 @@ body {
 }
 
 .panel-section {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -149,9 +163,11 @@ body {
 
 @media screen and (max-width: 768px) {
     .map-and-log {
-        width: 100%;
-        margin-right: 0;
-        float: none;
+        flex: 1 1 100%;
+    }
+
+    .panels {
+        flex: 1 1 100%;
     }
 
     #map1 {

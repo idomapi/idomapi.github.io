@@ -2,7 +2,7 @@ async function initGovMap() {
     govmap.createMap('map', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["statistic_areas_2011"],
-        visibleLayers: [],
+        visibleLayers: ["statistic_areas_2011", 'layer_153830', 'layer_157866'],
         showXY: true,
         isEmbeddedToggle: false,
         background: 0,

@@ -16,10 +16,20 @@ body {
 }
 
 @media screen and (max-width: 768px) {
-  #map {
-    width: 100%;
-    height: 400px;
-    margin-right: 0;
-    float: none;
-  }
+    body {
+        margin: 0;
+    }
+
+    body > div:not(#map) {
+        display: none;
+    }
+
+    #map {
+        width: 100%;
+        height: 100vh;
+        margin-right: 0;
+        float: none;
+        border: 0;
+        border-radius: 0;
+    }
 }

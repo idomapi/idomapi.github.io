@@ -62,3 +62,24 @@ body {
     flex-shrink: 0;
     align-self: flex-start;
 }
+
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .header,
+    .map-select-btn {
+        display: none;
+    }
+
+    .content {
+        margin-top: 0;
+        max-width: none;
+        width: 100%;
+    }
+
+    .map-container {
+        height: 100vh;
+    }
+}

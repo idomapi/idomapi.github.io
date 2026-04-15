@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "PARCEL_ALL", 'layer_207126', 'layer_207127'],
-        visibleLayers: ["ies", "statistic_areas_2011", 'layer_207126'],
+        visibleLayers: ['layer_207126', 'ies'],
         showXY: true,
         isEmbeddedToggle: false,
         background: "0",

@@ -1,18 +1,18 @@
 const env = 'prod';
-// const GOVMAP_TOKEN = '8c430f7f-1e21-4434-b256-c5e91fac4005'; // dev
-const GOVMAP_TOKEN = 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657'; // stage
-// const GOVMAP_TOKEN = '8afbb7f6-f247-4b73-9366-635aaa7c9b1f'; // production
 
 const ENV_CONFIG = {
     prod: {
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         apiUrl: 'https://www.govmap.gov.il/govmap/api/govmap.api.js',
         pageTitle: 'prod'
     },
     stage: {
+        token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
         apiUrl: 'https://stage.govmap.gov.il/govmap/api/govmap.api.js',
         pageTitle: 'test'
     },
     dev: {
+        token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         apiUrl: 'https://dev.govmap.gov.il/govmap/api/govmap.api.js',
         pageTitle: 'dev'
     }
@@ -20,6 +20,7 @@ const ENV_CONFIG = {
 
 const activeEnvConfig = ENV_CONFIG[env] || ENV_CONFIG.stage;
 
+const GOVMAP_TOKEN = activeEnvConfig.token;
 const GOVMAP_API_URL = activeEnvConfig.apiUrl;
 const SANITY_PAGE_TITLE = activeEnvConfig.pageTitle;
 

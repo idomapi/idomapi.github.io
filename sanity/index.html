@@ -22,7 +22,8 @@
 
 <body>
     <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a></p>
-    <div class="page-content gps-rows-layout">
+    <div class="page-content">
+    <div class="map-and-log">
         <div id="map1"></div>
         <div class="panel panel-log">
             <div class="panel-log-header">
@@ -31,7 +32,8 @@
             </div>
             <pre id="eventLog"></pre>
         </div>
-    <div class="panels gps-only">
+    </div>
+    <div class="panels">
         <details class="panel-section" open>
             <summary>אירועי מפה (Map events)</summary>
             <div class="panel-body">
@@ -385,7 +387,7 @@
                 </fieldset>
             </div>
         </details>
-        <details class="panel-section" id="gpsSection" open>
+        <details class="panel-section" id="gpsSection">
             <summary>GPS</summary>
             <div class="panel-body">
                 <fieldset class="form-block">

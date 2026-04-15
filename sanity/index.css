@@ -25,14 +25,6 @@ body {
     gap: 20px;
 }
 
-.page-content.gps-rows-layout {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    gap: 16px;
-}
-
 .map-and-log {
     flex: 7 1 280px;
     min-width: 0;
@@ -47,11 +39,6 @@ body {
     height: 650px;
 }
 
-.gps-rows-layout #map1 {
-    min-height: 60vh;
-    height: 70vh;
-}
-
 .panels {
     flex: 3 1 240px;
     min-width: 0;
@@ -59,15 +46,6 @@ body {
     overflow-x: hidden;
     max-height: 100vh;
     margin-top: 0;
-}
-
-.gps-rows-layout .panels {
-    max-height: none;
-    overflow: visible;
-}
-
-.gps-only .panel-section:not(#gpsSection) {
-    display: none;
 }
 
 .map-and-log .panel-log {
@@ -184,21 +162,31 @@ body {
 }
 
 @media screen and (max-width: 768px) {
+    .page-content {
+        display: block;
+    }
+
     .map-and-log {
         flex: 1 1 100%;
     }
 
     .panels {
         flex: 1 1 100%;
+        max-height: none;
+        overflow: visible;
     }
 
     #map1 {
-        height: 400px;
-    }
-
-    .gps-rows-layout #map1 {
         height: 60vh;
         min-height: 360px;
+    }
+
+    .panels .panel-section {
+        display: none;
+    }
+
+    .panels #gpsSection {
+        display: block;
     }
 }
 

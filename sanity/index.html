@@ -1,10 +1,13 @@
 <html>
 
 <head>
-    <title>אתר דמו לפונקציות API - גובמאפ</title>
+    <title>sanity</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
     <script src="const.js"></script>
+    <script>
+        document.title = SANITY_PAGE_TITLE;
+    </script>
     <script src="index.js"></script>
     <script>
     (function () {
@@ -19,8 +22,7 @@
 
 <body>
     <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a></p>
-    <div class="page-content">
-    <div class="map-and-log">
+    <div class="page-content gps-rows-layout">
         <div id="map1"></div>
         <div class="panel panel-log">
             <div class="panel-log-header">
@@ -29,8 +31,7 @@
             </div>
             <pre id="eventLog"></pre>
         </div>
-    </div>
-    <div class="panels">
+    <div class="panels gps-only">
         <details class="panel-section" open>
             <summary>אירועי מפה (Map events)</summary>
             <div class="panel-body">
@@ -384,7 +385,7 @@
                 </fieldset>
             </div>
         </details>
-        <details class="panel-section">
+        <details class="panel-section" id="gpsSection" open>
             <summary>GPS</summary>
             <div class="panel-body">
                 <fieldset class="form-block">

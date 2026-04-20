@@ -185,7 +185,8 @@ body {
         display: none;
     }
 
-    .panels #gpsSection {
+    .panels #gpsSection,
+    .panels #drawSection {
         display: block;
     }
 }

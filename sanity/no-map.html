@@ -28,7 +28,7 @@
             <pre id="eventLog"></pre>
         </div>
         <div class="panels">
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>מנוע חיפוש (search)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
@@ -68,13 +68,41 @@
                 <div class="panel-body">
                     <fieldset class="form-block">
                         <legend>govmap.getLayerFeaturesByLocation(params, apiToken)</legend>
-                        <label for="locationGeometry">geometry (WKT):</label>
-                        <input type="text" id="locationGeometry" value="POINT(179614.81 663968.73)" placeholder="POINT(x y)">
-                        <label for="locationRadius">radius (מטרים):</label>
-                        <input type="number" id="locationRadius" value="100" min="0" step="any">
-                        <label for="locationLayers">layers – name:fields (שורה אחת לכל שכבה, לדוגמה gasstations:name,company):</label>
-                        <textarea id="locationLayers" rows="3" placeholder="gasstations:name,company">gasstations:name,company</textarea>
+                        <div>
+                            <label for="locationGeometry">geometry (WKT):</label>
+                            <input type="text" id="locationGeometry" value="POINT(179614.81 663968.73)" placeholder="POINT(x y)">
+                        </div>
+                        <p class="hint">- or -</p>
+                        <div>
+                            <label for="locationAddress">address:</label>
+                            <input type="text" id="locationAddress" value="סעדיה גאון 24 תל אביב" placeholder="כתובת">
+                        </div>
+                        <div>
+                            <label for="locationRadius">radius (מטרים):</label>
+                            <input type="number" id="locationRadius" value="100" min="0" step="any">
+                        </div>
+                        <div>
+                            <label for="locationLayers">layers (שורה אחת לכל שכבה, לדוגמה gasstations:name,company):</label>
+                            <textarea id="locationLayers" rows="3" placeholder="gasstations:name,company">gasstations:name,company</textarea>
+                        </div>
                         <button type="button" id="btnGetLayerFeaturesByLocation">getLayerFeaturesByLocation</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>קבל שדות סינון לשכבה (getApiLayerFilterFields)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.getApiLayerFilterFields(layer, apiToken, language)</legend>
+                        <div>
+                            <label for="filterFieldsLayer">layer:</label>
+                            <input type="text" id="filterFieldsLayer" placeholder="gasstations" value="gasstations">
+                        </div>
+                        <div>
+                            <label for="filterFieldsLanguage">language:</label>
+                            <input type="text" id="filterFieldsLanguage" placeholder="language (e.g. he)">
+                        </div>
+                        <button type="button" id="btnGetApiLayerFilterFields">getApiLayerFilterFields</button>
                     </fieldset>
                 </div>
             </details>

@@ -15,15 +15,22 @@ function initGovMap() {
 function createMap() {
     govmap.createMap('map1', {
         token: GOVMAP_TOKEN,
-        layers: ['GASSTATIONS', 'SUB_GUSH_ALL', 'PARCEL_ALL', 'layer_228867', 'bus_stops'],
-        visibleLayers: ['204093'],
+        layers: ['GASSTATIONS', 'bus_stops'],
+        visibleLayers: ['204093', 'GASSTATIONS'],
         showXY: true,
         isEmbeddedToggle: false,
         background: '0',
         layersMode: 1,
         center: { x: 179487, y: 663941 },
         level: 9,
-        onLoad: function () {},
+        // identifyOnlyBubble: true,
+        // identifyOnlySelect: true,
+        // extent: {
+        //     "xmin": 178450.85,
+        //     "ymin": 663337.72,
+        //     "xmax": 180356.52,
+        //     "ymax": 664640.9
+        // }
     });
 }
 

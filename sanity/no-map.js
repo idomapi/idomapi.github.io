@@ -5,6 +5,7 @@ function initNoMap() {
     setupSearchPanel();
     setupGetSearchResultDataPanel();
     setupGetLayerFeaturesByLocationPanel();
+    setupGetApiLayerFilterFieldsPanel();
     setupLogPanel();
 }
 
@@ -95,14 +96,9 @@ function setupGetLayerFeaturesByLocationPanel() {
 
     btnGetLayerFeaturesByLocation.addEventListener('click', () => {
         const geometry = document.getElementById('locationGeometry').value.trim();
+        const address = document.getElementById('locationAddress').value.trim();
         const radius = Number(document.getElementById('locationRadius').value);
         const layersText = document.getElementById('locationLayers').value.trim();
-
-        if (!geometry) {
-            logEvent('getLayerFeaturesByLocation error', { message: 'geometry (WKT) is required' });
-            return;
-        }
-
         const layers = [];
 
         if (layersText) {
@@ -129,6 +125,7 @@ function setupGetLayerFeaturesByLocationPanel() {
         }
 
         const payload = {
+            address,
             geometry,
             radius: Number.isFinite(radius) ? radius : 100,
             layers
@@ -138,6 +135,25 @@ function setupGetLayerFeaturesByLocationPanel() {
             logEvent('getLayerFeaturesByLocation', response);
         }).catch((err) => {
             logEvent('getLayerFeaturesByLocation error', { message: String(err && err.message || err) });
+        });
+    });
+}
+
+function setupGetApiLayerFilterFieldsPanel() {
+    const btnGetApiLayerFilterFields = document.getElementById('btnGetApiLayerFilterFields');
+
+    if (!btnGetApiLayerFilterFields) {
+        return;
+    }
+
+    btnGetApiLayerFilterFields.addEventListener('click', () => {
+        const layer = document.getElementById('filterFieldsLayer').value.trim();
+        const language = document.getElementById('filterFieldsLanguage').value.trim();
+
+        govmap.getApiLayerFilterFields(layer, GOVMAP_TOKEN, language).then((response) => {
+            logEvent('getApiLayerFilterFields', response);
+        }).catch((err) => {
+            logEvent('getApiLayerFilterFields error', { message: String(err && err.message || err) });
         });
     });
 }

@@ -23,6 +23,9 @@ function createMap() {
         layersMode: 1,
         center: { x: 179487, y: 663941 },
         level: 9,
+        onLoad: function () {
+            writeLogLine('map loaded');
+        },
         // identifyOnlyBubble: true,
         // identifyOnlySelect: true,
         // extent: {
@@ -985,5 +988,16 @@ function logEvent(name, data) {
 
     const line = '[' + new Date().toISOString() + '] ' + name + ': ' + JSON.stringify(data, null, 2);
     el.textContent = (el.textContent ? el.textContent + '\n\n' : '') + line;
+    el.scrollTop = el.scrollHeight;
+}
+
+function writeLogLine(message) {
+    const el = document.getElementById('eventLog');
+
+    if (!el) {
+        return;
+    }
+
+    el.textContent = (el.textContent ? el.textContent + '\n\n' : '') + message;
     el.scrollTop = el.scrollHeight;
 }

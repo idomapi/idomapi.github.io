@@ -11,6 +11,7 @@ function initGovMap() {
         layersMode: 1,
         center: { x: 179543, y: 664414 },
         level: 7,
+        zoomButtons: false,
         onLoad: function () {
             // getLayerData();
         },

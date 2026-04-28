@@ -3,6 +3,7 @@ let lastSearchResults = [];
 
 function initNoMap() {
     setupSearchPanel();
+    setupManualPanel();
     setupGetSearchResultDataPanel();
     setupGetLayerFeaturesByLocationPanel();
     setupGetLayerFilterFieldsPanel();
@@ -52,6 +53,58 @@ function setupSearchPanel() {
             logEvent('search', response);
         }).catch((err) => {
             logEvent('search error', { message: String(err && err.message || err) });
+        });
+    });
+}
+
+function setupManualPanel() {
+    const btnManual = document.getElementById('btnManual');
+
+    if (!btnManual) {
+        return;
+    }
+
+    btnManual.addEventListener('click', () => {
+        const url = 'https://dev.govmap.gov.il/api/search-service/api-search';
+        const body = {
+            apiKey: '8c430f7f-1e21-4434-b256-c5e91fac4005',
+            searchText: 'דרך מצדה 6 באר שבע',
+            language: 'he',
+            maxResults: 5,
+            isAccurate: false
+        };
+
+        const requestInit = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'x-govmap-api-allow-all-domains': 'true',
+            },
+            body: JSON.stringify(body)
+        };
+
+        fetch(url, requestInit).then(async (response) => {
+            const rawText = await response.text();
+            let parsedBody = rawText;
+
+            if (rawText) {
+
+                try {
+                    parsedBody = JSON.parse(rawText);
+                } catch (_err) {
+                    parsedBody = rawText;
+                }
+            }
+
+            logEvent('Manual', {
+                ok: response.ok,
+                status: response.status,
+                statusText: response.statusText,
+                body: parsedBody
+            });
+        }).catch((err) => {
+            logEvent('Manual error', { message: String((err && err.message) || err) });
         });
     });
 }

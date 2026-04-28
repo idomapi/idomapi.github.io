@@ -5,7 +5,7 @@ function initNoMap() {
     setupSearchPanel();
     setupGetSearchResultDataPanel();
     setupGetLayerFeaturesByLocationPanel();
-    setupGetApiLayerFilterFieldsPanel();
+    setupGetLayerFilterFieldsPanel();
     setupLogPanel();
 }
 
@@ -139,21 +139,21 @@ function setupGetLayerFeaturesByLocationPanel() {
     });
 }
 
-function setupGetApiLayerFilterFieldsPanel() {
-    const btnGetApiLayerFilterFields = document.getElementById('btnGetApiLayerFilterFields');
+function setupGetLayerFilterFieldsPanel() {
+    const btnGetLayerFilterFields = document.getElementById('btnGetLayerFilterFields');
 
-    if (!btnGetApiLayerFilterFields) {
+    if (!btnGetLayerFilterFields) {
         return;
     }
 
-    btnGetApiLayerFilterFields.addEventListener('click', () => {
+    btnGetLayerFilterFields.addEventListener('click', () => {
         const layer = document.getElementById('filterFieldsLayer').value.trim();
         const language = document.getElementById('filterFieldsLanguage').value.trim();
 
-        govmap.getApiLayerFilterFields(layer, GOVMAP_TOKEN, language).then((response) => {
-            logEvent('getApiLayerFilterFields', response);
+        govmap.getLayerFilterFields(layer, GOVMAP_TOKEN, language).then((response) => {
+            logEvent('getLayerFilterFields', response);
         }).catch((err) => {
-            logEvent('getApiLayerFilterFields error', { message: String(err && err.message || err) });
+            logEvent('getLayerFilterFields error', { message: String(err && err.message || err) });
         });
     });
 }

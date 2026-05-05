@@ -1,0 +1,255 @@
+<html>
+
+<head>
+    <title>GovMap API – סטטיסטיקות שכבה (aggregate)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <script src="const.js"></script>
+    <script src="aggregate.js"></script>
+    <script>
+    (function () {
+        var s = document.createElement('script');
+        s.src = GOVMAP_API_URL;
+        s.defer = true;
+        s.onload = initAggregate;
+        document.head.appendChild(s);
+    })();
+    </script>
+</head>
+
+<body>
+    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a> | <a href="aggregate.html">סטטיסטיקות</a></p>
+    <div class="no-map-layout">
+        <div class="panel panel-log">
+            <div class="panel-log-header">
+                <label>לוג:</label>
+                <button type="button" id="btnClearLog">ניקוי לוג (Clear logs)</button>
+            </div>
+            <pre id="eventLog"></pre>
+        </div>
+        <div class="panels">
+            <p class="hint"><code>govmap.aggregate(params)</code>
+                <a href="https://docs.govmap.gov.il/docs/standalone/geospatial-aggregation-api-docs" target="_blank" rel="noopener">תיעוד govmap.aggregate</a>
+            </p>
+            <details class="panel-section" open>
+                <summary>מקור (source)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>params.source</legend>
+                        <div>
+                            <label for="aggSourceLayer">layer (חובה):</label>
+                            <input type="text" id="aggSourceLayer" value="layer_159941" placeholder="מזהה שכבה או alias">
+                        </div>
+                        <div>
+                            <label for="aggSourceSrid">srid (אופציונלי):</label>
+                            <select id="aggSourceSrid"></select>
+                        </div>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section" open>
+                <summary>פעולה (operation)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>params.operation</legend>
+                        <div>
+                            <label for="aggOperationType">type (חובה):</label>
+                            <select id="aggOperationType"></select>
+                        </div>
+                        <div id="aggBlockOperationField" class="hidden">
+                            <label for="aggOperationField">field:</label>
+                            <input type="text" id="aggOperationField" placeholder="שם שדה" value="x">
+                        </div>
+                        <div id="aggBlockOperationFields" class="hidden">
+                            <label for="aggOperationFields">fields (טבלה — רשימה מופרדת בפסיקים):</label>
+                            <input type="text" id="aggOperationFields" placeholder="name,city,power_output">
+                        </div>
+                        <div id="aggBlockHistogram" class="hidden">
+                            <label for="aggHistogramBuckets">histogram.buckets (2–50):</label>
+                            <input type="number" id="aggHistogramBuckets" value="5" min="2" max="50">
+                        </div>
+                        <div id="aggBlockTimeseries" class="hidden">
+                            <div>
+                                <label for="aggTimeseriesDateField">timeseries.date_field (חובה):</label>
+                                <input type="text" id="aggTimeseriesDateField" placeholder="created_at">
+                            </div>
+                            <div>
+                                <label for="aggTimeseriesInterval">timeseries.interval (חובה):</label>
+                                <select id="aggTimeseriesInterval">
+                                    <option value="hour">hour</option>
+                                    <option value="day">day</option>
+                                    <option value="week">week</option>
+                                    <option value="month" selected>month</option>
+                                    <option value="year">year</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="aggTimeseriesAggregation">timeseries.aggregation:</label>
+                                <select id="aggTimeseriesAggregation">
+                                    <option value="count" selected>count (ברירת מחדל)</option>
+                                    <option value="sum">sum</option>
+                                    <option value="avg">avg</option>
+                                    <option value="min">min</option>
+                                    <option value="max">max</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" id="btnAggregate">aggregate</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section" open>
+                <summary>סינון (filter)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>params.filter</legend>
+                        <div>
+                            <label for="aggFilterExpression">filter (מחרוזת תכונות):</label>
+                            <input type="text" id="aggFilterExpression" placeholder="city=תל אביב">
+                        </div>
+                        <div>
+                            <label for="aggFilterViewMode">view_mode:</label>
+                            <select id="aggFilterViewMode">
+                                <option value="global" selected>global</option>
+                                <option value="extent">extent</option>
+                            </select>
+                        </div>
+                        <p class="hint">ב־extent יש למלא bbox בארבעת השדות.</p>
+                        <div>
+                            <label for="aggBboxMinX">bbox minX:</label>
+                            <input type="number" id="aggBboxMinX" step="any" disabled>
+                            <label for="aggBboxMinY">minY:</label>
+                            <input type="number" id="aggBboxMinY" step="any" disabled>
+                            <label for="aggBboxMaxX">maxX:</label>
+                            <input type="number" id="aggBboxMaxX" step="any" disabled>
+                            <label for="aggBboxMaxY">maxY:</label>
+                            <input type="number" id="aggBboxMaxY" step="any" disabled>
+                        </div>
+                        <fieldset class="form-block">
+                            <legend>filter.spatial_filter</legend>
+                            <div>
+                                <label for="aggSpatialFilterLayer">layer:</label>
+                                <input type="text" id="aggSpatialFilterLayer" placeholder="municipalities">
+                            </div>
+                            <div>
+                                <label for="aggSpatialFilterRelation">relation:</label>
+                                <select id="aggSpatialFilterRelation">
+                                    <option value="">(בחר)</option>
+                                    <option value="within">within</option>
+                                    <option value="intersect">intersect</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="aggSpatialFilterBuffer">buffer (מטרים, ≥ 0):</label>
+                                <input type="number" id="aggSpatialFilterBuffer" min="0" step="any" placeholder="אופציונלי">
+                            </div>
+                            <div>
+                                <label for="aggSpatialFilterLogic">logic:</label>
+                                <select id="aggSpatialFilterLogic">
+                                    <option value="">(ללא)</option>
+                                    <option value="centroid">centroid</option>
+                                    <option value="proportion">proportion</option>
+                                </select>
+                            </div>
+                        </fieldset>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section" open>
+                <summary>קיבוץ (grouping)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>params.grouping</legend>
+                        <div>
+                            <label for="aggGroupBy">group_by:</label>
+                            <input type="text" id="aggGroupBy" placeholder="technology">
+                        </div>
+                        <div>
+                            <label for="aggSubGroupBy">sub_group_by:</label>
+                            <input type="text" id="aggSubGroupBy" placeholder="status">
+                        </div>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section" open>
+                <summary>השוואה (comparison)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>params.comparison</legend>
+                        <div>
+                            <label for="aggCompareTo">compare_to:</label>
+                            <select id="aggCompareTo">
+                                <option value="" selected>(ללא — לא לשלוח comparison)</option>
+                                <option value="global">global</option>
+                                <option value="prev_period">prev_period</option>
+                            </select>
+                        </div>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section" open>
+                <summary>פלט (output)</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>params.output</legend>
+                        <div>
+                            <label for="aggOutputLimit">limit (1–1000):</label>
+                            <input type="number" id="aggOutputLimit" min="1" max="1000" step="1" placeholder="ברירת מחדל 10">
+                        </div>
+                        <div>
+                            <label><input type="checkbox" id="aggOutputIncludePercentage"> include_percentage</label>
+                        </div>
+                        <div>
+                            <label for="aggOutputSortBy">sort_by:</label>
+                            <input type="text" id="aggOutputSortBy" placeholder="שדה למיון">
+                        </div>
+                        <div>
+                            <label for="aggOutputSortType">sort_type:</label>
+                            <select id="aggOutputSortType">
+                                <option value="">(אוטומטי — לא לשלוח)</option>
+                                <option value="numeric">numeric</option>
+                                <option value="alphabetic">alphabetic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aggOutputSortOrder">sort_order:</label>
+                            <select id="aggOutputSortOrder">
+                                <option value="">(אוטומטי — לא לשלוח)</option>
+                                <option value="asc">asc</option>
+                                <option value="desc">desc</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aggOutputDisplayFormat">display_format:</label>
+                            <select id="aggOutputDisplayFormat">
+                                <option value="">(ברירת מחדל — raw)</option>
+                                <option value="raw">raw</option>
+                                <option value="compact">compact</option>
+                                <option value="compact_1">compact_1</option>
+                                <option value="compact_2">compact_2</option>
+                                <option value="decimal_0">decimal_0</option>
+                                <option value="decimal_1">decimal_1</option>
+                                <option value="decimal_2">decimal_2</option>
+                                <option value="percent">percent</option>
+                                <option value="currency">currency</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aggOutputNullHandling">null_handling:</label>
+                            <select id="aggOutputNullHandling">
+                                <option value="include_as_other" selected>include_as_other (ברירת מחדל)</option>
+                                <option value="exclude">exclude</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aggOutputPageToken">page_token (עימוד table):</label>
+                            <input type="text" id="aggOutputPageToken" placeholder="הדבק token_page_next מהלוג">
+                        </div>
+                    </fieldset>
+                </div>
+            </details>
+        </div>
+    </div>
+</body>
+
+</html>

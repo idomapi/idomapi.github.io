@@ -2,7 +2,6 @@ function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         layers: ['statistic_areas_2011', 'GASSTATIONS'],
-        visibleLayers: ['GASSTATIONS'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -50,13 +49,9 @@ function displayGeometries() {
         },
         symbols: [],
         clearExisting: true,
-        data: {
-            tooltips: ['סודות מאכל הפלאפל הלאומי','bazinga'],
-            headers: ['פלאפל','bazinga1'],
-            // labels: ['lbael','lbael2'],
-            bubbles: ['',''],
-            bubbleUrl: 'https://he.wikipedia.org/wiki/%D7%A4%D7%9C%D7%90%D7%A4%D7%9C'
-        }
+        showBubble: false,
+        data: {},
+        // geomData: ['baz', 'foo'],
     };
     govmap.displayGeometries(data).then(function (response) {
         console.log(response.data);

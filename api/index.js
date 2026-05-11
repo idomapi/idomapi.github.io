@@ -101,7 +101,7 @@ function setBackground() {
             },
             { 
                 value: 1,
-                label: 'תצלום אוויר 2023' 
+                label: 'תצלום אוויר' 
             },
             { 
                 value: 2,
@@ -112,18 +112,6 @@ function setBackground() {
                 label: 'CIR' 
             },
             { 
-                value: 5,
-                label: 'מפה היסטורית תל אביב 1930' 
-            },
-            { 
-                value: 6,
-                label: 'מפה היסטורית ירושלים 1926' 
-            },
-            { 
-                value: 8,
-                label: 'מפה היסטורית חיפה 1919' 
-            },
-            { 
                 value: 9,
                 label: 'מפה טופוגרפית' 
             },
@@ -132,40 +120,64 @@ function setBackground() {
                 label: 'ללא רקע' 
             },
             { 
-                value: 16,
+                value: 15,
+                label: 'רחובות ומבנים באנגלית' 
+            },
+            { 
+                value: 8,
+                label: 'מפה היסטורית חיפה 1919' 
+            },
+            { 
+                value: 7,
+                label: 'מפה היסטורית ירושלים 1926' 
+            },
+            { 
+                value: 5,
+                label: 'מפה היסטורית תל אביב 1930' 
+            },
+            { 
+                value: 6,
+                label: 'מפה היסטורית 1935' 
+            },
+            { 
+                value: 33,
                 label: 'תצלום אוויר 2003' 
             },
             { 
-                value: 17,
+                value: 34,
                 label: 'תצלום אוויר 2004' 
             },
             { 
-                value: 20,
+                value: 37,
                 label: 'תצלום אוויר 2005' 
             },
             { 
-                value: 18,
+                value: 35,
                 label: 'תצלום אוויר 2006' 
             },
             { 
-                value: 21,
+                value: 38,
                 label: 'תצלום אוויר 2008' 
             },
             { 
-                value: 19,
+                value: 36,
                 label: 'תצלום אוויר 2013' 
             },
             { 
-                value: 24,
+                value: 39,
                 label: 'תצלום אוויר 2019' 
             },
             { 
-                value: 32,
+                value: 41,
                 label: 'תצלום אוויר 2021' 
             },
             { 
-                value: 27,
+                value: 43,
                 label: 'תצלום אוויר 2022' 
+            },
+            { 
+                value: 42,
+                label: 'תצלום אוויר 2023' 
             },
         ],
         isOptional: false },
@@ -468,6 +480,7 @@ function intersectFeatures() {
         { label: 'geometry', value: '', type: 'string', isOptional: true },
         { label: 'whereClause', value: '', type: 'string', isOptional: true },
         { label: 'getShapes', value: '', type: 'boolean', isOptional: true },
+        { label: 'radius', value: 0, type: 'number', isOptional: true },
     ]).then(values => {
         if (!values) return;
         const params = {
@@ -476,7 +489,8 @@ function intersectFeatures() {
             address: values[2],
             geometry: values[3],
             whereClause: values[4],
-            getShapes: values[5]
+            getShapes: values[5],
+            radius: values[6]
         };
         govmap.intersectFeatures(params)
             .then(response => {

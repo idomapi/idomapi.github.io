@@ -69,11 +69,11 @@ function operationTypeRequiresField(operationType, timeseriesAggregation) {
 function populateAggregationOperationTypes() {
     const sel = document.getElementById('aggOperationType');
 
-    if (!sel || typeof govmap === 'undefined' || !govmap.aggregationOperationType) {
+    if (!sel || typeof govmap === 'undefined' || !govmap.aggOperationType) {
         return;
     }
 
-    const map = govmap.aggregationOperationType;
+    const map = govmap.aggOperationType;
     const previous = sel.value;
 
     sel.replaceChildren();
@@ -131,15 +131,16 @@ function populateSelectFromGovmapEnum(selectId, enumName, withEmptyOption) {
 }
 
 function populateAggregationEnumSelects() {
-    populateSelectFromGovmapEnum('aggTimeseriesInterval', 'aggregationTimeseriesInterval', false);
-    populateSelectFromGovmapEnum('aggTimeseriesAggregation', 'aggregationTimeseriesAggregation', false);
-    populateSelectFromGovmapEnum('aggFilterViewMode', 'aggregationViewMode', false);
-    populateSelectFromGovmapEnum('aggSpatialFilterRelation', 'aggregationSpatialRelation', true);
-    populateSelectFromGovmapEnum('aggSpatialFilterLogic', 'aggregationSpatialLogic', true);
-    populateSelectFromGovmapEnum('aggCompareTo', 'aggregationCompareTo', true);
-    populateSelectFromGovmapEnum('aggOutputSortType', 'aggregationSortType', true);
-    populateSelectFromGovmapEnum('aggOutputSortOrder', 'aggregationSortOrder', true);
-    populateSelectFromGovmapEnum('aggOutputDisplayFormat', 'aggregationDisplayFormat', true);
+    populateSelectFromGovmapEnum('aggTimeseriesInterval', 'aggTimeseriesInterval', false);
+    populateSelectFromGovmapEnum('aggTimeseriesAggregation', 'aggTimeseriesAggregation', false);
+    populateSelectFromGovmapEnum('aggFilterViewMode', 'aggViewMode', false);
+    populateSelectFromGovmapEnum('aggSpatialFilterRelation', 'aggSpatialRelation', true);
+    populateSelectFromGovmapEnum('aggSpatialFilterLogic', 'aggSpatialLogic', true);
+    populateSelectFromGovmapEnum('aggCompareTo', 'aggCompareTo', true);
+    populateSelectFromGovmapEnum('aggOutputSortType', 'aggSortType', true);
+    populateSelectFromGovmapEnum('aggOutputSortOrder', 'aggSortOrder', true);
+    populateSelectFromGovmapEnum('aggOutputDisplayFormat', 'aggDisplayFormat', true);
+    populateSelectFromGovmapEnum('aggOutputNullHandling', 'aggNullHandling', false);
 
     const timeseriesAggregationEl = document.getElementById('aggTimeseriesAggregation');
 
@@ -155,13 +156,13 @@ function populateAggregationEnumSelects() {
 function populateAggregationSrids() {
     const sel = document.getElementById('aggSourceSrid');
 
-    if (!sel || typeof govmap === 'undefined' || !govmap.aggregationSrid) {
+    if (!sel || typeof govmap === 'undefined' || !govmap.aggSrid) {
         return;
     }
 
-    const map = govmap.aggregationSrid;
+    const map = govmap.aggSrid;
     const previous = sel.value;
-    const aggregationSridKeys = ['Wgs84', 'WebMercator', 'Itm'];
+    const aggSridKeys = ['Wgs84', 'WebMercator', 'Itm'];
     const defaultSrid = map.Wgs84;
     let defaultHint = '';
 
@@ -177,7 +178,7 @@ function populateAggregationSrids() {
 
     sel.appendChild(emptyOpt);
 
-    for (const label of aggregationSridKeys) {
+    for (const label of aggSridKeys) {
         const value = map[label];
 
         if (value === undefined) {

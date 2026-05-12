@@ -76,21 +76,11 @@
                             <div>
                                 <label for="aggTimeseriesInterval">timeseries.interval (חובה):</label>
                                 <select id="aggTimeseriesInterval">
-                                    <option value="hour">hour</option>
-                                    <option value="day">day</option>
-                                    <option value="week">week</option>
-                                    <option value="month" selected>month</option>
-                                    <option value="year">year</option>
                                 </select>
                             </div>
                             <div>
                                 <label for="aggTimeseriesAggregation">timeseries.aggregation:</label>
                                 <select id="aggTimeseriesAggregation">
-                                    <option value="count" selected>count (ברירת מחדל)</option>
-                                    <option value="sum">sum</option>
-                                    <option value="avg">avg</option>
-                                    <option value="min">min</option>
-                                    <option value="max">max</option>
                                 </select>
                             </div>
                         </div>
@@ -110,8 +100,6 @@
                         <div>
                             <label for="aggFilterViewMode">view_mode:</label>
                             <select id="aggFilterViewMode">
-                                <option value="global" selected>global</option>
-                                <option value="extent">extent</option>
                             </select>
                         </div>
                         <p class="hint">ב־extent יש למלא bbox בארבעת השדות.</p>
@@ -135,8 +123,6 @@
                                 <label for="aggSpatialFilterRelation">relation:</label>
                                 <select id="aggSpatialFilterRelation">
                                     <option value="">(בחר)</option>
-                                    <option value="within">within</option>
-                                    <option value="intersect">intersect</option>
                                 </select>
                             </div>
                             <div>
@@ -147,8 +133,6 @@
                                 <label for="aggSpatialFilterLogic">logic:</label>
                                 <select id="aggSpatialFilterLogic">
                                     <option value="">(ללא)</option>
-                                    <option value="centroid">centroid</option>
-                                    <option value="proportion">proportion</option>
                                 </select>
                             </div>
                         </fieldset>
@@ -180,8 +164,6 @@
                             <label for="aggCompareTo">compare_to:</label>
                             <select id="aggCompareTo">
                                 <option value="" selected>(ללא — לא לשלוח comparison)</option>
-                                <option value="global">global</option>
-                                <option value="prev_period">prev_period</option>
                             </select>
                         </div>
                     </fieldset>
@@ -207,38 +189,23 @@
                             <label for="aggOutputSortType">sort_type:</label>
                             <select id="aggOutputSortType">
                                 <option value="">(אוטומטי — לא לשלוח)</option>
-                                <option value="numeric">numeric</option>
-                                <option value="alphabetic">alphabetic</option>
                             </select>
                         </div>
                         <div>
                             <label for="aggOutputSortOrder">sort_order:</label>
                             <select id="aggOutputSortOrder">
                                 <option value="">(אוטומטי — לא לשלוח)</option>
-                                <option value="asc">asc</option>
-                                <option value="desc">desc</option>
                             </select>
                         </div>
                         <div>
                             <label for="aggOutputDisplayFormat">display_format:</label>
                             <select id="aggOutputDisplayFormat">
                                 <option value="">(ברירת מחדל — raw)</option>
-                                <option value="raw">raw</option>
-                                <option value="compact">compact</option>
-                                <option value="compact_1">compact_1</option>
-                                <option value="compact_2">compact_2</option>
-                                <option value="decimal_0">decimal_0</option>
-                                <option value="decimal_1">decimal_1</option>
-                                <option value="decimal_2">decimal_2</option>
-                                <option value="percent">percent</option>
-                                <option value="currency">currency</option>
                             </select>
                         </div>
                         <div>
                             <label for="aggOutputNullHandling">null_handling:</label>
                             <select id="aggOutputNullHandling">
-                                <option value="include_as_other" selected>include_as_other (ברירת מחדל)</option>
-                                <option value="exclude">exclude</option>
                             </select>
                         </div>
                         <div>

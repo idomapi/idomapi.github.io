@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
     <script src="const.js"></script>
+    <script src="env-switcher.js"></script>
     <script src="no-map.js"></script>
     <script>
     (function () {
@@ -18,6 +19,12 @@
 </head>
 
 <body>
+    <div class="sanity-env-bar" id="sanityEnvBar" role="toolbar" aria-label="GovMap API environment">
+        <span class="sanity-env-label">סביבה</span>
+        <button type="button" data-sanity-env="dev">dev</button>
+        <button type="button" data-sanity-env="stage">stage</button>
+        <button type="button" data-sanity-env="prod">prod</button>
+    </div>
     <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a> | <a href="aggregate.html">סטטיסטיקות</a></p>
     <div class="no-map-layout">
         <div class="panel panel-log">

@@ -1,4 +1,4 @@
-const env = 'dev';
+const DEFAULT_ENV = 'stage';
 
 const ENV_CONFIG = {
     prod: {
@@ -18,7 +18,40 @@ const ENV_CONFIG = {
     }
 };
 
-const activeEnvConfig = ENV_CONFIG[env] || ENV_CONFIG.stage;
+function resolveSanityEnv() {
+    if (typeof window === 'undefined' || !window.location) {
+        return DEFAULT_ENV;
+    }
+
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const fromUrl = params.get('env');
+
+        if (fromUrl && ENV_CONFIG[fromUrl]) {
+            try {
+                sessionStorage.setItem('sanityEnv', fromUrl);
+            } catch (e) {
+                /* ignore */
+            }
+
+            return fromUrl;
+        }
+
+        const fromStorage = sessionStorage.getItem('sanityEnv');
+
+        if (fromStorage && ENV_CONFIG[fromStorage]) {
+            return fromStorage;
+        }
+    } catch (e) {
+        /* ignore */
+    }
+
+    return DEFAULT_ENV;
+}
+
+const env = resolveSanityEnv();
+
+const activeEnvConfig = ENV_CONFIG[env] || ENV_CONFIG[DEFAULT_ENV];
 
 const GOVMAP_TOKEN = activeEnvConfig.token;
 const GOVMAP_API_URL = activeEnvConfig.apiUrl;

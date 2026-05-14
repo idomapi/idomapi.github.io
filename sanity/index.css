@@ -1,3 +1,48 @@
+.sanity-env-bar {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 769px) {
+    .sanity-env-bar {
+        display: flex;
+    }
+}
+
+.sanity-env-bar .sanity-env-label {
+    font-weight: 600;
+    color: #333;
+    margin-left: 4px;
+}
+
+.sanity-env-bar button[data-sanity-env] {
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid #c5ced8;
+    border-radius: 6px;
+    background: #f0f4f8;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.sanity-env-bar button[data-sanity-env]:hover {
+    background: #e2eaf2;
+}
+
+.sanity-env-bar button.sanity-env-active {
+    border-color: #1a5490;
+    background: #1a5490;
+    color: #fff;
+    cursor: default;
+}
+
 body {
     font-family: simplerregular, sans-serif;
     margin: 20px;

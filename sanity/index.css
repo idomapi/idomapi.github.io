@@ -19,7 +19,6 @@
 .sanity-env-bar .sanity-env-label {
     font-weight: 600;
     color: #333;
-    margin-left: 4px;
 }
 
 .sanity-env-bar button[data-sanity-env] {

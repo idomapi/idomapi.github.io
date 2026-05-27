@@ -2,7 +2,7 @@ async function initGovMap() {
     govmap.createMap('map', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["statistic_areas_2011"],
-        visibleLayers: ["statistic_areas_2011", 'layer_153830', 'layer_157866'],
+        visibleLayers: ["layer_157312"],
         showXY: true,
         isEmbeddedToggle: false,
         background: 0,
@@ -10,6 +10,18 @@ async function initGovMap() {
         center: { x: 179479, y: 663973 },
         level: 8,
     });
+}
+
+function searchInLayer() {
+    var params = {
+        layerName: 'layer_160223',
+        fieldName: 'value0',
+        fieldValues: ['a'],
+        highlight: true,
+        outLineColor: [255, 0, 0, 1],
+        fillColor: [128, 0, 128, 0.5],
+    };
+    govmap.searchInLayer(params);
 }
 
 function selectFeaturesOnMap() {
@@ -48,7 +60,7 @@ Driver's name : GPS
 `;
     const data = {
         // wkts: ['POLYGON((179375.26 665827.78, 180208.52 665469.71, 179930.5 664825.6, 179475 664399.92, 179375.26 665827.78))', 'POLYGON((179170.9 666660.26, 179663.58 666671.22, 179383.25 666266.11, 178429.3 666005.55, 179170.9 666660.26))'],
-        circleGeometries: [{ x: 179290, y: 664338, radius: 500 }, { x: 180276.9, y: 666030.51 , radius: 1000}],
+        circleGeometries: [{ x: 179290, y: 664338, radius: 500 }, { x: 180276.9, y: 666030.51, radius: 1000 }],
         // wkts: ['POINT(179290 664338)', 'POINT(180309.32 666030.39)'],
         // wkts: ['LINESTRING(179375.26 665827.78, 180208.52 665469.71, 179930.5 664825.6, 179475 664399.92)', 'LINESTRING(180219.7 665483.45, 180253.69 665892.77, 180121.42 666054.48, 180300.15 666176.31, 180452.05 666062.88, 180357.34 665876.26)'],
         names: ['p1', 'p2'],

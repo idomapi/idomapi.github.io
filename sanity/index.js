@@ -747,6 +747,13 @@ function setupDrawAndGeometryPanel() {
                 clearExisting: true,
                 data: geometryData
             };
+
+            applyGeomDataOption(data, [
+                { name: 'p1', category: 'חדשות', link: 'categories/1' },
+                { name: 'p2', category: 'כלכלה', link: 'categories/78' },
+                { name: 'p3', category: 'בארץ', link: 'categories/132' }
+            ]);
+
             govmap.displayGeometries(data).then((response) => {
                 logEvent('displayGeometries (3 points)', response);
             });
@@ -782,6 +789,11 @@ function setupDrawAndGeometryPanel() {
                 clearExisting: true,
                 data: geometryData
             };
+
+            applyGeomDataOption(data, [
+                { name: 'p1', category: 'פלאפל', radius: 250 }
+            ]);
+
             govmap.displayGeometries(data).then((response) => {
                 logEvent('displayGeometries (circle)', response);
             });
@@ -827,6 +839,12 @@ function setupDrawAndGeometryPanel() {
                 clearExisting: true,
                 data: geometryData
             };
+
+            applyGeomDataOption(data, [
+                { name: 'p1', title: 'מצולע 1 כותרת', details: 'מידע נוסף...' },
+                { name: 'p2', title: 'מצולע 2 כותרת', details: 'מידע נוסף...' }
+            ]);
+
             govmap.displayGeometries(data).then((response) => {
                 logEvent('displayGeometries (polygon)', response);
             });
@@ -861,6 +879,11 @@ function setupDrawAndGeometryPanel() {
                 clearExisting: true,
                 data: geometryData
             };
+
+            applyGeomDataOption(data, [
+                { name: 'p1', category: 'שווארמה', path: 'polyline sample' }
+            ]);
+
             govmap.displayGeometries(data).then((response) => {
                 logEvent('displayGeometries (polyline)', response);
             });
@@ -916,6 +939,19 @@ function setupDrawAndGeometryPanel() {
             logEvent('clearMapMarker', { called: true });
         });
     }
+}
+
+function applyGeomDataOption(data, geomData) {
+    if (!isDisplayGeomDataEnabled()) return;
+
+    data.showBubble = false;
+    data.geomData = geomData;
+}
+
+function isDisplayGeomDataEnabled() {
+    const checkbox = document.getElementById('displayIncludeGeomData');
+
+    return Boolean(checkbox && checkbox.checked);
 }
 
 function getDrawTypeEnum(key) {

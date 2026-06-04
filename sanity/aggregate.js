@@ -6,6 +6,7 @@ function initAggregate() {
     setupOperationTypeToggle();
     setupViewModeToggle();
     setupClearLog();
+    setupOperationFieldsPicker();
 }
 
 const AGGREGATE_OPERATION_TYPES = new Set([
@@ -29,8 +30,62 @@ const OPERATION_TYPES_REQUIRING_FIELD = new Set([
     'histogram'
 ]);
 
+const NUMERIC_FIELD_OPERATION_TYPES = new Set([
+    'sum',
+    'avg',
+    'min',
+    'max',
+    'range',
+    'histogram'
+]);
+
+const LAYER_FILTER_FIELD_ARRAY_KEYS = [
+    'fields',
+    'Fields',
+    'filterFields',
+    'filter_fields',
+    'layerFields',
+    'LayerFields',
+    'results',
+    'result',
+    'data',
+    'items'
+];
+
+const FIELD_TYPE_ENUM_NAMES = [
+    'fieldType',
+    'FieldType',
+    'layerFieldType',
+    'LayerFieldType',
+    'layerFilterFields',
+    'LayerFilterFields',
+    'aggFieldType',
+    'AggFieldType'
+];
+
+const NUMERIC_FIELD_TYPE_CODES = new Set(['2']);
+
+const NUMERIC_FIELD_TYPE_TOKENS = [
+    'number',
+    'numeric',
+    'integer',
+    'int',
+    'short',
+    'long',
+    'double',
+    'single',
+    'float',
+    'decimal',
+    'smallint',
+    'bigint',
+    'oid'
+];
+
 let supportedAggregationOperationTypes = new Set(AGGREGATE_OPERATION_TYPES);
+let supportedTimeseriesIntervals = new Set(['hour', 'day', 'week', 'month', 'year']);
 let supportedTimeseriesAggregations = new Set(['count', 'sum', 'avg', 'min', 'max']);
+let operationFieldsLayer = '';
+let operationLayerFields = [];
 
 function normalizeOperationType(value) {
     return String(value || '').trim().toLowerCase();
@@ -63,7 +118,15 @@ function operationTypeRequiresField(operationType, timeseriesAggregation) {
         return false;
     }
 
-    return true;
+    return Boolean(timeseriesAggregation && timeseriesAggregation !== 'count');
+}
+
+function operationTypeRequiresNumericField(operationType, timeseriesAggregation) {
+    if (NUMERIC_FIELD_OPERATION_TYPES.has(operationType)) {
+        return true;
+    }
+
+    return Boolean(operationType === 'timeseries' && timeseriesAggregation && timeseriesAggregation !== 'count');
 }
 
 function populateAggregationOperationTypes() {
@@ -131,26 +194,36 @@ function populateSelectFromGovmapEnum(selectId, enumName, withEmptyOption) {
 }
 
 function populateAggregationEnumSelects() {
-    populateSelectFromGovmapEnum('aggTimeseriesInterval', 'aggTimeseriesInterval', false);
-    populateSelectFromGovmapEnum('aggTimeseriesAggregation', 'aggTimeseriesAggregation', false);
-    populateSelectFromGovmapEnum('aggFilterViewMode', 'aggViewMode', false);
+    populateSelectFromGovmapEnum('aggTimeseriesInterval', 'aggTimeseriesInterval', true);
+    populateSelectFromGovmapEnum('aggTimeseriesAggregation', 'aggTimeseriesAggregation', true);
+    populateSelectFromGovmapEnum('aggFilterViewMode', 'aggViewMode', true);
     populateSelectFromGovmapEnum('aggSpatialFilterRelation', 'aggSpatialRelation', true);
     populateSelectFromGovmapEnum('aggSpatialFilterLogic', 'aggSpatialLogic', true);
     populateSelectFromGovmapEnum('aggCompareTo', 'aggCompareTo', true);
     populateSelectFromGovmapEnum('aggOutputSortType', 'aggSortType', true);
     populateSelectFromGovmapEnum('aggOutputSortOrder', 'aggSortOrder', true);
     populateSelectFromGovmapEnum('aggOutputDisplayFormat', 'aggDisplayFormat', true);
-    populateSelectFromGovmapEnum('aggOutputNullHandling', 'aggNullHandling', false);
+    populateSelectFromGovmapEnum('aggOutputNullHandling', 'aggNullHandling', true);
 
+    const timeseriesIntervalEl = document.getElementById('aggTimeseriesInterval');
     const timeseriesAggregationEl = document.getElementById('aggTimeseriesAggregation');
 
-    if (!timeseriesAggregationEl) {
+    if (!timeseriesIntervalEl || !timeseriesAggregationEl) {
         return;
     }
 
-    supportedTimeseriesAggregations = new Set(
-        [...timeseriesAggregationEl.options].map((option) => normalizeTimeseriesAggregation(option.value)).filter(Boolean)
-    );
+    const intervalValues = [...timeseriesIntervalEl.options].map((option) => option.value).filter(Boolean);
+    const aggregationValues = [...timeseriesAggregationEl.options]
+        .map((option) => normalizeTimeseriesAggregation(option.value))
+        .filter(Boolean);
+
+    if (intervalValues.length > 0) {
+        supportedTimeseriesIntervals = new Set(intervalValues);
+    }
+
+    if (aggregationValues.length > 0) {
+        supportedTimeseriesAggregations = new Set(aggregationValues);
+    }
 }
 
 function populateAggregationSrids() {
@@ -197,6 +270,608 @@ function populateAggregationSrids() {
     }
 }
 
+function setupOperationFieldsPicker() {
+    const sourceLayerEl = document.getElementById('aggSourceLayer');
+    const fieldInput = document.getElementById('aggOperationField');
+    const fieldSelect = document.getElementById('aggOperationFieldSelect');
+    const btnLoadField = document.getElementById('btnLoadOperationField');
+    const fieldActions = document.getElementById('aggOperationFieldActions');
+    const fieldHint = document.getElementById('aggOperationFieldHint');
+    const fieldTypeHint = document.getElementById('aggOperationFieldTypeHint');
+    const select = document.getElementById('aggOperationFieldsSelect');
+    const btnLoad = document.getElementById('btnLoadOperationFields');
+    const btnSelectAll = document.getElementById('btnSelectAllOperationFields');
+    const btnDeselectAll = document.getElementById('btnDeselectAllOperationFields');
+    const actions = document.getElementById('aggOperationFieldsActions');
+    const hint = document.getElementById('aggOperationFieldsHint');
+    const selectHint = document.getElementById('aggOperationFieldsSelectHint');
+    const groupByInput = document.getElementById('aggGroupBy');
+    const groupBySelect = document.getElementById('aggGroupBySelect');
+    const btnLoadGroupByFields = document.getElementById('btnLoadGroupByFields');
+    const groupByActions = document.getElementById('aggGroupByActions');
+
+    if (
+        !sourceLayerEl
+        || !fieldInput
+        || !fieldSelect
+        || !btnLoadField
+        || !fieldActions
+        || !fieldHint
+        || !fieldTypeHint
+        || !select
+        || !btnLoad
+        || !btnSelectAll
+        || !btnDeselectAll
+        || !actions
+        || !selectHint
+        || !groupByInput
+        || !groupBySelect
+        || !btnLoadGroupByFields
+        || !groupByActions
+    ) {
+        return;
+    }
+
+    const setHint = (lines) => {
+        if (hint) {
+            hint.textContent = lines.join('\n');
+        }
+    };
+
+    const setPickerDisabled = (disabled) => {
+        fieldSelect.disabled = disabled;
+        btnLoadField.disabled = disabled;
+        select.disabled = disabled;
+        btnLoad.disabled = disabled;
+        btnSelectAll.disabled = disabled;
+        btnDeselectAll.disabled = disabled;
+        groupBySelect.disabled = disabled;
+        btnLoadGroupByFields.disabled = disabled;
+    };
+
+    let loadSequence = 0;
+
+    const loadFields = (logResponse) => {
+        const requestId = loadSequence + 1;
+        const layer = sourceLayerEl.value.trim();
+
+        loadSequence = requestId;
+
+        if (!layer) {
+            operationFieldsLayer = '';
+            operationLayerFields = [];
+            select.replaceChildren();
+            clearLayerFieldPickers();
+            setPickerDisabled(false);
+            setHint(['יש להזין params.source.layer כדי לטעון שדות.']);
+
+            return;
+        }
+
+        if (typeof govmap === 'undefined' || typeof govmap.getLayerFilterFields !== 'function') {
+            setPickerDisabled(false);
+            setHint(['govmap.getLayerFilterFields אינו זמין בסביבה הנוכחית.']);
+
+            return;
+        }
+
+        operationFieldsLayer = layer;
+        operationLayerFields = [];
+        select.replaceChildren();
+        clearLayerFieldPickers();
+        setPickerDisabled(true);
+        setHint(['טוען שדות...']);
+
+        govmap.getLayerFilterFields(layer, GOVMAP_TOKEN, 'he').then((response) => {
+            if (requestId !== loadSequence) {
+                return;
+            }
+
+            const fields = extractLayerFilterFields(response);
+
+            operationLayerFields = fields;
+            refreshOperationFieldPickerForOperation();
+            populateOperationFieldsSelect(select, fields);
+            populateGroupBySelect(fields);
+
+            if (fields.length > 0) {
+                setHint([
+                    `נטענו ${fields.length} שדות עבור`,
+                    layer,
+                    'אפשר לשלב בחירה מרובה עם הרשימה הידנית.'
+                ]);
+            } else {
+                setHint([
+                    'לא נמצאו שדות עבור',
+                    layer,
+                    'עליך לפרסם את השכבה ב-API.',
+                    'אפשר עדיין להזין שדות ידנית.'
+                ]);
+            }
+
+            if (logResponse) {
+                logEvent('getLayerFilterFields', response);
+            }
+        }).catch((err) => {
+            if (requestId !== loadSequence) {
+                return;
+            }
+
+            const message = String((err && err.message) || err);
+
+            setHint(['טעינת שדות נכשלה:', message]);
+            logEvent('getLayerFilterFields error', { message });
+        }).finally(() => {
+            if (requestId !== loadSequence) {
+                return;
+            }
+
+            setPickerDisabled(false);
+        });
+    };
+
+    btnLoad.addEventListener('click', () => {
+        loadFields(true);
+    });
+
+    btnLoadField.addEventListener('click', () => {
+        loadFields(true);
+    });
+
+    btnLoadGroupByFields.addEventListener('click', () => {
+        loadFields(true);
+    });
+
+    sourceLayerEl.addEventListener('change', () => {
+        loadFields(false);
+    });
+
+    sourceLayerEl.addEventListener('blur', () => {
+        if (sourceLayerEl.value.trim() === operationFieldsLayer) {
+            return;
+        }
+
+        loadFields(false);
+    });
+
+    btnSelectAll.addEventListener('click', () => {
+        setAllOperationFieldSelections(select, true);
+    });
+
+    btnDeselectAll.addEventListener('click', () => {
+        setAllOperationFieldSelections(select, false);
+    });
+
+    fieldSelect.addEventListener('change', () => {
+        fieldInput.value = fieldSelect.value;
+    });
+
+    groupBySelect.addEventListener('change', () => {
+        groupByInput.value = groupBySelect.value;
+    });
+
+    loadFields(false);
+}
+
+function clearLayerFieldPickers() {
+    const fieldSelect = document.getElementById('aggOperationFieldSelect');
+    const fieldActions = document.getElementById('aggOperationFieldActions');
+    const fieldHint = document.getElementById('aggOperationFieldHint');
+    const fieldTypeHint = document.getElementById('aggOperationFieldTypeHint');
+    const fieldsSelect = document.getElementById('aggOperationFieldsSelect');
+    const fieldsActions = document.getElementById('aggOperationFieldsActions');
+    const fieldsSelectHint = document.getElementById('aggOperationFieldsSelectHint');
+    const groupBySelect = document.getElementById('aggGroupBySelect');
+    const groupByActions = document.getElementById('aggGroupByActions');
+
+    if (fieldSelect) {
+        fieldSelect.replaceChildren();
+        fieldSelect.classList.add('hidden');
+    }
+
+    if (fieldActions) {
+        fieldActions.classList.add('hidden');
+    }
+
+    if (fieldHint) {
+        fieldHint.textContent = '';
+        fieldHint.classList.add('hidden');
+    }
+
+    if (fieldTypeHint) {
+        fieldTypeHint.classList.add('hidden');
+    }
+
+    if (fieldsSelect) {
+        fieldsSelect.replaceChildren();
+        fieldsSelect.classList.add('hidden');
+    }
+
+    if (fieldsActions) {
+        fieldsActions.classList.add('hidden');
+    }
+
+    if (fieldsSelectHint) {
+        fieldsSelectHint.classList.add('hidden');
+    }
+
+    if (groupBySelect) {
+        groupBySelect.replaceChildren();
+        groupBySelect.classList.add('hidden');
+    }
+
+    if (groupByActions) {
+        groupByActions.classList.add('hidden');
+    }
+}
+
+function refreshOperationFieldPickerForOperation() {
+    const typeEl = document.getElementById('aggOperationType');
+    const timeseriesAggregationEl = document.getElementById('aggTimeseriesAggregation');
+    const select = document.getElementById('aggOperationFieldSelect');
+    const actions = document.getElementById('aggOperationFieldActions');
+    const hint = document.getElementById('aggOperationFieldHint');
+    const typeHint = document.getElementById('aggOperationFieldTypeHint');
+
+    if (!typeEl || !timeseriesAggregationEl || !select || !actions || !hint || !typeHint) {
+        return;
+    }
+
+    const operationType = normalizeOperationType(typeEl.value);
+    const timeseriesAggregation = normalizeTimeseriesAggregation(timeseriesAggregationEl.value);
+    const needsField = operationTypeRequiresField(operationType, timeseriesAggregation);
+    const numericOnly = operationTypeRequiresNumericField(operationType, timeseriesAggregation);
+
+    typeHint.classList.toggle('hidden', !needsField || !numericOnly);
+
+    if (!needsField) {
+        populateOperationFieldSelect(select, []);
+        hint.textContent = '';
+        hint.classList.add('hidden');
+
+        return;
+    }
+
+    const fields = numericOnly ? operationLayerFields.filter((field) => isNumericLayerField(field)) : operationLayerFields;
+
+    populateOperationFieldSelect(select, fields);
+
+    if (operationLayerFields.length === 0) {
+        hint.textContent = '';
+        hint.classList.add('hidden');
+
+        return;
+    }
+
+    if (fields.length === 0 && numericOnly) {
+        hint.textContent = 'לא נמצאו שדות מסוג מספר בשכבה.';
+        hint.classList.remove('hidden');
+
+        return;
+    }
+
+    hint.textContent = '';
+    hint.classList.add('hidden');
+}
+
+function populateOperationFieldSelect(select, fields) {
+    const actions = document.getElementById('aggOperationFieldActions');
+    const input = document.getElementById('aggOperationField');
+
+    populateSingleLayerFieldSelect(select, input, actions, fields, '(בחר שדה)');
+}
+
+function populateGroupBySelect(fields) {
+    const select = document.getElementById('aggGroupBySelect');
+    const input = document.getElementById('aggGroupBy');
+    const actions = document.getElementById('aggGroupByActions');
+
+    if (!select) {
+        return;
+    }
+
+    populateSingleLayerFieldSelect(select, input, actions, fields, '(בחר שדה לקיבוץ)');
+}
+
+function populateSingleLayerFieldSelect(select, input, actions, fields, emptyLabel) {
+    const previous = input ? input.value.trim() : select.value;
+    const hasFields = fields.length > 0;
+
+    select.replaceChildren();
+    select.classList.toggle('hidden', !hasFields);
+
+    if (actions) {
+        actions.classList.toggle('hidden', !hasFields);
+    }
+
+    if (!hasFields) {
+        return;
+    }
+
+    const emptyOption = document.createElement('option');
+    emptyOption.value = '';
+    emptyOption.textContent = emptyLabel;
+
+    select.appendChild(emptyOption);
+
+    for (const field of fields) {
+        const option = document.createElement('option');
+
+        option.value = field.value;
+        option.textContent = formatLayerFieldOptionText(field);
+        option.selected = field.value === previous;
+
+        select.appendChild(option);
+    }
+}
+
+function setAllOperationFieldSelections(select, isSelected) {
+    for (const option of select.options) {
+        option.selected = isSelected;
+    }
+}
+
+function populateOperationFieldsSelect(select, fields) {
+    const actions = document.getElementById('aggOperationFieldsActions');
+    const selectHint = document.getElementById('aggOperationFieldsSelectHint');
+    const selectedValues = new Set([...select.selectedOptions].map((option) => option.value));
+    const hasFields = fields.length > 0;
+
+    select.replaceChildren();
+    select.classList.toggle('hidden', !hasFields);
+
+    if (actions) {
+        actions.classList.toggle('hidden', !hasFields);
+    }
+
+    if (selectHint) {
+        selectHint.classList.toggle('hidden', !hasFields);
+    }
+
+    for (const field of fields) {
+        const option = document.createElement('option');
+
+        option.value = field.value;
+        option.textContent = formatLayerFieldOptionText(field);
+        option.selected = selectedValues.has(field.value);
+
+        select.appendChild(option);
+    }
+}
+
+function formatLayerFieldOptionText(field) {
+    const label = String(field.label || '').trim();
+
+    if (label && label !== field.value) {
+        return `${field.value} (${label})`;
+    }
+
+    return field.value;
+}
+
+function extractLayerFilterFields(response) {
+    const candidates = getLayerFilterFieldArrayCandidates(response);
+    let bestFields = [];
+
+    for (const candidate of candidates) {
+        const fields = normalizeLayerFilterFieldEntries(candidate);
+
+        if (fields.length > bestFields.length) {
+            bestFields = fields;
+        }
+    }
+
+    return bestFields;
+}
+
+function getLayerFilterFieldArrayCandidates(value) {
+    const candidates = [];
+    const seenArrays = new Set();
+
+    const addCandidate = (candidate) => {
+        if (seenArrays.has(candidate)) {
+            return;
+        }
+
+        seenArrays.add(candidate);
+        candidates.push(candidate);
+    };
+
+    const visit = (item, depth) => {
+        if (depth > 3 || item === null || item === undefined) {
+            return;
+        }
+
+        if (Array.isArray(item)) {
+            addCandidate(item);
+
+            return;
+        }
+
+        if (typeof item !== 'object') {
+            return;
+        }
+
+        for (const key of LAYER_FILTER_FIELD_ARRAY_KEYS) {
+            const child = item[key];
+
+            if (Array.isArray(child)) {
+                addCandidate(child);
+            }
+        }
+
+        for (const child of Object.values(item)) {
+
+            if (child && typeof child === 'object') {
+                visit(child, depth + 1);
+            }
+        }
+    };
+
+    visit(value, 0);
+
+    return candidates;
+}
+
+function normalizeLayerFilterFieldEntries(entries) {
+    const fields = [];
+    const seen = new Set();
+
+    for (const entry of entries) {
+        const value = getLayerFilterFieldValue(entry);
+
+        if (!value || seen.has(value)) {
+            continue;
+        }
+
+        seen.add(value);
+        fields.push({
+            value,
+            label: getLayerFilterFieldLabel(entry, value),
+            type: getLayerFilterFieldType(entry)
+        });
+    }
+
+    return fields;
+}
+
+function getLayerFilterFieldValue(entry) {
+    if (typeof entry === 'string') {
+        return entry.trim();
+    }
+
+    if (!entry || typeof entry !== 'object') {
+        return '';
+    }
+
+    const fieldNameKeys = ['fieldName', 'FieldName', 'field_name', 'name', 'Name', 'field', 'Field', 'id', 'Id', 'key', 'Key'];
+
+    for (const key of fieldNameKeys) {
+        const value = entry[key];
+
+        if (typeof value === 'string' && value.trim()) {
+            return value.trim();
+        }
+    }
+
+    return '';
+}
+
+function getLayerFilterFieldLabel(entry, fallbackValue) {
+    if (!entry || typeof entry !== 'object') {
+        return fallbackValue;
+    }
+
+    const labelKeys = [
+        'caption',
+        'Caption',
+        'alias',
+        'Alias',
+        'label',
+        'Label',
+        'title',
+        'Title',
+        'text',
+        'Text',
+        'displayName',
+        'DisplayName',
+        'display_name',
+        'description',
+        'Description'
+    ];
+
+    for (const key of labelKeys) {
+        const value = entry[key];
+
+        if (typeof value === 'string' && value.trim()) {
+            return value.trim();
+        }
+    }
+
+    return fallbackValue;
+}
+
+function getLayerFilterFieldType(entry) {
+    if (!entry || typeof entry !== 'object') {
+        return '';
+    }
+
+    const typeKeys = [
+        'fieldType',
+        'FieldType',
+        'field_type',
+        'type',
+        'Type',
+        'dataType',
+        'DataType',
+        'data_type'
+    ];
+
+    for (const key of typeKeys) {
+        const value = entry[key];
+
+        if ((typeof value === 'string' || typeof value === 'number') && String(value).trim()) {
+            return String(value).trim();
+        }
+    }
+
+    return '';
+}
+
+function isNumericLayerField(field) {
+    const normalizedType = normalizeFieldTypeValue(field && field.type);
+
+    if (!normalizedType) {
+        return false;
+    }
+
+    if (NUMERIC_FIELD_TYPE_CODES.has(normalizedType)) {
+        return true;
+    }
+
+    if (fieldTypeValueHasNumericToken(normalizedType)) {
+        return true;
+    }
+
+    return getNumericFieldTypeEnumValues().has(normalizedType);
+}
+
+function getNumericFieldTypeEnumValues() {
+    const values = new Set();
+
+    if (typeof govmap === 'undefined') {
+        return values;
+    }
+
+    for (const enumName of FIELD_TYPE_ENUM_NAMES) {
+        const enumMap = govmap[enumName];
+
+        if (!enumMap || typeof enumMap !== 'object') {
+            continue;
+        }
+
+        for (const [label, value] of Object.entries(enumMap)) {
+            const normalizedLabel = normalizeFieldTypeValue(label);
+            const normalizedValue = normalizeFieldTypeValue(value);
+
+            if (fieldTypeValueHasNumericToken(normalizedLabel) || fieldTypeValueHasNumericToken(normalizedValue)) {
+                values.add(normalizedLabel);
+                values.add(normalizedValue);
+            }
+        }
+    }
+
+    return values;
+}
+
+function normalizeFieldTypeValue(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function fieldTypeValueHasNumericToken(value) {
+    return NUMERIC_FIELD_TYPE_TOKENS.some((token) => value.includes(token));
+}
+
 function setupOperationTypeToggle() {
     const typeEl = document.getElementById('aggOperationType');
     const fieldBlock = document.getElementById('aggBlockOperationField');
@@ -218,6 +893,8 @@ function setupOperationTypeToggle() {
         fieldsBlock.classList.toggle('hidden', operationType !== 'table');
         histogramBlock.classList.toggle('hidden', operationType !== 'histogram');
         timeseriesBlock.classList.toggle('hidden', operationType !== 'timeseries');
+
+        refreshOperationFieldPickerForOperation();
     };
 
     typeEl.addEventListener('change', apply);
@@ -356,6 +1033,54 @@ function tryParseJson(value) {
     }
 }
 
+function collectOperationField() {
+    const fieldInput = document.getElementById('aggOperationField');
+    const fieldSelect = document.getElementById('aggOperationFieldSelect');
+    const typedField = fieldInput ? fieldInput.value.trim() : '';
+    const selectedField = fieldSelect ? fieldSelect.value.trim() : '';
+
+    return typedField || selectedField;
+}
+
+function collectOperationFields() {
+    const fieldsInput = document.getElementById('aggOperationFields');
+    const typedFields = splitCommaSeparatedFields(fieldsInput ? fieldsInput.value : '');
+    const selectedFields = getSelectedOperationFields();
+
+    return uniqueFields([...typedFields, ...selectedFields]);
+}
+
+function getSelectedOperationFields() {
+    const select = document.getElementById('aggOperationFieldsSelect');
+
+    if (!select) {
+        return [];
+    }
+
+    return [...select.selectedOptions].map((option) => option.value.trim()).filter(Boolean);
+}
+
+function splitCommaSeparatedFields(value) {
+    return String(value || '').split(',').map((field) => field.trim()).filter(Boolean);
+}
+
+function uniqueFields(fields) {
+    const unique = [];
+    const seen = new Set();
+
+    for (const field of fields) {
+
+        if (seen.has(field)) {
+            continue;
+        }
+
+        seen.add(field);
+        unique.push(field);
+    }
+
+    return unique;
+}
+
 /**
  * @returns {{ params: object } | { error: string }}
  */
@@ -375,7 +1100,7 @@ function buildAggregateParams() {
     }
 
     if (operationTypeRequiresField(operationType, timeseriesAggregation)) {
-        const field = document.getElementById('aggOperationField').value.trim();
+        const field = collectOperationField();
 
         if (!field) {
             return { error: 'operation.field is required for operation type ' + operationType };
@@ -403,7 +1128,15 @@ function buildAggregateParams() {
             return { error: 'timeseries.date_field is required' };
         }
 
-        if (!supportedTimeseriesAggregations.has(aggregation)) {
+        if (!interval) {
+            return { error: 'timeseries.interval is required' };
+        }
+
+        if (!supportedTimeseriesIntervals.has(interval)) {
+            return { error: 'timeseries.interval is invalid: ' + interval };
+        }
+
+        if (aggregation && !supportedTimeseriesAggregations.has(aggregation)) {
             return { error: 'timeseries.aggregation is invalid: ' + aggregation };
         }
 
@@ -415,11 +1148,10 @@ function buildAggregateParams() {
     }
 
     if (operationType === 'table') {
-        const fieldsRaw = document.getElementById('aggOperationFields').value.trim();
-        const fields = fieldsRaw.split(',').map((s) => s.trim()).filter(Boolean);
+        const fields = collectOperationFields();
 
         if (fields.length === 0) {
-            return { error: 'operation.fields is required for table (comma-separated)' };
+            return { error: 'operation.fields is required for table (type fields, select fields, or both)' };
         }
 
         operation.fields = fields;
@@ -460,17 +1192,23 @@ function buildAggregateParams() {
         params.filter = filterBuilt.filter;
     }
 
-    if (groupingBuilt.grouping) {
+    const hasActiveGrouping = Boolean(groupingBuilt.grouping && operationType !== 'table');
+
+    if (hasActiveGrouping) {
         params.grouping = groupingBuilt.grouping;
     }
 
-    const comparison = buildAggregateComparison();
+    const comparison = buildAggregateComparison(operationType);
 
-    if (comparison) {
-        params.comparison = comparison;
+    if (comparison.error) {
+        return { error: comparison.error };
     }
 
-    const outputBuilt = buildAggregateOutput();
+    if (comparison.comparison) {
+        params.comparison = comparison.comparison;
+    }
+
+    const outputBuilt = buildAggregateOutput(operationType, hasActiveGrouping);
 
     if (outputBuilt.error) {
         return { error: outputBuilt.error };
@@ -481,6 +1219,20 @@ function buildAggregateParams() {
     }
 
     return { params };
+}
+
+function buildAggregateComparison(operationType) {
+    const compareTo = document.getElementById('aggCompareTo').value;
+
+    if (compareTo !== 'global' && compareTo !== 'prev_period') {
+        return {};
+    }
+
+    if (operationType === 'table') {
+        return {};
+    }
+
+    return { comparison: { compare_to: compareTo } };
 }
 
 /**
@@ -574,23 +1326,17 @@ function buildAggregateGrouping() {
         return { error: 'sub_group_by requires group_by' };
     }
 
-    return { grouping };
-}
-
-function buildAggregateComparison() {
-    const compareTo = document.getElementById('aggCompareTo').value;
-
-    if (compareTo !== 'global' && compareTo !== 'prev_period') {
-        return null;
+    if (subGroupBy === groupBy) {
+        return { error: 'sub_group_by must be different from group_by' };
     }
 
-    return { compare_to: compareTo };
+    return { grouping };
 }
 
 /**
  * @returns {{ output: object | null, error?: string }}
  */
-function buildAggregateOutput() {
+function buildAggregateOutput(operationType, hasGrouping) {
     const limitRaw = document.getElementById('aggOutputLimit').value.trim();
     const includePercentage = document.getElementById('aggOutputIncludePercentage').checked;
     const sortBy = document.getElementById('aggOutputSortBy').value.trim();
@@ -605,14 +1351,14 @@ function buildAggregateOutput() {
     if (limitRaw) {
         const limit = Number(limitRaw);
 
-        if (!Number.isFinite(limit)) {
-            return { output: null, error: 'output.limit must be a finite number' };
+        if (!Number.isInteger(limit) || limit < 1 || limit > 1000) {
+            return { output: null, error: 'output.limit must be an integer between 1 and 1000' };
         }
 
         output.limit = limit;
     }
 
-    if (includePercentage) {
+    if (includePercentage && hasGrouping) {
         output.include_percentage = true;
     }
 
@@ -636,7 +1382,7 @@ function buildAggregateOutput() {
         output.null_handling = 'exclude';
     }
 
-    if (pageToken) {
+    if (pageToken && operationType === 'table') {
         output.page_token = pageToken;
     }
 

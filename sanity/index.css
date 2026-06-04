@@ -264,3 +264,57 @@ body {
     min-width: 200px;
     display: block;
 }
+
+.aggregate-actions {
+    margin: 0 0 8px;
+}
+
+.aggregate-actions button {
+    padding: 8px 14px;
+}
+
+.field-picker {
+    margin: 4px 0 8px;
+}
+
+.field-picker-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.field-picker-actions.hidden {
+    display: none;
+}
+
+.field-picker-actions label {
+    flex: 0 0 100%;
+}
+
+.field-picker-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.field-picker select {
+    display: block;
+    width: min(100%, 420px);
+    margin: 0 8px 8px 0;
+    padding: 6px 8px;
+}
+
+.field-picker select.hidden {
+    display: none;
+}
+
+.field-picker select[multiple] {
+    min-height: 150px;
+}
+
+.field-picker .hint {
+    text-align: right;
+    white-space: pre-line;
+}

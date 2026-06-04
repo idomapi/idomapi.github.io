@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang='he'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <title>אנטנות סלולאריות</title>
+    <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+    <div class='container'>
+        <div class='map-container'>
+            <div id='map'></div>
+        </div>
+        <div class='content-container'>
+            <div class='toggle-container'>
+                <label class='toggle-label'>
+                    <input type='checkbox' id='spatialFilterToggle'>
+                    <span class='toggle-text'>ניתוח מרחבי</span>
+                </label>
+            </div>
+            <div class='table-wrapper'>
+                <!-- Table will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src='https://stage.govmap.gov.il/govmap/api/govmap.api.js'></script>
+    <script src='app.js'></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const DEFAULT_ENV = 'stage';
+const DEFAULT_ENV = 'prod';
 
 const ENV_CONFIG = {
     prod: {

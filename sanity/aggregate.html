@@ -38,14 +38,17 @@
             <p class="hint"><code>govmap.aggregate(params)</code>
                 <a href="https://docs.govmap.gov.il/docs/standalone/geospatial-aggregation-api-docs" target="_blank" rel="noopener">תיעוד govmap.aggregate</a>
             </p>
-            <details class="panel-section" open>
+            <div class="aggregate-actions">
+                <button type="button" id="btnAggregate">aggregate</button>
+            </div>
+            <details class="panel-section">
                 <summary>מקור (source)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
                         <legend>params.source</legend>
                         <div>
                             <label for="aggSourceLayer">layer (חובה):</label>
-                            <input type="text" id="aggSourceLayer" value="layer_159941" placeholder="מזהה שכבה או alias">
+                            <input type="text" id="aggSourceLayer" value="layer_234365" placeholder="מזהה שכבה או alias">
                         </div>
                         <div>
                             <label for="aggSourceSrid">srid (אופציונלי):</label>
@@ -54,7 +57,7 @@
                     </fieldset>
                 </div>
             </details>
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>פעולה (operation)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
@@ -66,10 +69,35 @@
                         <div id="aggBlockOperationField" class="hidden">
                             <label for="aggOperationField">field:</label>
                             <input type="text" id="aggOperationField" placeholder="שם שדה" value="x">
+                            <div class="field-picker">
+                                <div class="field-picker-actions hidden" id="aggOperationFieldActions">
+                                    <label for="aggOperationFieldSelect">בחירת שדה מהשכבה:</label>
+                                    <div class="field-picker-buttons">
+                                        <button type="button" id="btnLoadOperationField">רענון שדות</button>
+                                    </div>
+                                </div>
+                                <select id="aggOperationFieldSelect" class="hidden" aria-label="בחירת שדה"></select>
+                                <p class="hint hidden" id="aggOperationFieldTypeHint" dir="rtl">שדות מסוג מספר בלבד.</p>
+                                <p class="hint hidden" id="aggOperationFieldHint" dir="rtl"></p>
+                            </div>
                         </div>
                         <div id="aggBlockOperationFields" class="hidden">
                             <label for="aggOperationFields">fields (טבלה — רשימה מופרדת בפסיקים):</label>
-                            <input type="text" id="aggOperationFields" placeholder="name,city,power_output">
+                            <input type="text" id="aggOperationFields" placeholder="id, company, address">
+                            <div class="field-picker">
+                                <div class="field-picker-actions hidden" id="aggOperationFieldsActions">
+                                    <label for="aggOperationFieldsSelect">בחירת שדות מהשכבה:</label>
+                                    <div class="field-picker-buttons">
+                                        <button type="button" id="btnLoadOperationFields">רענון שדות</button>
+                                        <button type="button" id="btnSelectAllOperationFields">בחר הכל</button>
+                                        <button type="button" id="btnDeselectAllOperationFields">נקה בחירה</button>
+                                    </div>
+                                </div>
+                                <select id="aggOperationFieldsSelect" class="hidden" multiple size="8" aria-label="בחירת שדות מרובה"></select>
+                                <p class="hint hidden" id="aggOperationFieldsSelectHint" dir="rtl">לחץ SHIFT לבחירה מרובה.</p>
+                                <p class="hint" id="aggOperationFieldsHint" dir="rtl">השדות נטענים לפי params.source.layer.
+אפשר לשלב בחירה מרובה עם הרשימה הידנית.</p>
+                            </div>
                         </div>
                         <div id="aggBlockHistogram" class="hidden">
                             <label for="aggHistogramBuckets">histogram.buckets (2–50):</label>
@@ -83,19 +111,20 @@
                             <div>
                                 <label for="aggTimeseriesInterval">timeseries.interval (חובה):</label>
                                 <select id="aggTimeseriesInterval">
+                                    <option value="">(בחר interval)</option>
                                 </select>
                             </div>
                             <div>
                                 <label for="aggTimeseriesAggregation">timeseries.aggregation:</label>
                                 <select id="aggTimeseriesAggregation">
+                                    <option value="">(ברירת מחדל — count, לא לשלוח)</option>
                                 </select>
                             </div>
                         </div>
-                        <button type="button" id="btnAggregate">aggregate</button>
                     </fieldset>
                 </div>
             </details>
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>סינון (filter)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
@@ -107,6 +136,7 @@
                         <div>
                             <label for="aggFilterViewMode">view_mode:</label>
                             <select id="aggFilterViewMode">
+                                <option value="">(ברירת מחדל — global, לא לשלוח)</option>
                             </select>
                         </div>
                         <p class="hint">ב־extent יש למלא bbox בארבעת השדות.</p>
@@ -146,7 +176,7 @@
                     </fieldset>
                 </div>
             </details>
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>קיבוץ (grouping)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
@@ -154,6 +184,15 @@
                         <div>
                             <label for="aggGroupBy">group_by:</label>
                             <input type="text" id="aggGroupBy" placeholder="technology">
+                            <div class="field-picker">
+                                <div class="field-picker-actions hidden" id="aggGroupByActions">
+                                    <label for="aggGroupBySelect">בחירת שדה מהשכבה:</label>
+                                    <div class="field-picker-buttons">
+                                        <button type="button" id="btnLoadGroupByFields">רענון שדות</button>
+                                    </div>
+                                </div>
+                                <select id="aggGroupBySelect" class="hidden" aria-label="בחירת שדה לקיבוץ"></select>
+                            </div>
                         </div>
                         <div>
                             <label for="aggSubGroupBy">sub_group_by:</label>
@@ -162,7 +201,7 @@
                     </fieldset>
                 </div>
             </details>
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>השוואה (comparison)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
@@ -176,7 +215,7 @@
                     </fieldset>
                 </div>
             </details>
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>פלט (output)</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
@@ -213,6 +252,7 @@
                         <div>
                             <label for="aggOutputNullHandling">null_handling:</label>
                             <select id="aggOutputNullHandling">
+                                <option value="">(ברירת מחדל — include_as_other, לא לשלוח)</option>
                             </select>
                         </div>
                         <div>

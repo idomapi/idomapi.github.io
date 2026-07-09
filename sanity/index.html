@@ -192,6 +192,7 @@
                     <label for="intersectRadius">radius (optional, meters):</label>
                     <input type="number" id="intersectRadius" value="0" min="0" step="any">
                     <label><input type="checkbox" id="intersectGetShapes"> getShapes</label>
+                    <label><input type="checkbox" id="intersectUseCurrentFilter"> useCurrentFilter</label>
                     <button type="button" id="btnIntersectFeatures">חיפוש ישויות (intersectFeatures)</button>
                 </fieldset>
                 <fieldset class="form-block">
@@ -292,6 +293,7 @@
                         <option value="Circle">Circle</option>
                         <option value="Rectangle">Rectangle</option>
                         <option value="FreehandPolygon">FreehandPolygon</option>
+                        <option value="FreehandPolyline">FreehandPolyline</option>
                     </select>
                     <button type="button" id="btnDraw">draw</button>
                     <button type="button" id="btnEditDrawing">editDrawing</button>

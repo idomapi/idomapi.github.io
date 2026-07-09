@@ -466,7 +466,8 @@ function setupIdentifyPanel() {
             const whereClause = document.getElementById('intersectWhere').value.trim();
             const radius = Number(document.getElementById('intersectRadius').value);
             const getShapes = document.getElementById('intersectGetShapes').checked;
-            const params = { address, layerName, fields, getShapes, radius };
+            const useCurrentFilter = document.getElementById('intersectUseCurrentFilter').checked;
+            const params = { address, layerName, fields, getShapes, useCurrentFilter, radius };
 
             if (whereClause) {
                 params.whereClause = whereClause;
@@ -965,6 +966,7 @@ function getDrawTypeEnum(key) {
         case 'Circle': return govmap.drawType.Circle;
         case 'Rectangle': return govmap.drawType.Rectangle;
         case 'FreehandPolygon': return govmap.drawType.FreehandPolygon;
+        case 'FreehandPolyline': return govmap.drawType.FreehandPolyline;
         default: return null;
     }
 }

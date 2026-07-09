@@ -480,6 +480,7 @@ function intersectFeatures() {
         { label: 'geometry', value: '', type: 'string', isOptional: true },
         { label: 'whereClause', value: '', type: 'string', isOptional: true },
         { label: 'getShapes', value: '', type: 'boolean', isOptional: true },
+        { label: 'useCurrentFilter', value: '', type: 'boolean', isOptional: true },
         { label: 'radius', value: 0, type: 'number', isOptional: true },
     ]).then(values => {
         if (!values) return;
@@ -490,7 +491,8 @@ function intersectFeatures() {
             geometry: values[3],
             whereClause: values[4],
             getShapes: values[5],
-            radius: values[6]
+            useCurrentFilter: values[6],
+            radius: values[7]
         };
         govmap.intersectFeatures(params)
             .then(response => {

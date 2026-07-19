@@ -28,7 +28,7 @@
         <button type="button" data-sanity-env="stage">stage</button>
         <button type="button" data-sanity-env="prod">prod</button>
     </div>
-    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a> | <a href="aggregate.html">סטטיסטיקות</a></p>
+    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a> | <a href="aggregate.html">סטטיסטיקות</a> | <a href="gush-parcel-compare/index.html">השוואת גוש/חלקה prod/dev</a></p>
     <div class="page-content">
     <div class="map-and-log">
         <div id="map1"></div>
@@ -144,9 +144,9 @@
                     <label for="searchInLayerName">layerName:</label>
                     <input type="text" id="searchInLayerName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
                     <label for="searchInFieldName">fieldName:</label>
-                    <input type="text" id="searchInFieldName" value="ID" placeholder="ID">
+                    <input type="text" id="searchInFieldName" value="name" placeholder="name">
                     <label for="searchInFieldValues">fieldValues (comma-separated):</label>
-                    <input type="text" id="searchInFieldValues" value="7103--46" placeholder="7103--46">
+                    <input type="text" id="searchInFieldValues" value="46/7103/0" placeholder="46/7103/0">
                     <label><input type="checkbox" id="searchInHighlight"> highlight</label>
                     <button type="button" id="btnSearchInLayer">searchInLayer</button>
                 </fieldset>

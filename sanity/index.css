@@ -170,10 +170,70 @@ body {
 .form-block legend {
     font-weight: 600;
     padding: 0 6px;
+    margin-bottom: 8px;
 }
 
-.form-block label {
-    margin-left: 8px;
+.form-block label[for] {
+    display: block;
+    margin: 0 0 2px;
+    direction: ltr;
+    text-align: left;
+}
+
+.form-block label[for] + :is(
+    input:not([type='checkbox']):not([type='radio']),
+    select,
+    textarea
+) {
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 0 10px;
+}
+
+.form-block :is(input, select, textarea, button) {
+    margin-left: 0;
+}
+
+.form-block label:not([for]) {
+    display: block;
+    margin: 0 0 8px;
+    direction: ltr;
+}
+
+.form-block label:not([for]) + :is(
+    input:not([type='checkbox']):not([type='radio']),
+    select,
+    textarea
+) {
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 0 10px;
+}
+
+.form-block input[type='checkbox'],
+.form-block input[type='radio'] {
+    margin: 0;
+    width: auto;
+}
+
+.form-block button,
+.form-block > p,
+.form-block > .hint,
+.form-block p.hint {
+    display: block;
+    margin-top: 8px;
+}
+
+.form-block :is(span, div):not(.field-picker):not(.field-picker-actions):not(.field-picker-buttons) {
+    display: contents;
+}
+
+.form-block .field-picker {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
 }
 
 .hidden {
@@ -258,11 +318,8 @@ body {
 }
 
 .no-map-layout .form-block textarea {
-    margin-left: 8px;
-    margin-bottom: 8px;
-    padding: 6px 8px;
-    min-width: 200px;
-    display: block;
+    max-width: 100%;
+    min-height: 4em;
 }
 
 .aggregate-actions {

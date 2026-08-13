@@ -61,3 +61,25 @@ Driver's name : GPS
         console.log(response);
     });
 }
+
+function searchInLayer() {
+    var params = {
+        layerName: 'layer_208272',
+        fieldName: 'objectId',
+        fieldValues: ['6238', '5496', '1352'],
+        highlight: true,
+        outLineColor: [255, 0, 0, 1],
+        fillColor: [128, 0, 128, 0.5], // purple
+    };
+    govmap.searchInLayer(params);
+}
+
+function filterLayer() {
+    var params = {
+        layerName: 'layer_208271',
+        whereClause: "(objectid IN (48, 102, 99, 101, 166, 93, 21, 147, 166)) AND (activityty LIKE '%קבוצתי%' OR activityty LIKE '%פרטני%') AND (riskstatus LIKE '%נפילות%' OR riskstatus LIKE '%ירידה קוגנטיבית%')",
+        zoomToExtent: true,
+    };
+    govmap.filterLayers(params);
+}
+

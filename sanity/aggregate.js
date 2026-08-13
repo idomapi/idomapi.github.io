@@ -3,11 +3,15 @@ function initAggregate() {
     populateAggregationSrids();
     populateAggregationEnumSelects();
     setupAggregatePanel();
+    setupQuickAggregateButtons();
     setupOperationTypeToggle();
     setupViewModeToggle();
     setupClearLog();
     setupOperationFieldsPicker();
 }
+
+const QUICK_AGGREGATE_LAYER = '208599';
+const QUICK_AGGREGATE_PAGE_SIZE = 100;
 
 const AGGREGATE_OPERATION_TYPES = new Set([
     'count',
@@ -977,6 +981,80 @@ function setupAggregatePanel() {
 
             logEvent('aggregate error', { message });
         });
+    });
+}
+
+function setupQuickAggregateButtons() {
+    const btnExtent = document.getElementById('btnQuickAggregateExtent');
+    const btnGlobal = document.getElementById('btnQuickAggregateGlobal');
+
+    if (btnExtent) {
+        btnExtent.addEventListener('click', () => {
+            runQuickAggregate({
+                apiKey: GOVMAP_TOKEN,
+                source: { layer: QUICK_AGGREGATE_LAYER, srid: govmap.aggSrid.Itm },
+                operation: {
+                    type: 'table',
+                    fields: ['serviceid', 'servicename']
+                },
+                filter: {
+                    view_mode: 'extent',
+                    bbox: [196380, 740490, 198942, 741153]
+                },
+                output: { limit: QUICK_AGGREGATE_PAGE_SIZE }
+            });
+        });
+    }
+
+    if (btnGlobal) {
+        btnGlobal.addEventListener('click', () => {
+            runQuickAggregate({
+                apiKey: GOVMAP_TOKEN,
+                source: { layer: QUICK_AGGREGATE_LAYER },
+                operation: {
+                    type: 'table',
+                    fields: ['serviceid', 'servicename']
+                },
+                output: { limit: QUICK_AGGREGATE_PAGE_SIZE }
+            });
+        });
+    }
+}
+
+function runQuickAggregate(params) {
+    logEvent('aggregate request (quick)', params);
+    fetchQuickAggregatePage(params, 1, []);
+}
+
+function fetchQuickAggregatePage(params, pageNumber, rowsSoFar) {
+    govmap.aggregate(params).then((response) => {
+        const apiError = extractAggregateApiError(response);
+
+        if (apiError) {
+            logEvent('aggregate error', { message: apiError, response });
+            return;
+        }
+
+        logEvent(`aggregate (quick) page ${pageNumber}`, response);
+
+        const rows = Array.isArray(response && response.data) ? response.data : [];
+        const allRows = rowsSoFar.concat(rows);
+        const paging = response && response.paging;
+
+        if (!paging || !paging.has_more || !paging.next_page_token) {
+            logEvent('aggregate (quick) pagination complete', { pages: pageNumber, totalRows: allRows.length });
+            return;
+        }
+
+        const nextParams = { ...params, output: { ...params.output, page_token: paging.next_page_token } };
+
+        fetchQuickAggregatePage(nextParams, pageNumber + 1, allRows);
+    }).catch((err) => {
+        const apiError = extractAggregateTransportError(err);
+        const fallbackError = String((err && err.message) || err);
+        const message = apiError || fallbackError;
+
+        logEvent('aggregate error', { message });
     });
 }
 

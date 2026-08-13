@@ -1,0 +1,203 @@
+body {
+    font-family: simplerregular, sans-serif;
+    margin: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.page-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.map-and-log {
+    flex: 7 1 280px;
+    min-width: 0;
+}
+
+#map1 {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 450px;
+}
+
+.panels {
+    flex: 3 1 320px;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100vh;
+}
+
+.panel-log {
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 12px;
+}
+
+.panel-log-header {
+    display: flex;
+    direction: rtl;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.panel-log label {
+    display: block;
+    margin-bottom: 2px;
+}
+
+#eventLog {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    max-height: 220px;
+    overflow: auto;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.panel-section {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 8px;
+}
+
+.panel-section summary {
+    padding: 12px 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.panel-section summary::-webkit-details-marker {
+    display: none;
+}
+
+.panel-section summary::before {
+    content: '▸ ';
+    margin-left: 4px;
+}
+
+.panel-section[open] summary::before {
+    content: '▾ ';
+}
+
+.panel-body {
+    padding: 0 14px 12px;
+}
+
+.form-block {
+    margin-bottom: 16px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+.form-block legend {
+    font-weight: 600;
+    padding: 0 6px;
+    margin-bottom: 8px;
+}
+
+.form-block label[for] {
+    display: block;
+    margin: 0 0 2px;
+    direction: ltr;
+    text-align: left;
+}
+
+.form-block label[for] + :is(
+    input:not([type='checkbox']):not([type='radio']),
+    select
+) {
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 0 10px;
+}
+
+.form-block label:not([for]) {
+    display: block;
+    margin: 0 0 8px;
+    direction: ltr;
+}
+
+.form-block input[type='checkbox'],
+.form-block input[type='radio'] {
+    margin: 0;
+    width: auto;
+}
+
+.form-block button {
+    display: block;
+    margin-top: 8px;
+}
+
+.form-block .hint {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.intersect-layer-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.intersect-layer-row input[type='text'],
+.intersect-layer-row input[type='number'] {
+    padding: 6px 8px;
+    max-width: 160px;
+}
+
+.intersect-layer-row label {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.hidden {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        margin: 0;
+        padding: 12px;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .map-and-log,
+    .panels {
+        flex: 1 1 100%;
+        max-height: none;
+        overflow: visible;
+    }
+
+    #map1 {
+        height: 60vh;
+        min-height: 360px;
+    }
+}

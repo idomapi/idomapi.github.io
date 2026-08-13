@@ -226,7 +226,7 @@ body {
     margin-top: 8px;
 }
 
-.form-block :is(span, div):not(.field-picker):not(.field-picker-actions):not(.field-picker-buttons) {
+.form-block :is(span, div):not(.field-picker):not(.field-picker-actions):not(.field-picker-buttons):not(.hidden) {
     display: contents;
 }
 

@@ -4,7 +4,7 @@ const migrashimLayer = '237473';
 function initGovMap() {
     govmap.createMap('map', {
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
-        layers: [gvulLayer, migrashimLayer],
+        // layers: [gvulLayer, migrashimLayer],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -15,9 +15,21 @@ function initGovMap() {
         // center: { x: 159530, y: 620516 },
         level: 7,
         onLoad: function () {
-            filterLayer();
         },
     });
+}
+
+function findParcel() {
+    govmap.setVisibleLayers(["PARCEL_ALL", "SUB_GUSH_ALL"]);
+    var params = {
+        layerName: 'PARCEL_ALL',
+        fieldName: 'name',
+        fieldValues: ["60/100231/3"],
+        highlight: true,
+        fillColor: [173, 216, 230, 0.3],
+        outlineColor: [0, 0, 255, 1],
+    };
+    govmap.searchInLayer(params);
 }
 
 async function searchInLayer() {

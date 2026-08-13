@@ -28,7 +28,7 @@
         <button type="button" data-sanity-env="stage">stage</button>
         <button type="button" data-sanity-env="prod">prod</button>
     </div>
-    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a> | <a href="aggregate.html">סטטיסטיקות</a> | <a href="gush-parcel-compare/index.html">השוואת גוש/חלקה prod/dev</a></p>
+    <p class="page-nav"><a href="index.html">דמו מפה</a> | <a href="no-map.html">ללא מפה</a> | <a href="multi-maps.html">4 מפות</a> | <a href="aggregate.html">סטטיסטיקות</a></p>
     <div class="page-content">
     <div class="map-and-log">
         <div id="map1"></div>
@@ -199,8 +199,8 @@
                     <legend>searchAndLocate(params)</legend>
                     <label for="locateType">type:</label>
                     <select id="locateType">
-                        <option value="lotParcelToAddress">lotParcelToAddress (כתובת → גוש/חלקה)</option>
-                        <option value="addressToLotParcel">addressToLotParcel (גוש/חלקה → כתובת)</option>
+                        <option value="lotParcelToAddress">lotParcelToAddress (גוש/חלקה → כתובת)</option>
+                        <option value="addressToLotParcel">addressToLotParcel (כתובת → גוש/חלקה)</option>
                     </select>
                     <span id="locateAddressWrap">
                         <label for="locateAddress">address:</label>
@@ -211,6 +211,8 @@
                         <input type="number" id="locateLot" value="40095">
                         <label for="locateParcel">parcel (חלקה):</label>
                         <input type="number" id="locateParcel" value="13">
+                        <label for="locateGushSuffix">gushSuffix (תת-גוש):</label>
+                        <input type="number" id="locateGushSuffix" value="0">
                     </span>
                     <button type="button" id="btnSearchAndLocate">חיפוש גוש/חלקה (searchAndLocate)</button>
                 </fieldset>

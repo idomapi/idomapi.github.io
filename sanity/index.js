@@ -16,7 +16,7 @@ function createMap() {
     govmap.createMap('map1', {
         token: GOVMAP_TOKEN,
         layers: ['GASSTATIONS', 'bus_stops'],
-        visibleLayers: ['204093', 'GASSTATIONS'],
+        // visibleLayers: ['204093', 'GASSTATIONS'],
         showXY: true,
         isEmbeddedToggle: false,
         background: '0',
@@ -257,6 +257,7 @@ function setupLayerDataFilterPanel() {
                 //     'gasstations': "(name = 'רשף')"
                 // },
                 selectOnMap: true,
+                getWkt: true
             };
             govmap.selectFeaturesOnMap(params).then((response) => {
                 logEvent('selectFeaturesOnMap', response);
@@ -509,6 +510,7 @@ function setupIdentifyPanel() {
             } else {
                 params.lot = Number(document.getElementById('locateLot').value);
                 params.parcel = Number(document.getElementById('locateParcel').value);
+                params.gushSuffix = Number(document.getElementById('locateGushSuffix').value);
             }
 
             govmap.searchAndLocate(params).then((response) => {

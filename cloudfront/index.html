@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <title>CloudFront - גובמאפ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
+    <script src="https://d1tj85vqlmrpm.cloudfront.net/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+</head>
+
+<body>
+    <div class="page-content">
+        <div class="map-and-log">
+            <div id="map1"></div>
+            <div class="panel panel-log">
+                <div class="panel-log-header">
+                    <label>לוג:</label>
+                    <button type="button" id="btnClearLog">ניקוי לוג (Clear logs)</button>
+                </div>
+                <pre id="eventLog"></pre>
+            </div>
+        </div>
+        <div class="panels">
+            <details class="panel-section" open>
+                <summary>intersectLayers</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.intersectLayers(intersectLayersObject)</legend>
+                        <p class="hint">שכבות בסדר. כל שכבה מסוננת לפי whereClause שלה ונשארת רק במקום שהיא נחתכת עם השכבה הקודמת. radius מרחיב את בדיקת החיתוך מול השלב הקודם.</p>
+                        <div id="intersectLayersRows"></div>
+                        <button type="button" id="btnAddIntersectLayer">+ הוספת שכבה (add layer)</button>
+                        <label for="intersectFieldsInput">fields (comma-separated):</label>
+                        <input type="text" id="intersectFieldsInput" value="value0" placeholder="value0, value1">
+                        <label for="intersectInputType">מקור מיקום (address / geometry):</label>
+                        <select id="intersectInputType">
+                            <option value="address">address</option>
+                            <option value="geometry">geometry</option>
+                        </select>
+                        <span id="intersectAddressWrap">
+                            <label for="intersectAddressInput">address:</label>
+                            <input type="text" id="intersectAddressInput" value="נהלל 13 תל אביב" placeholder="כתובת">
+                        </span>
+                        <span id="intersectGeometryWrap" class="hidden">
+                            <label for="intersectGeometryInput">geometry (WKT):</label>
+                            <input type="text" id="intersectGeometryInput" placeholder="POINT(x y)">
+                        </span>
+                        <button type="button" id="btnIntersectLayers">intersectLayers</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>filterLayers</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.filterLayers(params)</legend>
+                        <label for="filterLayerName">layerName:</label>
+                        <input type="text" id="filterLayerName" value="162879" placeholder="162879">
+                        <label for="filterWhereClause">whereClause:</label>
+                        <input type="text" id="filterWhereClause" placeholder="value0 = 'x'">
+                        <label><input type="checkbox" id="filterZoomToExtent" checked> zoomToExtent</label>
+                        <button type="button" id="btnFilterLayers">filterLayers</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>setVisibleLayers</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.setVisibleLayers(layersOn, layersOff)</legend>
+                        <label for="layersOn">layersOn (comma-separated):</label>
+                        <input type="text" id="layersOn" value="162879" placeholder="162879">
+                        <label for="layersOff">layersOff (comma-separated):</label>
+                        <input type="text" id="layersOff" value="162881" placeholder="162881">
+                        <button type="button" id="btnSetVisibleLayers">setVisibleLayers</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
+                <summary>showMeasure</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.showMeasure() / closeMeasure()</legend>
+                        <button type="button" id="btnShowMeasure">showMeasure</button>
+                        <button type="button" id="btnCloseMeasure">closeMeasure</button>
+                    </fieldset>
+                </div>
+            </details>
+        </div>
+    </div>
+</body>
+
+</html>

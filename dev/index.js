@@ -1,8 +1,11 @@
+const gvulLayer = '162207';
+const migrashimLayer = '162206'; 
+
 async function initGovMap() {
     govmap.createMap('map', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
         layers: ["statistic_areas_2011"],
-        visibleLayers: ["layer_157312"],
+        visibleLayers: [migrashimLayer, gvulLayer],
         showXY: true,
         isEmbeddedToggle: false,
         background: 0,
@@ -97,4 +100,10 @@ Driver's name : GPS
     govmap.displayGeometries(data).then(function (response) {
         console.log(response);
     });
+}
+
+function filterLayer() {
+    const ma = 2056235;
+    govmap.filterLayers({ 'layerName': migrashimLayer, 'whereClause': "MISHASAVA =" + ma, 'zoomToExtent': false });
+    govmap.filterLayers({ 'layerName': gvulLayer, 'whereClause': "MISHASAVA =" + ma, 'zoomToExtent': true });
 }

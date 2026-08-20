@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <title>MOT - גובמאפ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="stylesheet" href="../index.css">
+    <script src="index.js"></script>
+    <script src="https://d1tj85vqlmrpm.cloudfront.net/govmap/api/govmap.api.js" defer onload="initMOT()"></script>
+</head>
+
+<body>
+    <div class="page-content">
+        <div class="map-and-log">
+            <div id="map1"></div>
+            <div class="panel panel-log">
+                <div class="panel-log-header">
+                    <label>לוג:</label>
+                    <button type="button" id="btnClearLog">ניקוי לוג (Clear logs)</button>
+                </div>
+                <pre id="eventLog"></pre>
+            </div>
+        </div>
+        <div class="panels">
+            <details class="panel-section" open>
+                <summary>MOT Intersection Test</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.intersectLayers(motRequest)</legend>
+                        <p class="hint">בדיקת חיתוך בין שכבה MUNI ו-LRT_LINE עם ישות גיאומטרית של תחום ישראל.</p>
+                        <button type="button" id="btnRunMOTTest">הרצת בדיקה (Run Test)</button>
+                    </fieldset>
+                </div>
+            </details>
+        </div>
+    </div>
+</body>
+
+</html>

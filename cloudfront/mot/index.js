@@ -33,22 +33,23 @@ function setupMOTPanel() {
 
 function runMOTTest() {
     const israelExtentPolygonGeo = 'POLYGON((129897.85 818015.41, 287854.42 818015.41, 287854.42 376689.53, 129897.85 376689.53, 129897.85 818015.41))';
+    const muniWhereClause = document.getElementById('muniWhereClause').value.trim();
+
     const request = {
         layers: [
             {
                 layerName: 'MUNI',
-                whereClause: 'OBJECTID = 129', // bat yam polygon id 
+                whereClause: muniWhereClause,
                 useCurrentFilter: false,
                 radius: 0
             },
             {
                 layerName: 'LRT_LINE',
-                // whereClause: '',
                 useCurrentFilter: false,
                 radius: 0
             }
         ],
-        fields: ['name'],
+        fields: ['objectid'],
         geometry: israelExtentPolygonGeo
     };
 

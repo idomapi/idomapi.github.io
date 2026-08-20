@@ -28,6 +28,11 @@
                     <fieldset class="form-block">
                         <legend>govmap.intersectLayers(motRequest)</legend>
                         <p class="hint">בדיקת חיתוך בין שכבה MUNI ו-LRT_LINE עם ישות גיאומטרית של תחום ישראל.</p>
+                        <label for="muniWhereClause">MUNI whereClause:</label>
+                        <select id="muniWhereClause">
+                            <option value="MUNI_NAME = 'בת ים'">MUNI_NAME = 'בת ים'</option>
+                            <option value="objectid = 129">objectid = 129</option>
+                        </select>
                         <button type="button" id="btnRunMOTTest">הרצת בדיקה (Run Test)</button>
                     </fieldset>
                 </div>

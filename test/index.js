@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "PARCEL_ALL", 'layer_207126', 'layer_207127'],
-        visibleLayers: ['layer_207126', 'ies'],
+        visibleLayers: ['layer_208272'],
         showXY: true,
         isEmbeddedToggle: false,
         background: "0",
@@ -69,7 +69,8 @@ function searchInLayer() {
         fieldValues: ['6238', '5496', '1352'],
         highlight: true,
         outLineColor: [255, 0, 0, 1],
-        fillColor: [128, 0, 128, 0.5], // purple
+        fillColor: [255, 255, 0, 0.5], // yellow
+   
     };
     govmap.searchInLayer(params);
 }
@@ -83,3 +84,45 @@ function filterLayer() {
     govmap.filterLayers(params);
 }
 
+function aggregateLayer() {
+    const SERVICE_TABLE_LAYER_FIELDS = [
+        'serviceid',
+        'servicename',
+        'servicetypename',
+        'targetpopulations',
+        'language',
+        'openhours',
+        'accessibility',
+        'requirespaymentamount',
+        'requirespayment',
+        'serviceproviderorganizationtype',
+        'fulladdress',
+        'servicedescription',
+        'providername',
+        'locationtype',
+        'participationeligibility',
+        'activitytype',
+        'airisktype',
+        'frequency',
+        'reliability_id'
+    ];
+    govmap.aggregate({
+        apiKey: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
+        source: {
+            layer: '208599',
+            srid: govmap.aggSrid?.Itm
+        },
+        operation: {
+            type: 'table',
+            fields: SERVICE_TABLE_LAYER_FIELDS,
+        },
+        output: {
+            limit: 100,
+        },
+        filter: {
+            filter: "(reliability_id=3)"
+        }
+    }).then(function (response) {
+        console.log(response);
+    });
+}

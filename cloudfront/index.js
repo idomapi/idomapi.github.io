@@ -4,13 +4,14 @@ function initGovMap() {
     setupFilterLayersPanel();
     setupSetVisibleLayersPanel();
     setupShowMeasurePanel();
+    setupSearchInLayerPanel();
     setupLogPanel();
 }
 
 function createMap() {
     govmap.createMap('map1', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
-        visibleLayers: ['162879', '162881'],
+        visibleLayers: ['162879', '162881', 'ies'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -190,6 +191,16 @@ function setupShowMeasurePanel() {
     }
 }
 
+function setupSearchInLayerPanel() {
+    const btn = document.getElementById('btnSearchInLayer');
+
+    if (!btn) {
+        return;
+    }
+
+    btn.addEventListener('click', searchInLayer);
+}
+
 function setupLogPanel() {
     const btnClearLog = document.getElementById('btnClearLog');
     const eventLog = document.getElementById('eventLog');
@@ -211,4 +222,33 @@ function logEvent(name, data) {
     const line = '[' + new Date().toISOString() + '] ' + name + ': ' + JSON.stringify(data, null, 2);
     el.textContent = (el.textContent ? el.textContent + '\n\n' : '') + line;
     el.scrollTop = el.scrollHeight;
+}
+
+const SEARCH_IN_LAYER_PRESETS = {
+    layer_162879: {
+        layerName: 'layer_162879',
+        fieldName: 'value0',
+        fieldValues: ['ג'],
+        highlight: true,
+        showBubble: false,
+        outLineColor: [0, 255, 0, 1],
+        fillColor: [255, 0, 0, 0.5],
+    },
+    ies: {
+        layerName: 'ies',
+        fieldName: 'name',
+        fieldValues: ['הרצליה'],
+        highlight: true,
+        showBubble: false,
+        outLineColor: [0, 255, 0, 1],
+        fillColor: [255, 0, 0, 0.5],
+    },
+};
+
+function searchInLayer() {
+    const key = document.getElementById('searchInLayerPreset').value;
+    const params = SEARCH_IN_LAYER_PRESETS[key];
+
+    govmap.searchInLayer(params);
+    logEvent('searchInLayer', params);
 }

@@ -103,6 +103,9 @@ body {
 }
 
 .form-block {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
     margin-bottom: 16px;
     padding: 10px;
     border: 1px solid #e0e0e0;
@@ -111,8 +114,8 @@ body {
 
 .form-block legend {
     font-weight: 600;
-    padding: 0 6px;
-    margin-bottom: 8px;
+    padding: 0 0 8px;
+    margin: 0;
 }
 
 .form-block label[for] {

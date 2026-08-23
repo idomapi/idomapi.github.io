@@ -11,7 +11,7 @@ function initGovMap() {
 function createMap() {
     govmap.createMap('map1', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
-        visibleLayers: ['162879', '162881', 'ies'],
+        visibleLayers: ['162879', 'ies', 'layer_163153'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -229,6 +229,15 @@ const SEARCH_IN_LAYER_PRESETS = {
         layerName: 'layer_162879',
         fieldName: 'value0',
         fieldValues: ['ג'],
+        highlight: true,
+        showBubble: false,
+        outLineColor: [0, 255, 0, 1],
+        fillColor: [255, 0, 0, 0.5],
+    },
+    layer_163153: {
+        layerName: 'layer_163153',
+        fieldName: 'value0',
+        fieldValues: ['a'],
         highlight: true,
         showBubble: false,
         outLineColor: [0, 255, 0, 1],

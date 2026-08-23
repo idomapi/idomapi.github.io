@@ -69,7 +69,7 @@ function searchInLayer() {
         fieldValues: ['6238', '5496', '1352'],
         highlight: true,
         outLineColor: [255, 0, 0, 1],
-        fillColor: [255, 255, 0, 0.5], // yellow
+        fillColor: [255, 255, 0, 1], // yellow
    
     };
     govmap.searchInLayer(params);

@@ -1,5 +1,6 @@
 function initGovMap() {
     createMap();
+    setupGetEntitiesGeometryPanel();
     setupIntersectLayersPanel();
     setupFilterLayersPanel();
     setupSetVisibleLayersPanel();
@@ -11,7 +12,7 @@ function initGovMap() {
 function createMap() {
     govmap.createMap('map1', {
         token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
-        visibleLayers: ['162879', 'ies', 'layer_163153'],
+        visibleLayers: ['162879', 'ies', 'layer_163153', 'layer_155046'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -22,6 +23,40 @@ function createMap() {
         level: 7,
         onLoad: function () {
         },
+    });
+}
+
+function setupGetEntitiesGeometryPanel() {
+    const btn = document.getElementById('btnGetEntitiesGeometry');
+
+    if (!btn) {
+        return;
+    }
+
+    btn.addEventListener('click', () => {
+        if (typeof govmap.getEntitiesGeometry !== 'function') {
+            logEvent('getEntitiesGeometry error', { message: 'govmap.getEntitiesGeometry is not available' });
+            return;
+        }
+
+        const layerId = document.getElementById('entitiesGeometryLayerId').value.trim();
+        const objectIds = document.getElementById('entitiesGeometryObjectIds').value
+            .split(',').map((s) => s.trim()).filter(Boolean);
+
+        if (!layerId || objectIds.length === 0) {
+            logEvent('getEntitiesGeometry error', { message: 'layerId and at least one objectId are required' });
+            return;
+        }
+
+        const params = { layerId, objectIds };
+
+        logEvent('getEntitiesGeometry parameters', params);
+
+        govmap.getEntitiesGeometry(params).then((response) => {
+            logEvent('getEntitiesGeometry', response);
+        }).catch((err) => {
+            logEvent('getEntitiesGeometry error', { message: String(err && err.message || err) });
+        });
     });
 }
 
@@ -193,9 +228,18 @@ function setupShowMeasurePanel() {
 
 function setupSearchInLayerPanel() {
     const btn = document.getElementById('btnSearchInLayer');
+    const select = document.getElementById('searchInLayerPreset');
 
-    if (!btn) {
+    if (!btn || !select) {
         return;
+    }
+
+    for (const [key, preset] of Object.entries(SEARCH_IN_LAYER_PRESETS)) {
+        const option = document.createElement('option');
+
+        option.value = key;
+        option.textContent = [preset.layerName, preset.fieldName, (preset.fieldValues || []).join(', ')].join(' / ');
+        select.appendChild(option);
     }
 
     btn.addEventListener('click', searchInLayer);
@@ -252,11 +296,25 @@ const SEARCH_IN_LAYER_PRESETS = {
         outLineColor: [0, 255, 0, 1],
         fillColor: [255, 0, 0, 0.5],
     },
+    layer_155046: {
+        layerName: 'layer_155046',
+        fieldName: 'value1',
+        fieldValues: ['ב'],
+        highlight: true,
+        showBubble: false,
+        outLineColor: [0, 255, 0, 1],
+        fillColor: [255, 0, 0, 0.5],
+    }
 };
 
 function searchInLayer() {
     const key = document.getElementById('searchInLayerPreset').value;
     const params = SEARCH_IN_LAYER_PRESETS[key];
+
+    if (!params) {
+        logEvent('searchInLayer error', { message: 'Unknown preset: ' + key });
+        return;
+    }
 
     govmap.searchInLayer(params);
     logEvent('searchInLayer', params);

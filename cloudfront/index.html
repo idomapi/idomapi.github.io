@@ -22,22 +22,32 @@
             </div>
         </div>
         <div class="panels">
-            <details class="panel-section" open>
+            <details class="panel-section">
+                <summary>getEntitiesGeometry</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.getEntitiesGeometry(params)</legend>
+                        <p class="hint">מחזיר גיאומטריה לישויות לפי layerId ו-objectIds. השכבה צריכה להיות מפורסמת ל-API עם exposeGeometry.</p>
+                        <label for="entitiesGeometryLayerId">layerId:</label>
+                        <input type="text" id="entitiesGeometryLayerId" value="162879" placeholder="162879">
+                        <label for="entitiesGeometryObjectIds">objectIds (comma-separated):</label>
+                        <input type="text" id="entitiesGeometryObjectIds" value="1" placeholder="1, 2, 3">
+                        <button type="button" id="btnGetEntitiesGeometry">getEntitiesGeometry</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
                 <summary>searchInLayer</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
                         <legend>searchInLayer</legend>
                         <label for="searchInLayerPreset">params:</label>
-                        <select id="searchInLayerPreset">
-                            <option value="layer_162879">layer_162879 / value0 / ג</option>
-                            <option value="layer_163153">layer_163153 / value0 / a</option>
-                            <option value="ies">ies / name / הרצליה</option>
-                        </select>
+                        <select id="searchInLayerPreset"></select>
                         <button type="button" id="btnSearchInLayer">searchInLayer</button>
                     </fieldset>
                 </div>
             </details>
-            <details class="panel-section" open>
+            <details class="panel-section">
                 <summary>intersectLayers</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">

@@ -33,49 +33,16 @@ function findParcel() {
 }
 
 async function searchInLayer() {
-    const rikuzim = {
-        layerName: 'layer_230860',
-        fieldName: 'kalpi',
-        fieldValues: ['115', '43'],
-    }
-    govmap.searchInLayer({
-        layerName: rikuzim.layerName,
-        fieldName: rikuzim.fieldName,
-        fieldValues: rikuzim.fieldValues,
+    var params = {
+        layerName: '211923',
+        fieldName: 'value1',
+        fieldValues: ['21'],
         highlight: true,
+        showBubble: false,
+        outLineColor: [0, 255, 0, 1],
         fillColor: [255, 0, 0, 0.5],
-        outLineColor: [0, 255, 0, 1]
-    });
-
-    const ashkelon = {
-        layerName: 'layer_234077',
-        fieldName: 'value0',
-        fieldValues: ['1', '3'],
-    }
-    govmap.searchInLayer({
-        layerName: ashkelon.layerName,
-        fieldName: ashkelon.fieldName,
-        fieldValues: ashkelon.fieldValues,
-        highlight: true,
-        fillColor: [255, 0, 0, 0.5],
-        outLineColor: [128, 0, 128, 1]
-
-    });
-
-    const kalpi = {
-        layerName: 'layer_230859',
-        fieldName: 'kalpi',
-        fieldValues: ['206', '97'],
-    }
-
-    govmap.searchInLayer({
-        layerName: kalpi.layerName,
-        fieldName: kalpi.fieldName,
-        fieldValues: kalpi.fieldValues,
-        highlight: true,
-        fillColor: [255, 0, 0, 0.5],
-        outLineColor: [128, 0, 128, 1]
-    });
+    };
+    govmap.searchInLayer(params);
 }
 
 function selectFeaturesOnMap() {

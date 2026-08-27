@@ -71,8 +71,7 @@
             <summary>מפה ושכבות (Map state &amp; layers)</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
-                    <legend>getBackground / getCenter / getMapUrl</legend>
-                    <button type="button" id="btnGetBackground">getBackground</button>
+                    <legend>getCenter / getMapUrl</legend>
                     <button type="button" id="btnGetCenter">getCenter</button>
                     <button type="button" id="btnGetMapUrl">getMapUrl</button>
                 </fieldset>
@@ -102,7 +101,7 @@
                     <label for="layersOn">layersOn (comma-separated):</label>
                     <input type="text" id="layersOn" value="GASSTATIONS" placeholder="GASSTATIONS">
                     <label for="layersOff">layersOff (comma-separated):</label>
-                    <input type="text" id="layersOff" value="busstops" placeholder="busstops">
+                    <input type="text" id="layersOff" value="bus_stops" placeholder="bus_stops">
                     <button type="button" id="btnSetVisibleLayers">setVisibleLayers</button>
                 </fieldset>
             </div>
@@ -181,8 +180,19 @@
                 </fieldset>
                 <fieldset class="form-block">
                     <legend>intersectFeatures(params)</legend>
-                    <label for="intersectAddress">address:</label>
-                    <input type="text" id="intersectAddress" value="וילסון 10 תל אביב" placeholder="כתובת">
+                    <label for="intersectInputType">address / geometry:</label>
+                    <select id="intersectInputType">
+                        <option value="address">address</option>
+                        <option value="geometry">geometry</option>
+                    </select>
+                    <span id="intersectAddressWrap">
+                        <label for="intersectAddress">address:</label>
+                        <input type="text" id="intersectAddress" value="וילסון 10 תל אביב" placeholder="כתובת">
+                    </span>
+                    <span id="intersectGeometryWrap" class="hidden">
+                        <label for="intersectGeometry">geometry:</label>
+                        <input type="text" id="intersectGeometry" value="POLYGON((178913.45 662158.23, 183817.6 662139.91, 183831.7 666172.6, 178929.49 666190.93, 178913.45 662158.23))" placeholder="POLYGON((x y, ...))">
+                    </span>
                     <label for="intersectLayerName">layerName:</label>
                     <input type="text" id="intersectLayerName" value="PARCEL_ALL" placeholder="PARCEL_ALL">
                     <label for="intersectFields">fields (comma-separated):</label>
@@ -191,7 +201,6 @@
                     <input type="text" id="intersectWhere" placeholder="(gush_num = 7103) AND (parcel = 43)">
                     <label for="intersectRadius">radius (optional, meters):</label>
                     <input type="number" id="intersectRadius" value="0" min="0" step="any">
-                    <label><input type="checkbox" id="intersectGetShapes"> getShapes</label>
                     <label><input type="checkbox" id="intersectUseCurrentFilter"> useCurrentFilter</label>
                     <button type="button" id="btnIntersectFeatures">חיפוש ישויות (intersectFeatures)</button>
                 </fieldset>
@@ -222,7 +231,8 @@
             <summary>רקע, כלים, הדפסה (Background, tools, print)</summary>
             <div class="panel-body">
                 <fieldset class="form-block">
-                    <legend>setBackground(backgroundTypeID)</legend>
+                    <legend>getBackground / setBackground(backgroundTypeID)</legend>
+                    <button type="button" id="btnGetBackground">getBackground</button>
                     <label for="backgroundId">מפת רקע:</label>
                     <select id="backgroundId">
                         <option value="0">0 – רחובות ומבנים</option>

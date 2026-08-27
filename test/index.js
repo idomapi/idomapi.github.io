@@ -2,7 +2,7 @@ function initGovMap() {
     govmap.createMap('map', {
         token: 'ce39f4d4-93ac-4f6f-bb70-9618a4c6b657',
         layers: ["GASSTATIONS", "SUB_GUSH_ALL", "PARCEL_ALL", 'layer_207126', 'layer_207127'],
-        visibleLayers: ['layer_208272'],
+        visibleLayers: ['207365'],
         showXY: true,
         isEmbeddedToggle: false,
         background: "0",
@@ -63,14 +63,21 @@ Driver's name : GPS
 }
 
 function searchInLayer() {
+    // var params = {
+    //     layerName: 'layer_208272',
+    //     fieldName: 'objectId',
+    //     fieldValues: ['6238', '5496', '1352'],
+    //     highlight: true,
+    //     outLineColor: [255, 0, 0, 1],
+    //     fillColor: [255, 255, 0, 1], // yellow
+    // };
     var params = {
-        layerName: 'layer_208272',
-        fieldName: 'objectId',
-        fieldValues: ['6238', '5496', '1352'],
+        layerName: '207365',
+        fieldName: 'value1',
+        fieldValues: ['3', '32'],
         highlight: true,
-        outLineColor: [255, 0, 0, 1],
+        outLineColor: [0, 255, 0, 1], // green
         fillColor: [255, 255, 0, 1], // yellow
-   
     };
     govmap.searchInLayer(params);
 }

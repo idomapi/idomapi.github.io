@@ -421,10 +421,23 @@ function setupIdentifyPanel() {
     const btnIdentifyByXY = document.getElementById('btnIdentifyByXY');
     const btnIdentifyByXYAndLayer = document.getElementById('btnIdentifyByXYAndLayer');
     const btnIntersectFeatures = document.getElementById('btnIntersectFeatures');
+    const intersectInputType = document.getElementById('intersectInputType');
+    const intersectAddressWrap = document.getElementById('intersectAddressWrap');
+    const intersectGeometryWrap = document.getElementById('intersectGeometryWrap');
     const btnSearchAndLocate = document.getElementById('btnSearchAndLocate');
     const locateType = document.getElementById('locateType');
     const locateAddressWrap = document.getElementById('locateAddressWrap');
     const locateLotParcelWrap = document.getElementById('locateLotParcelWrap');
+
+    if (intersectInputType && intersectAddressWrap && intersectGeometryWrap) {
+        const toggleIntersectInputs = () => {
+            const isAddress = intersectInputType.value === 'address';
+            intersectAddressWrap.classList.toggle('hidden', !isAddress);
+            intersectGeometryWrap.classList.toggle('hidden', isAddress);
+        };
+        intersectInputType.addEventListener('change', toggleIntersectInputs);
+        toggleIntersectInputs();
+    }
 
     if (locateType && locateAddressWrap && locateLotParcelWrap) {
         const toggleLocateInputs = () => {
@@ -460,15 +473,19 @@ function setupIdentifyPanel() {
 
     if (btnIntersectFeatures) {
         btnIntersectFeatures.addEventListener('click', () => {
-            const address = document.getElementById('intersectAddress').value.trim();
             const layerName = document.getElementById('intersectLayerName').value.trim();
             const fieldsStr = document.getElementById('intersectFields').value.trim();
             const fields = fieldsStr ? fieldsStr.split(',').map((s) => s.trim()).filter(Boolean) : [];
             const whereClause = document.getElementById('intersectWhere').value.trim();
             const radius = Number(document.getElementById('intersectRadius').value);
-            const getShapes = document.getElementById('intersectGetShapes').checked;
             const useCurrentFilter = document.getElementById('intersectUseCurrentFilter').checked;
-            const params = { address, layerName, fields, getShapes, useCurrentFilter, radius };
+            const params = { layerName, fields, useCurrentFilter, radius };
+
+            if (intersectInputType && intersectInputType.value === 'geometry') {
+                params.geometry = document.getElementById('intersectGeometry').value.trim();
+            } else {
+                params.address = document.getElementById('intersectAddress').value.trim();
+            }
 
             if (whereClause) {
                 params.whereClause = whereClause;

@@ -34,9 +34,9 @@ function findParcel() {
 
 async function searchInLayer() {
     var params = {
-        layerName: '211923',
-        fieldName: 'value1',
-        fieldValues: ['21'],
+        layerName: '234077',
+        fieldName: 'value0',
+        fieldValues: ['3'],
         highlight: true,
         showBubble: false,
         outLineColor: [0, 255, 0, 1],

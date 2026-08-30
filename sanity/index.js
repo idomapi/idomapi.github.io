@@ -424,6 +424,10 @@ function setupIdentifyPanel() {
     const intersectInputType = document.getElementById('intersectInputType');
     const intersectAddressWrap = document.getElementById('intersectAddressWrap');
     const intersectGeometryWrap = document.getElementById('intersectGeometryWrap');
+    const btnIntersectLayers = document.getElementById('btnIntersectLayers');
+    const intersectLayersInputType = document.getElementById('intersectLayersInputType');
+    const intersectLayersAddressWrap = document.getElementById('intersectLayersAddressWrap');
+    const intersectLayersGeometryWrap = document.getElementById('intersectLayersGeometryWrap');
     const btnSearchAndLocate = document.getElementById('btnSearchAndLocate');
     const locateType = document.getElementById('locateType');
     const locateAddressWrap = document.getElementById('locateAddressWrap');
@@ -437,6 +441,16 @@ function setupIdentifyPanel() {
         };
         intersectInputType.addEventListener('change', toggleIntersectInputs);
         toggleIntersectInputs();
+    }
+
+    if (intersectLayersInputType && intersectLayersAddressWrap && intersectLayersGeometryWrap) {
+        const toggleIntersectLayersInputs = () => {
+            const isAddress = intersectLayersInputType.value === 'address';
+            intersectLayersAddressWrap.classList.toggle('hidden', !isAddress);
+            intersectLayersGeometryWrap.classList.toggle('hidden', isAddress);
+        };
+        intersectLayersInputType.addEventListener('change', toggleIntersectLayersInputs);
+        toggleIntersectLayersInputs();
     }
 
     if (locateType && locateAddressWrap && locateLotParcelWrap) {
@@ -492,6 +506,34 @@ function setupIdentifyPanel() {
             }
             govmap.intersectFeatures(params).then((response) => {
                 logEvent('intersectFeatures', response);
+            });
+        });
+    }
+
+    if (btnIntersectLayers) {
+        btnIntersectLayers.addEventListener('click', () => {
+            const fieldsStr = document.getElementById('intersectLayersFields').value.trim();
+            const fields = fieldsStr ? fieldsStr.split(',').map((s) => s.trim()).filter(Boolean) : [];
+            const layersStr = document.getElementById('intersectLayersDefinition').value.trim();
+
+            let layers;
+            try {
+                layers = layersStr ? JSON.parse(layersStr) : [];
+            } catch (e) {
+                logEvent('intersectLayers error', { message: 'Invalid JSON in layers definition: ' + e.message });
+                return;
+            }
+
+            const params = { layers, fields };
+
+            if (intersectLayersInputType && intersectLayersInputType.value === 'geometry') {
+                params.geometry = document.getElementById('intersectLayersGeometry').value.trim();
+            } else {
+                params.address = document.getElementById('intersectLayersAddress').value.trim();
+            }
+
+            govmap.intersectLayers(params).then((response) => {
+                logEvent('intersectLayers', response);
             });
         });
     }

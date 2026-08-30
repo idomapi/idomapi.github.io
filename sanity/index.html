@@ -205,6 +205,37 @@
                     <button type="button" id="btnIntersectFeatures">חיפוש ישויות (intersectFeatures)</button>
                 </fieldset>
                 <fieldset class="form-block">
+                    <legend>intersectLayers(params)</legend>
+                    <label for="intersectLayersInputType">address / geometry:</label>
+                    <select id="intersectLayersInputType">
+                        <option value="address">address</option>
+                        <option value="geometry">geometry</option>
+                    </select>
+                    <span id="intersectLayersAddressWrap">
+                        <label for="intersectLayersAddress">address:</label>
+                        <input type="text" id="intersectLayersAddress" value="גשרון 1, אילת" placeholder="כתובת">
+                    </span>
+                    <span id="intersectLayersGeometryWrap" class="hidden">
+                        <label for="intersectLayersGeometry">geometry:</label>
+                        <input type="text" id="intersectLayersGeometry" placeholder="POLYGON((x y, ...))">
+                    </span>
+                    <label for="intersectLayersDefinition">layers (JSON format):</label>
+                    <textarea id="intersectLayersDefinition" rows="6" placeholder="[{&quot;layerName&quot;:&quot;...&quot;,&quot;radius&quot;:...}]">[
+  {
+    "layerName": "neighborhoods_area",
+    "radius": 200
+  },
+  {
+    "layerName": "school",
+    "whereClause": "(shlav_chinuch = 'עליונה בלבד')",
+    "radius": 25
+  }
+]</textarea>
+                    <label for="intersectLayersFields">fields (comma-separated):</label>
+                    <input type="text" id="intersectLayersFields" value="shem_misgeret,ktovet" placeholder="field1, field2">
+                    <button type="button" id="btnIntersectLayers">intersectLayers</button>
+                </fieldset>
+                <fieldset class="form-block">
                     <legend>searchAndLocate(params)</legend>
                     <label for="locateType">type:</label>
                     <select id="locateType">

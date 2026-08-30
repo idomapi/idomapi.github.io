@@ -243,22 +243,36 @@ function setupLayerDataFilterPanel() {
 
     if (btnSelectFeaturesOnMap) {
         btnSelectFeaturesOnMap.addEventListener('click', () => {
+            const isProd = env === 'prod';
+            const geomMode = document.querySelector('input[name="selectFeaturesGeom"]:checked').value;
             const params = {
                 continous: false,
-                // wkt: 'POINT(179593 663941)',
-                // radius: 100,
-                drawType: getDrawTypeEnum('Polygon'),
-                filterLayer: false,
-                isZoomToExtent: true,
+                filterLayer: document.getElementById('selectFeaturesFilterLayer').checked,
+                isZoomToExtent: document.getElementById('selectFeaturesZoomToExtent').checked,
                 layers: ['gasstations'],
-                // returnFields: { gasstations: ['value0', 'value1', 'value2', 'value3'] },
-                returnFields: { gasstations: ['name', 'address', 'company'] },
-                // whereClause: {
-                //     'gasstations': "(name = 'רשף')"
-                // },
+                returnFields: {
+                    gasstations: isProd
+                        ? ['value0', 'value1', 'value2', 'value3']
+                        : ['name', 'address', 'company']
+                },
                 selectOnMap: true,
                 getWkt: true
             };
+
+            if (geomMode === 'wkt') {
+                params.wkt = 'POINT(179593 663941)';
+                params.radius = Number(document.getElementById('selectFeaturesRadius').value);
+            } else {
+                params.drawType = getDrawTypeEnum('Polygon');
+            }
+
+            if (document.getElementById('selectFeaturesFilterReshef').checked) {
+                const fieldName = isProd ? 'value2' : 'address';
+                params.whereClause = {
+                    gasstations: `(${fieldName} = 'סעדיה הגאון 24 ת"א')`
+                };
+            }
+
             govmap.selectFeaturesOnMap(params).then((response) => {
                 logEvent('selectFeaturesOnMap', response);
             });

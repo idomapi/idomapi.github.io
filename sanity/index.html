@@ -132,6 +132,13 @@
                 </fieldset>
                 <fieldset class="form-block">
                     <legend>selectFeaturesOnMap(params) – doc example</legend>
+                    <label><input type="radio" name="selectFeaturesGeom" value="drawType" checked> drawType (Polygon)</label>
+                    <label><input type="radio" name="selectFeaturesGeom" value="wkt"> wkt POINT(179593 663941)</label>
+                    <label for="selectFeaturesRadius">radius:</label>
+                    <input type="number" id="selectFeaturesRadius" value="100" min="0" step="any">
+                    <label><input type="checkbox" id="selectFeaturesFilterReshef"> address = סעדיה הגאון 24 ת"א</label>
+                    <label><input type="checkbox" id="selectFeaturesFilterLayer"> filterLayer</label>
+                    <label><input type="checkbox" id="selectFeaturesZoomToExtent" checked> isZoomToExtent</label>
                     <button type="button" id="btnSelectFeaturesOnMap">Invoke</button>
                 </fieldset>
                 <fieldset class="form-block">

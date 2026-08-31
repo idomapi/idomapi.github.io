@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>בדיקות API Aggregate</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        button.clear {
+            background: #ff9800;
+        }
+
+        button.clear:hover {
+            background: #e68900;
+        }
+
+        .status {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .status-value.passed {
+            color: #4CAF50;
+        }
+
+        .status-value.failed {
+            color: #f44336;
+        }
+
+        .status-value.total {
+            color: #2196F3;
+        }
+
+        .status-value.pending {
+            color: #ff9800;
+        }
+
+        .results {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .result-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .result-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .result-status.passed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .result-status.failed {
+            background: #f44336;
+            color: white;
+        }
+
+        .result-status.running {
+            background: #2196F3;
+            color: white;
+        }
+
+        .result-details {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .result-request {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .result-response {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-bottom: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .result-error {
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            color: #721c24;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .result-api-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: #721c24;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 10;
+            color: #333;
+        }
+
+        .copy-btn:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        .copy-btn svg {
+            display: block;
+            color: #333;
+        }
+
+        .progress {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .filter-controls {
+            margin-bottom: 15px;
+        }
+
+        .filter-controls label {
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        .filter-controls input[type="checkbox"] {
+            margin-left: 5px;
+        }
+
+        .slow-panel {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .slow-panel-header {
+            background: #b71c1c;
+            color: white;
+            padding: 12px 18px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slow-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 18px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            gap: 14px;
+            transition: background 0.15s;
+        }
+
+        .slow-row:last-child {
+            border-bottom: none;
+        }
+
+        .slow-row:hover {
+            background: #fff3e0;
+        }
+
+        .slow-rank {
+            font-size: 15px;
+            font-weight: bold;
+            color: #bbb;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .slow-rank.top1 { color: #c62828; font-size: 18px; }
+        .slow-rank.top2 { color: #e65100; }
+        .slow-rank.top3 { color: #f9a825; }
+
+        .slow-duration {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 72px;
+            color: #d32f2f;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .slow-bar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slow-name {
+            font-size: 13px;
+            color: #333;
+        }
+
+        .slow-bar-bg {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .slow-bar-fill {
+            height: 100%;
+            background: linear-gradient(to left, #ef9a9a, #c62828);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .slow-badge {
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .slow-badge.passed { background: #4CAF50; color: white; }
+        .slow-badge.failed { background: #f44336; color: white; }
+
+        @keyframes highlight-flash {
+            0%   { background: #fff59d; }
+            100% { background: transparent; }
+        }
+
+        .result-item.highlight {
+            animation: highlight-flash 1.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>בדיקות API Aggregate</h1>
+
+        <div class="controls">
+            <div class="control-row">
+                <label>
+                    סביבה:
+                    <select id="envSelect" onchange="setTestEnvironment(this.value); clearResults();">
+                        <option value="DEV">DEV</option>
+                        <option value="STAGE">STAGE</option>
+                        <option value="PROD">PROD</option>
+                    </select>
+                </label>
+                <button id="runAllBtn" onclick="runAllTests()">הרץ את כל הבדיקות</button>
+                <button id="runNullHandlingBtn" onclick="runNullHandlingTests()">הרץ בדיקות aggNullHandling</button>
+                <button id="runPaginationBtn" onclick="runPaginationTest()">הרץ בדיקת עימוד מלאה</button>
+                <button class="clear" onclick="clearResults()">נקה תוצאות</button>
+            </div>
+            <div class="filter-controls">
+                <label>
+                    <input type="checkbox" id="filterValid" checked>
+                    בדיקות תקינות
+                </label>
+                <label>
+                    <input type="checkbox" id="filterInvalid" checked>
+                    בדיקות שגויות
+                </label>
+                <label>
+                    <input type="checkbox" id="filterEdgeCases" checked>
+                    מקרי קצה
+                </label>
+                <label>
+                    <input type="checkbox" id="randomBbox">
+                    תיבה תוחמת (BBOX) אקראית
+                </label>
+            </div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="status">
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">סה"כ בדיקות</div>
+                    <div class="status-value total" id="totalTests">0</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">ממתין לתשובה מהשרת</div>
+                    <div class="status-value pending" id="pendingTests">0</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">עברו</div>
+                    <div class="status-value passed" id="passedTests">0</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">נכשלו</div>
+                    <div class="status-value failed" id="failedTests">0</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">אחוז הצלחה</div>
+                    <div class="status-value" id="successRate">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slow-panel" id="slowPanel" style="display:none">
+            <div class="slow-panel-header">
+                🐢 בקשות האיטיות ביותר (מעל 5 שניות)
+            </div>
+            <div id="slowList"></div>
+        </div>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <script src="test-config.js"></script>
+    <script src="test.js?v=null-handling-5"></script>
+</body>
+</html>

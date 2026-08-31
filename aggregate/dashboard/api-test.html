@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>בדיקת יכולות API — לפי ספציפיקציה</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            background: #f5f5f5;
+            color: #222;
+            direction: rtl;
+        }
+
+        header {
+            background: #1a3a5c;
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+
+        header h1 { font-size: 18px; }
+        header p { font-size: 12px; opacity: .7; }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            padding: 8px 20px;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+
+        .legend span { display: flex; align-items: center; gap: 4px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #2c5282;
+            color: #fff;
+            padding: 8px 12px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        tr:hover td { background: #f0f4f8; }
+
+        tr.section-hdr td {
+            background: #2d3748;
+            color: #e2e8f0;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 6px 12px;
+            letter-spacing: .5px;
+        }
+
+        .test-name { min-width: 220px; }
+        .test-name small { color: #718096; font-size: 11px; display: block; margin-top: 2px; }
+
+        .status {
+            min-width: 90px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status.pass    { color: #276749; }
+        .status.fail    { color: #c53030; }
+        .status.warn    { color: #b7791f; }
+        .status.running { color: #2b6cb0; }
+
+        .spec-section { font-size: 12px; color: #4a5568; max-width: 240px; line-height: 1.4; }
+
+        .note { color: #2d3748; max-width: 420px; word-break: break-word; }
+
+        pre.golami {
+            font-size: 11px;
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 8px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow: auto;
+            max-width: 520px;
+            white-space: pre-wrap;
+        }
+
+        details summary {
+            cursor: pointer;
+            font-size: 11px;
+            color: #4a5568;
+        }
+
+        .summary-bar {
+            padding: 10px 20px;
+            background: #fff;
+            border-top: 2px solid #e2e8f0;
+            font-size: 13px;
+            display: flex;
+            gap: 24px;
+        }
+
+        .summary-bar span { font-weight: 700; }
+        .summary-bar .s-pass { color: #276749; }
+        .summary-bar .s-fail { color: #c53030; }
+        .summary-bar .s-warn { color: #b7791f; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>בדיקת יכולות govmap.aggregate — לפי ספציפיקציה</h1>
+        <p>
+            סביבה:
+            <select id="envSelect" onchange="location.search = '?env=' + this.value">
+                <option value="DEV">DEV</option>
+                <option value="STAGE">STAGE</option>
+                <option value="PROD">PROD</option>
+            </select>
+            · בדיקה רצה אוטומטית בטעינת העמוד
+        </p>
+    </header>
+
+    <div class="legend">
+        <span class="status pass">✓ עובד</span>
+        <span class="status fail">✗ שגיאה / לא נתמך</span>
+        <span class="status warn">⚠ הגבלה / חלופה</span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>בדיקה</th>
+                <th>סעיף במפרט</th>
+                <th>דרישת API</th>
+                <th>סטטוס</th>
+                <th>תוצאה</th>
+                <th>גולמי</th>
+            </tr>
+        </thead>
+        <tbody id="test-tbody"></tbody>
+    </table>
+
+    <div class="summary-bar" id="summary">מריץ בדיקות…</div>
+
+    <script src="api-test-config.js"></script>
+    <script src="api-test.js?v=ts-matrix"></script>
+</body>
+</html>

@@ -18,7 +18,9 @@
             });
         }
         function showExample() {
-            govmap.draw(govmap.drawType.Point).progress(function (response) { });
+            govmap.draw(govmap.drawType.Polygon).progress(function (response) {
+                console.log('response', response);
+            });
         }
     </script>
 </head>

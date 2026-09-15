@@ -178,6 +178,28 @@ function startIdentify(event) {
     });
 }
 
+function hasHebrewLetters(text) {
+    return /[\u0590-\u05FF]/.test(text);
+}
+
+function getSearchQueryVariants(query) {
+    if (!query) {
+        return [];
+    }
+    if (hasHebrewLetters(query)) {
+        return [query];
+    }
+
+    const variants = [
+        query,
+        query.toLowerCase(),
+        query.toUpperCase(),
+        query.charAt(0).toUpperCase() + query.slice(1)
+    ];
+
+    return Array.from(new Set(variants));
+}
+
 function featureMatchesActiveFilters(entity) {
     if (currentMode === 'search') {
         const query = document.getElementById('search-input').value.trim();
@@ -188,7 +210,8 @@ function featureMatchesActiveFilters(entity) {
 
         const name = String(getEntityFieldValue(entity, 'value0', FEATURE_FIELD_MAP.value0));
         const address = String(getEntityFieldValue(entity, 'value2', FEATURE_FIELD_MAP.value2));
-        return name.includes(query) || address.includes(query);
+        const variants = getSearchQueryVariants(query);
+        return variants.some((variant) => name.includes(variant) || address.includes(variant));
     }
 
     const hasThum = selectedFilters.thum.length > 0;
@@ -520,7 +543,7 @@ function buildWhereClause() {
 }
 
 function buildLikeClause(fieldName, query) {
-    return `${fieldName} ILIKE ${quoteSqlValue('%' + query + '%')}`;
+    return `${fieldName} LIKE ${quoteSqlValue('%' + query + '%')}`;
 }
 
 function buildSearchWhereClause(query) {
@@ -528,10 +551,14 @@ function buildSearchWhereClause(query) {
         return '';
     }
 
-    return wrapOrGroups([
-        buildLikeClause(SEARCH_FIELD_MAP.name, query),
-        buildLikeClause(SEARCH_FIELD_MAP.address, query)
-    ]);
+    const clauses = [];
+
+    getSearchQueryVariants(query).forEach((variant) => {
+        clauses.push(buildLikeClause(SEARCH_FIELD_MAP.name, variant));
+        clauses.push(buildLikeClause(SEARCH_FIELD_MAP.address, variant));
+    });
+
+    return wrapOrGroups(clauses);
 }
 
 function applyLayerFilter(whereClause) {

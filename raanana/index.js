@@ -57,17 +57,13 @@ let identifyCallTimes = [];
 let bubbleFeatures = [];
 
 function initGovMap() {
-    const token = (location.hostname === 'idoz')
-        ? '8afbb7f6-f247-4b73-9366-635aaa7c9b1f'
-        : '19a29909-fef5-4b8b-b347-74652f99acaf';
-
     govmap.createMap('map', {
         center: {
             x: 187798.19,
             y: 677212.55,
         },
         level: 7,
-        token,
+        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         visibleLayers: [BUSINESS_LAYER],
         background: '0',
         layersMode: 4,

@@ -520,7 +520,7 @@ function buildWhereClause() {
 }
 
 function buildLikeClause(fieldName, query) {
-    return `${fieldName} LIKE ${quoteSqlValue('%' + query + '%')}`;
+    return `${fieldName} ILIKE ${quoteSqlValue('%' + query + '%')}`;
 }
 
 function buildSearchWhereClause(query) {

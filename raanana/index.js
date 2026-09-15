@@ -57,13 +57,17 @@ let identifyCallTimes = [];
 let bubbleFeatures = [];
 
 function initGovMap() {
+    const token = (location.hostname === 'idoz')
+        ? '8afbb7f6-f247-4b73-9366-635aaa7c9b1f'
+        : '19a29909-fef5-4b8b-b347-74652f99acaf';
+
     govmap.createMap('map', {
         center: {
             x: 187798.19,
             y: 677212.55,
         },
         level: 7,
-        token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
+        token,
         visibleLayers: [BUSINESS_LAYER],
         background: '0',
         layersMode: 4,
@@ -141,12 +145,26 @@ function startIdentify(event) {
     identifyInFlight = true;
     identifyCallTimes.push(Date.now());
 
-    govmap.identifyByXY(x, y).then((result) => {
+    // identifyByXY returns empty while filterLayers is active, so use getLayerData
+    // and keep only businesses that match the current search/category filter.
+    const tolerancePromise = (typeof govmap.getMapTolerance === 'function')
+        ? govmap.getMapTolerance()
+        : Promise.resolve(40);
+
+    tolerancePromise.then((tolerance) => {
+        const radius = Math.max(Number(tolerance) || 40, 20);
+
+        return govmap.getLayerData({
+            LayerName: BUSINESS_LAYER,
+            Point: { x, y },
+            Radius: radius
+        });
+    }).then((result) => {
         if (requestId !== identifyRequestId) {
             return;
         }
 
-        const features = collectIdentifyFeatures(result);
+        const features = collectLayerDataFeatures(result);
 
         if (features.length === 0) {
             closeFeatureBubble();
@@ -164,24 +182,56 @@ function startIdentify(event) {
     });
 }
 
-function collectIdentifyFeatures(result) {
-    const layers = (result && result.data) ? result.data : [];
-    const matched = [];
-    const fallback = [];
+function featureMatchesActiveFilters(entity) {
+    if (currentMode === 'search') {
+        const query = document.getElementById('search-input').value.trim();
 
-    layers.forEach((layer) => {
-        const layerName = String(layer.name || '');
-        const entities = layer.entities || [];
-
-        if (layerName.toLowerCase() === BUSINESS_LAYER.toLowerCase()) {
-            matched.push(...entities);
-            return;
+        if (!query) {
+            return true;
         }
 
-        fallback.push(...entities);
-    });
+        const name = String(getEntityFieldValue(entity, 'value0', FEATURE_FIELD_MAP.value0));
+        const address = String(getEntityFieldValue(entity, 'value2', FEATURE_FIELD_MAP.value2));
+        return name.includes(query) || address.includes(query);
+    }
 
-    return matched.length > 0 ? matched : fallback;
+    const hasThum = selectedFilters.thum.length > 0;
+    const hasKvuza = selectedFilters.kvuza.length > 0;
+    const hasSug = selectedFilters.sug.length > 0;
+
+    if (!hasThum && !hasKvuza && !hasSug) {
+        return true;
+    }
+
+    const thum = String(getEntityFieldValue(entity, 'value10', FEATURE_FIELD_MAP.value10));
+    const kvuza = String(getEntityFieldValue(entity, 'value7', FEATURE_FIELD_MAP.value7));
+    const sug = String(getEntityFieldValue(entity, 'value1', FEATURE_FIELD_MAP.value1));
+
+    if (hasThum && !selectedFilters.thum.includes(thum)) {
+        return false;
+    }
+
+    if (hasKvuza && !selectedFilters.kvuza.includes(kvuza)) {
+        return false;
+    }
+
+    if (hasSug && !selectedFilters.sug.includes(sug)) {
+        return false;
+    }
+
+    return true;
+}
+
+function collectLayerDataFeatures(result) {
+    const entities = (result && Array.isArray(result.data)) ? result.data : [];
+    const matched = entities.filter((entity) => featureMatchesActiveFilters(entity));
+
+    if (matched.length === 0) {
+        return [];
+    }
+
+    const minDistance = Math.min(...matched.map((entity) => Number(entity.distance) || 0));
+    return matched.filter((entity) => (Number(entity.distance) || 0) <= minDistance + 1.5);
 }
 
 function getEntityFieldValue(entity, fieldKey, hebrewLabel) {
@@ -517,10 +567,6 @@ async function loadCategories() {
     categories = await response.json();
 }
 
-function getMenuId(filterKey) {
-    return `${filterKey}-menu`;
-}
-
 function updateToggleCount(filterKey) {
     const root = document.querySelector(`.multi-select[data-filter="${filterKey}"]`);
     const countEl = root.querySelector('.multi-select-count');
@@ -531,7 +577,7 @@ function updateToggleCount(filterKey) {
 }
 
 function createCheckboxItems(items, filterKey) {
-    const menu = document.getElementById(getMenuId(filterKey));
+    const menu = document.getElementById(`${filterKey}-menu`);
     menu.innerHTML = '';
 
     if (items.length === 0) {
@@ -543,17 +589,14 @@ function createCheckboxItems(items, filterKey) {
         return;
     }
 
-    items.forEach((item, index) => {
-        const isChecked = selectedFilters[filterKey].includes(item);
-        const inputId = `${filterKey}-${index}`;
+    items.forEach((item) => {
         const wrapper = document.createElement('label');
         wrapper.className = 'checkbox-item';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.id = inputId;
         checkbox.value = item;
-        checkbox.checked = isChecked;
+        checkbox.checked = selectedFilters[filterKey].includes(item);
         checkbox.dataset.filter = filterKey;
 
         const text = document.createElement('span');
@@ -671,12 +714,8 @@ function updateSugOptions() {
     createCheckboxItems(sugList, 'sug');
 }
 
-function closeAllMenus(exceptFilter) {
+function closeAllMenus() {
     document.querySelectorAll('.multi-select').forEach((root) => {
-        if (exceptFilter && root.dataset.filter === exceptFilter) {
-            return;
-        }
-
         root.classList.remove('is-open');
         root.querySelector('.multi-select-toggle').setAttribute('aria-expanded', 'false');
         root.querySelector('.multi-select-menu').hidden = true;
@@ -713,6 +752,7 @@ function setMode(mode) {
 
     document.getElementById('search-submit').classList.toggle('is-hidden', mode === 'category');
     closeAllMenus();
+    handleSearch();
 
     if (mode === 'search') {
         document.getElementById('search-input').focus();
@@ -722,22 +762,13 @@ function setMode(mode) {
     document.querySelector('.multi-select[data-filter="thum"] .multi-select-toggle').focus();
 }
 
-function getCurrentQuery() {
-    if (currentMode === 'search') {
-        return document.getElementById('search-input').value.trim();
-    }
-
-    return selectedFilters;
-}
-
 function handleSearch() {
-    const query = getCurrentQuery();
-
     if (currentMode === 'category') {
         applyCategoryLayerFilter();
         return;
     }
 
+    const query = document.getElementById('search-input').value.trim();
     applySearchLayerFilter(query);
 }
 

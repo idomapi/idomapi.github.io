@@ -55,7 +55,6 @@ body {
     display: inline-flex;
     flex: 0 0 auto;
     align-items: center;
-    align-self: center;
     height: var(--bar-height);
     padding: 4px;
     box-sizing: border-box;
@@ -238,13 +237,6 @@ body {
     font: inherit;
     font-size: 14px;
     color: var(--raanana-text);
-}
-
-.checkbox-item input:disabled,
-.checkbox-item:has(input:disabled) {
-    opacity: 0.5;
-    cursor: not-allowed;
-    color: var(--raanana-muted);
 }
 
 .reset-btn {

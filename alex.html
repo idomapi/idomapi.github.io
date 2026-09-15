@@ -1,0 +1,30 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js"></script>
+    <script type="text/javascript">
+        function initGovMap() {
+            govmap.createMap('map', {
+                token: 'YOUR_API_TOKEN',
+                showXY: true,
+                identifyOnClick: true,
+                isEmbeddedToggle: false,
+                background: "1",
+                layersMode: 1,
+                zoomButtons: false,
+                onLoad: () => {
+                    showExample();
+                }
+            });
+        }
+        function showExample() {
+            govmap.draw(govmap.drawType.Point).progress(function (response) { });
+        }
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width:600px;height:600px;"></div>
+</body>
+
+</html>

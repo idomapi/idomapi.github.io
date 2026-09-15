@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css?v=5">
+    <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer></script>
+    <script src="index.js?v=5" defer></script>
+</head>
+<body>
+    <div class="app">
+        <div class="search-bar" role="search">
+            <div class="mode-switch" role="group" aria-label="סוג חיפוש">
+                <button type="button" class="mode-btn is-active" data-mode="search" aria-pressed="true">חיפוש</button>
+                <button type="button" class="mode-btn" data-mode="category" aria-pressed="false">קטגוריה</button>
+            </div>
+
+            <div class="field-wrap" data-panel="search">
+                <input
+                    id="search-input"
+                    class="search-input"
+                    type="search"
+                    placeholder="הקלידו שם עסק..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="field-wrap is-hidden" data-panel="category">
+                <div class="multi-selects">
+                    <div class="multi-select" data-filter="thum">
+                        <button type="button" class="multi-select-toggle" aria-expanded="false">
+                            <span class="multi-select-label">תחום</span>
+                            <span class="multi-select-count is-hidden">0</span>
+                        </button>
+                        <div class="multi-select-menu" id="thum-menu" hidden></div>
+                    </div>
+
+                    <div class="multi-select" data-filter="kvuza">
+                        <button type="button" class="multi-select-toggle" aria-expanded="false">
+                            <span class="multi-select-label">קבוצה</span>
+                            <span class="multi-select-count is-hidden">0</span>
+                        </button>
+                        <div class="multi-select-menu" id="kvuza-menu" hidden></div>
+                    </div>
+
+                    <div class="multi-select" data-filter="sug">
+                        <button type="button" class="multi-select-toggle" aria-expanded="false">
+                            <span class="multi-select-label">סוג</span>
+                            <span class="multi-select-count is-hidden">0</span>
+                        </button>
+                        <div class="multi-select-menu" id="sug-menu" hidden></div>
+                    </div>
+                </div>
+
+                <button type="button" id="reset-btn" class="reset-btn" aria-label="איפוס">איפוס</button>
+            </div>
+
+            <button type="button" id="search-submit" class="search-submit">חפש</button>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="feature-bubble" class="feature-bubble is-hidden" hidden>
+            <div class="feature-bubble-header">
+                <h2 id="feature-bubble-title" class="feature-bubble-title"></h2>
+                <button type="button" id="feature-bubble-close" class="feature-bubble-close" aria-label="סגירה">×</button>
+            </div>
+            <div id="feature-bubble-body" class="feature-bubble-body"></div>
+        </div>
+    </div>
+</body>
+</html>

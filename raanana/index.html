@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=21">
+    <link rel="stylesheet" href="index.css?v=22">
     <script src="https://www.govmap.gov.il/govmap/api/govmap.api.js" defer></script>
-    <script src="index.js?v=21" defer></script>
+    <script src="index.js?v=22" defer></script>
 </head>
-
 <body>
     <div class="app">
         <div class="search-bar" role="search">
             <div class="mode-switch" role="group" aria-label="סוג חיפוש">
-                <button type="button" class="mode-btn is-active" data-mode="search-name" aria-pressed="true">שם
-                    עסק</button>
+                <button type="button" class="mode-btn is-active" data-mode="search-name" aria-pressed="true">שם עסק</button>
                 <button type="button" class="mode-btn" data-mode="search-address" aria-pressed="false">כתובת</button>
                 <button type="button" class="mode-btn" data-mode="category" aria-pressed="false">קטגוריה</button>
             </div>
 
             <div class="field-wrap" data-panel="search">
-                <input id="search-input" class="search-input" type="search" placeholder="הקלידו שם עסק..."
-                    autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false"
-                    aria-controls="search-results" aria-haspopup="listbox">
+                <input
+                    id="search-input"
+                    class="search-input"
+                    type="search"
+                    placeholder="הקלידו שם עסק..."
+                    autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-controls="search-results"
+                    aria-haspopup="listbox"
+                >
                 <div id="search-results" class="search-results" role="listbox" hidden></div>
             </div>
 
@@ -65,12 +71,10 @@
         <div id="feature-bubble" class="feature-bubble is-hidden" hidden>
             <div class="feature-bubble-header">
                 <h2 id="feature-bubble-title" class="feature-bubble-title"></h2>
-                <button type="button" id="feature-bubble-close" class="feature-bubble-close"
-                    aria-label="סגירה">×</button>
+                <button type="button" id="feature-bubble-close" class="feature-bubble-close" aria-label="סגירה">×</button>
             </div>
             <div id="feature-bubble-body" class="feature-bubble-body"></div>
         </div>
     </div>
 </body>
-
 </html>

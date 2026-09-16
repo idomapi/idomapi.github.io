@@ -39,7 +39,7 @@ const FEATURE_FIELD_ORDER = [
 
 let categories = null;
 
-let currentMode = 'search';
+let currentMode = 'search-name';
 let selectedFilters = {
     thum: [],
     kvuza: [],
@@ -49,6 +49,11 @@ let selectedFilters = {
 const IDENTIFY_MAX_PER_WINDOW = 10;
 const IDENTIFY_WINDOW_MS = 60000;
 
+const SEARCH_DEBOUNCE_MS = 600;
+const SEARCH_MIN_CHARS = 2;
+const SEARCH_RESULT_FIELDS = ['value0', 'value2', 'objectid'];
+const RAANANA_SEARCH_WKT = 'POLYGON((185282.06 678676.6, 189479.69 678716.98, 189949.16 676891.25, 189828.1 676086.64, 190177.03 675446.98, 187656.27 675325.75, 186799.66 675800.76, 185830.08 676356.7, 185282.45 677992.5, 185282.06 678676.6))';
+
 let mapClickBound = false;
 let identifyRequestId = 0;
 let identifyInFlight = false;
@@ -56,24 +61,29 @@ let pendingMapClick = null;
 let identifyCallTimes = [];
 let bubbleFeatures = [];
 
+let searchDebounceTimer = null;
+let searchRequestId = 0;
+let searchSuggestionResults = [];
+let activeSearchIndex = -1;
+
 function initGovMap() {
     govmap.createMap('map', {
         center: {
             x: 187798.19,
             y: 677212.55,
         },
+        extent: {
+            xmin: 180012,
+            ymin: 673087,
+            xmax: 195579,
+            ymax: 681343
+        },
         level: 7,
         token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
         visibleLayers: [BUSINESS_LAYER],
         background: '0',
         layersMode: 4,
-        zoomButtons: false,
-        extent: {
-            xmax: 190230,
-            xmin: 185269,
-            ymax: 679426.81,
-            ymin: 675020.57
-        },
+        zoomButtons: true,
         identifyOnClick: false,
         showXY: true,
         onLoad: () => {
@@ -201,17 +211,17 @@ function getSearchQueryVariants(query) {
 }
 
 function featureMatchesActiveFilters(entity) {
-    if (currentMode === 'search') {
+    if (isTextSearchMode()) {
         const query = document.getElementById('search-input').value.trim();
 
         if (!query) {
             return true;
         }
 
-        const name = String(getEntityFieldValue(entity, 'value0', FEATURE_FIELD_MAP.value0));
-        const address = String(getEntityFieldValue(entity, 'value2', FEATURE_FIELD_MAP.value2));
+        const fieldKey = getActiveSearchFieldKey();
+        const fieldValue = String(getEntityFieldValue(entity, fieldKey, FEATURE_FIELD_MAP[fieldKey]));
         const variants = getSearchQueryVariants(query);
-        return variants.some((variant) => name.includes(variant) || address.includes(variant));
+        return variants.some((variant) => fieldValue.includes(variant));
     }
 
     const hasThum = selectedFilters.thum.length > 0;
@@ -542,23 +552,33 @@ function buildWhereClause() {
     return buildFieldClause(FILTER_FIELD_MAP.sug, selectedFilters.sug);
 }
 
+function isTextSearchMode() {
+    return currentMode === 'search-name' || currentMode === 'search-address';
+}
+
+function getActiveSearchFieldKey() {
+    return currentMode === 'search-address'
+        ? SEARCH_FIELD_MAP.address
+        : SEARCH_FIELD_MAP.name;
+}
+
+function getSearchInputPlaceholder() {
+    return currentMode === 'search-address'
+        ? 'הקלידו כתובת...'
+        : 'הקלידו שם עסק...';
+}
+
 function buildLikeClause(fieldName, query) {
     return `${fieldName} LIKE ${quoteSqlValue('%' + query + '%')}`;
 }
 
+// One field only — OR across name+address makes intersectFeatures return empty.
 function buildSearchWhereClause(query) {
     if (!query) {
         return '';
     }
 
-    const clauses = [];
-
-    getSearchQueryVariants(query).forEach((variant) => {
-        clauses.push(buildLikeClause(SEARCH_FIELD_MAP.name, variant));
-        clauses.push(buildLikeClause(SEARCH_FIELD_MAP.address, variant));
-    });
-
-    return wrapOrGroups(clauses);
+    return `(${buildLikeClause(getActiveSearchFieldKey(), query)})`;
 }
 
 function applyLayerFilter(whereClause) {
@@ -569,7 +589,7 @@ function applyLayerFilter(whereClause) {
     govmap.filterLayers({
         layerName: BUSINESS_LAYER,
         whereClause: whereClause,
-        zoomToExtent: false
+        zoomToExtent: true
     });
 }
 
@@ -579,6 +599,269 @@ function applyCategoryLayerFilter() {
 
 function applySearchLayerFilter(query) {
     applyLayerFilter(buildSearchWhereClause(query));
+}
+
+function getIntersectFieldValue(feature, fieldName, fieldIndex) {
+    if (!feature) {
+        return '';
+    }
+
+    if (Array.isArray(feature.Values)) {
+        const value = feature.Values[fieldIndex];
+        return value == null ? '' : value;
+    }
+
+    if (feature.Values && typeof feature.Values === 'object') {
+        const value = feature.Values[fieldName];
+
+        if (value != null && value !== '') {
+            return value;
+        }
+    }
+
+    return getEntityFieldValue(feature, fieldName, FEATURE_FIELD_MAP[fieldName] || fieldName);
+}
+
+function normalizeSearchSuggestions(result) {
+    const rows = (result && Array.isArray(result.data))
+        ? result.data
+        : (Array.isArray(result) ? result : []);
+
+    const suggestions = [];
+    const seen = new Set();
+
+    rows.forEach((row) => {
+        const name = String(getIntersectFieldValue(row, 'value0', 0) || '').replace(/\s+/g, ' ').trim();
+        const address = String(getIntersectFieldValue(row, 'value2', 1) || '').replace(/\s+/g, ' ').trim();
+        const objectId = row.ObjectId != null
+            ? row.ObjectId
+            : getIntersectFieldValue(row, 'objectid', 2);
+
+        if (!name && !address) {
+            return;
+        }
+
+        const key = name + '|' + address + '|' + String(objectId || '');
+
+        if (seen.has(key)) {
+            return;
+        }
+
+        seen.add(key);
+        suggestions.push({ name, address });
+    });
+
+    return suggestions;
+}
+
+// Separate from map filterLayers: query businesses inside Raanana for the dropdown.
+function searchBusinessSuggestions(query) {
+    const whereClause = buildSearchWhereClause(query);
+
+    if (!whereClause) {
+        return Promise.resolve([]);
+    }
+
+    if (typeof govmap === 'undefined' || typeof govmap.intersectFeatures !== 'function') {
+        return Promise.resolve([]);
+    }
+
+    return govmap.intersectFeatures({
+        geometry: RAANANA_SEARCH_WKT,
+        layerName: BUSINESS_LAYER,
+        fields: SEARCH_RESULT_FIELDS,
+        whereClause: whereClause,
+        radius: 0
+    }).then((result) => normalizeSearchSuggestions(result), () => []);
+}
+
+function getSearchResultsEl() {
+    return document.getElementById('search-results');
+}
+
+function setSearchExpanded(isExpanded) {
+    document.getElementById('search-input').setAttribute('aria-expanded', String(isExpanded));
+}
+
+function hideSearchSuggestions() {
+    const resultsEl = getSearchResultsEl();
+    resultsEl.hidden = true;
+    resultsEl.innerHTML = '';
+    searchSuggestionResults = [];
+    activeSearchIndex = -1;
+    setSearchExpanded(false);
+}
+
+function showSearchStatus(message) {
+    const resultsEl = getSearchResultsEl();
+    resultsEl.innerHTML = '';
+
+    const status = document.createElement('div');
+    status.className = 'search-results-status';
+    status.textContent = message;
+    resultsEl.appendChild(status);
+    resultsEl.hidden = false;
+    setSearchExpanded(true);
+    searchSuggestionResults = [];
+    activeSearchIndex = -1;
+}
+
+function updateActiveSearchItem() {
+    const resultsEl = getSearchResultsEl();
+    const items = resultsEl.querySelectorAll('.search-results-item');
+
+    items.forEach((item, index) => {
+        item.classList.toggle('is-active', index === activeSearchIndex);
+    });
+
+    if (activeSearchIndex >= 0 && items[activeSearchIndex]) {
+        items[activeSearchIndex].scrollIntoView({ block: 'nearest' });
+    }
+}
+
+function renderSearchSuggestions(suggestions) {
+    const resultsEl = getSearchResultsEl();
+    resultsEl.innerHTML = '';
+    searchSuggestionResults = suggestions;
+    activeSearchIndex = suggestions.length > 0 ? 0 : -1;
+
+    if (suggestions.length === 0) {
+        showSearchStatus('לא נמצאו תוצאות');
+        return;
+    }
+
+    suggestions.forEach((suggestion, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'search-results-item' + (index === 0 ? ' is-active' : '');
+        button.setAttribute('role', 'option');
+        button.dataset.index = String(index);
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'search-results-name';
+        nameEl.textContent = suggestion.name;
+        button.appendChild(nameEl);
+
+        if (suggestion.address) {
+            const addressEl = document.createElement('span');
+            addressEl.className = 'search-results-address';
+            addressEl.textContent = suggestion.address;
+            button.appendChild(addressEl);
+        }
+
+        button.addEventListener('mouseenter', () => {
+            activeSearchIndex = index;
+            updateActiveSearchItem();
+        });
+
+        button.addEventListener('click', () => {
+            selectSearchSuggestion(index);
+        });
+
+        resultsEl.appendChild(button);
+    });
+
+    resultsEl.hidden = false;
+    setSearchExpanded(true);
+}
+
+function selectSearchSuggestion(index) {
+    const suggestion = searchSuggestionResults[index];
+
+    if (!suggestion) {
+        return;
+    }
+
+    const input = document.getElementById('search-input');
+    const selectedValue = currentMode === 'search-address'
+        ? (suggestion.address || suggestion.name)
+        : (suggestion.name || suggestion.address);
+
+    input.value = selectedValue;
+    hideSearchSuggestions();
+    applySearchLayerFilter(selectedValue);
+}
+
+function runDebouncedBusinessSearch() {
+    if (!isTextSearchMode()) {
+        return;
+    }
+
+    const query = document.getElementById('search-input').value.trim();
+
+    if (query.length < SEARCH_MIN_CHARS) {
+        hideSearchSuggestions();
+
+        if (!query) {
+            applySearchLayerFilter('');
+        }
+
+        return;
+    }
+
+    const requestId = ++searchRequestId;
+    showSearchStatus('מחפש...');
+
+    searchBusinessSuggestions(query).then((suggestions) => {
+        if (requestId !== searchRequestId || !isTextSearchMode()) {
+            return;
+        }
+
+        renderSearchSuggestions(suggestions);
+    });
+}
+
+function scheduleBusinessSearch() {
+    if (searchDebounceTimer !== null) {
+        clearTimeout(searchDebounceTimer);
+    }
+
+    searchDebounceTimer = setTimeout(() => {
+        searchDebounceTimer = null;
+        runDebouncedBusinessSearch();
+    }, SEARCH_DEBOUNCE_MS);
+}
+
+function handleSearchInputKeydown(event) {
+    const resultsEl = getSearchResultsEl();
+    const isOpen = !resultsEl.hidden;
+
+    if (event.key === 'ArrowDown' && isOpen && searchSuggestionResults.length > 0) {
+        event.preventDefault();
+        activeSearchIndex = (activeSearchIndex + 1) % searchSuggestionResults.length;
+        updateActiveSearchItem();
+        return;
+    }
+
+    if (event.key === 'ArrowUp' && isOpen && searchSuggestionResults.length > 0) {
+        event.preventDefault();
+        activeSearchIndex = activeSearchIndex <= 0
+            ? searchSuggestionResults.length - 1
+            : activeSearchIndex - 1;
+        updateActiveSearchItem();
+        return;
+    }
+
+    if (event.key === 'Enter') {
+        event.preventDefault();
+
+        if (isOpen && activeSearchIndex >= 0) {
+            selectSearchSuggestion(activeSearchIndex);
+            return;
+        }
+
+        if (searchDebounceTimer !== null) {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = null;
+        }
+
+        runDebouncedBusinessSearch();
+        return;
+    }
+
+    if (event.key === 'Escape') {
+        hideSearchSuggestions();
+    }
 }
 
 async function loadCategories() {
@@ -770,19 +1053,33 @@ function setMode(mode) {
     });
 
     document.querySelectorAll('[data-panel]').forEach((panel) => {
-        panel.classList.toggle('is-hidden', panel.dataset.panel !== mode);
+        const panelName = panel.dataset.panel;
+        const showPanel = panelName === 'category'
+            ? mode === 'category'
+            : isTextSearchMode();
+
+        panel.classList.toggle('is-hidden', !showPanel);
     });
 
-    document.getElementById('search-submit').classList.toggle('is-hidden', mode === 'category');
     closeAllMenus();
-    handleSearch();
+    hideSearchSuggestions();
 
-    if (mode === 'search') {
-        document.getElementById('search-input').focus();
+    if (mode === 'category') {
+        handleSearch();
+        document.querySelector('.multi-select[data-filter="thum"] .multi-select-toggle').focus();
         return;
     }
 
-    document.querySelector('.multi-select[data-filter="thum"] .multi-select-toggle').focus();
+    const searchInput = document.getElementById('search-input');
+    searchInput.placeholder = getSearchInputPlaceholder();
+    const query = searchInput.value.trim();
+    applySearchLayerFilter(query);
+
+    if (query.length >= SEARCH_MIN_CHARS) {
+        scheduleBusinessSearch();
+    }
+
+    searchInput.focus();
 }
 
 function handleSearch() {
@@ -854,14 +1151,13 @@ async function initSearchBar() {
         });
     });
 
-    document.getElementById('search-submit').addEventListener('click', handleSearch);
+    const searchInput = document.getElementById('search-input');
 
-    document.getElementById('search-input').addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            handleSearch();
-        }
+    searchInput.addEventListener('input', () => {
+        scheduleBusinessSearch();
     });
+
+    searchInput.addEventListener('keydown', handleSearchInputKeydown);
 
     document.getElementById('reset-btn').addEventListener('click', handleReset);
 
@@ -875,6 +1171,10 @@ async function initSearchBar() {
         if (!event.target.closest('.multi-select')) {
             closeAllMenus();
         }
+
+        if (!event.target.closest('[data-panel="search"]')) {
+            hideSearchSuggestions();
+        }
     });
 }
 
@@ -885,6 +1185,7 @@ function initFeatureBubble() {
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
+            hideSearchSuggestions();
             closeFeatureBubble();
         }
     });

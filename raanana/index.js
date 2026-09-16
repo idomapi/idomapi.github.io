@@ -188,15 +188,16 @@ function startIdentify(event) {
     });
 }
 
-function hasHebrewLetters(text) {
-    return /[\u0590-\u05FF]/.test(text);
+function isStrictlyEnglishLetters(text) {
+    return /^[A-Za-z]+$/.test(text);
 }
 
 function getSearchQueryVariants(query) {
     if (!query) {
         return [];
     }
-    if (hasHebrewLetters(query)) {
+
+    if (currentMode !== 'search-name' || !isStrictlyEnglishLetters(query)) {
         return [query];
     }
 
@@ -204,7 +205,7 @@ function getSearchQueryVariants(query) {
         query,
         query.toLowerCase(),
         query.toUpperCase(),
-        query.charAt(0).toUpperCase() + query.slice(1)
+        query.charAt(0).toUpperCase() + query.slice(1).toLowerCase()
     ];
 
     return Array.from(new Set(variants));
@@ -578,7 +579,12 @@ function buildSearchWhereClause(query) {
         return '';
     }
 
-    return `(${buildLikeClause(getActiveSearchFieldKey(), query)})`;
+    const fieldName = getActiveSearchFieldKey();
+    const clauses = getSearchQueryVariants(query).map((variant) => {
+        return buildLikeClause(fieldName, variant);
+    });
+
+    return `(${clauses.join(' OR ')})`;
 }
 
 function applyLayerFilter(whereClause) {
@@ -655,10 +661,12 @@ function normalizeSearchSuggestions(result) {
 }
 
 // Separate from map filterLayers: query businesses inside Raanana for the dropdown.
+// intersectFeatures returns empty when whereClause uses OR, so English case
+// variants are queried one-by-one and then merged.
 function searchBusinessSuggestions(query) {
-    const whereClause = buildSearchWhereClause(query);
+    const variants = getSearchQueryVariants(query);
 
-    if (!whereClause) {
+    if (variants.length === 0) {
         return Promise.resolve([]);
     }
 
@@ -666,13 +674,36 @@ function searchBusinessSuggestions(query) {
         return Promise.resolve([]);
     }
 
-    return govmap.intersectFeatures({
-        geometry: RAANANA_SEARCH_WKT,
-        layerName: BUSINESS_LAYER,
-        fields: SEARCH_RESULT_FIELDS,
-        whereClause: whereClause,
-        radius: 0
-    }).then((result) => normalizeSearchSuggestions(result), () => []);
+    const fieldName = getActiveSearchFieldKey();
+    const requests = variants.map((variant) => {
+        return govmap.intersectFeatures({
+            geometry: RAANANA_SEARCH_WKT,
+            layerName: BUSINESS_LAYER,
+            fields: SEARCH_RESULT_FIELDS,
+            whereClause: `(${buildLikeClause(fieldName, variant)})`,
+            radius: 0
+        }).then((result) => normalizeSearchSuggestions(result), () => []);
+    });
+
+    return Promise.all(requests).then((groups) => {
+        const suggestions = [];
+        const seen = new Set();
+
+        groups.forEach((group) => {
+            group.forEach((item) => {
+                const key = item.name + '|' + item.address;
+
+                if (seen.has(key)) {
+                    return;
+                }
+
+                seen.add(key);
+                suggestions.push(item);
+            });
+        });
+
+        return suggestions;
+    });
 }
 
 function getSearchResultsEl() {

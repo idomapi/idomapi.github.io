@@ -19,6 +19,7 @@
 </head>
 
 <body>
+    <p class="page-nav"><a href="aggregate/test.html">בדיקות Aggregate</a> | <a href="aggregate/api-test.html">בדיקות API</a></p>
     <div class="sanity-env-bar" id="sanityEnvBar" dir="rtl" role="toolbar" aria-label="GovMap API environment">
         <span class="sanity-env-label">סביבה</span>
         <button type="button" data-sanity-env="dev">dev</button>
@@ -106,6 +107,10 @@
                         <div id="aggBlockHistogram" class="hidden">
                             <label for="aggHistogramBuckets">histogram.buckets (2–50):</label>
                             <input type="number" id="aggHistogramBuckets" value="5" min="2" max="50">
+                        </div>
+                        <div id="aggBlockJenks" class="hidden">
+                            <label for="aggJenksBuckets">jenks.buckets (2–20):</label>
+                            <input type="number" id="aggJenksBuckets" value="5" min="2" max="20">
                         </div>
                         <div id="aggBlockTimeseries" class="hidden">
                             <div>
@@ -201,6 +206,21 @@
                         <div>
                             <label for="aggSubGroupBy">sub_group_by:</label>
                             <input type="text" id="aggSubGroupBy" placeholder="status">
+                        </div>
+                        <div>
+                            <label for="aggGroupLimit">group_limit:</label>
+                            <input type="number" id="aggGroupLimit" placeholder="ללא הגבלה" min="1">
+                        </div>
+                        <div>
+                            <label for="aggSubGroupBySource">sub_group_by_source:</label>
+                            <select id="aggSubGroupBySource">
+                                <option value="">(ללא)</option>
+                                <option value="spatial_filter">spatial_filter</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aggSubGroupLimit">sub_group_limit:</label>
+                            <input type="number" id="aggSubGroupLimit" placeholder="ללא הגבלה" min="1">
                         </div>
                     </fieldset>
                 </div>

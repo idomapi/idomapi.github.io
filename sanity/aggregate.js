@@ -21,6 +21,7 @@ const AGGREGATE_OPERATION_TYPES = new Set([
     'max',
     'range',
     'histogram',
+    'jenks',
     'timeseries',
     'table'
 ]);
@@ -31,7 +32,8 @@ const OPERATION_TYPES_REQUIRING_FIELD = new Set([
     'min',
     'max',
     'range',
-    'histogram'
+    'histogram',
+    'jenks'
 ]);
 
 const NUMERIC_FIELD_OPERATION_TYPES = new Set([
@@ -40,7 +42,8 @@ const NUMERIC_FIELD_OPERATION_TYPES = new Set([
     'min',
     'max',
     'range',
-    'histogram'
+    'histogram',
+    'jenks'
 ]);
 
 const LAYER_FILTER_FIELD_ARRAY_KEYS = [
@@ -881,10 +884,11 @@ function setupOperationTypeToggle() {
     const fieldBlock = document.getElementById('aggBlockOperationField');
     const fieldsBlock = document.getElementById('aggBlockOperationFields');
     const histogramBlock = document.getElementById('aggBlockHistogram');
+    const jenksBlock = document.getElementById('aggBlockJenks');
     const timeseriesBlock = document.getElementById('aggBlockTimeseries');
     const timeseriesAggregationEl = document.getElementById('aggTimeseriesAggregation');
 
-    if (!typeEl || !fieldBlock || !fieldsBlock || !histogramBlock || !timeseriesBlock || !timeseriesAggregationEl) {
+    if (!typeEl || !fieldBlock || !fieldsBlock || !histogramBlock || !jenksBlock || !timeseriesBlock || !timeseriesAggregationEl) {
         return;
     }
 
@@ -896,6 +900,7 @@ function setupOperationTypeToggle() {
         fieldBlock.classList.toggle('hidden', !needsField);
         fieldsBlock.classList.toggle('hidden', operationType !== 'table');
         histogramBlock.classList.toggle('hidden', operationType !== 'histogram');
+        jenksBlock.classList.toggle('hidden', operationType !== 'jenks');
         timeseriesBlock.classList.toggle('hidden', operationType !== 'timeseries');
 
         refreshOperationFieldPickerForOperation();
@@ -1197,6 +1202,16 @@ function buildAggregateParams() {
         operation.histogram = { buckets };
     }
 
+    if (operationType === 'jenks') {
+        const buckets = Number(document.getElementById('aggJenksBuckets').value);
+
+        if (!Number.isFinite(buckets) || buckets < 2 || buckets > 20) {
+            return { error: 'jenks.buckets must be a number between 2 and 20' };
+        }
+
+        operation.jenks = { buckets };
+    }
+
     if (operationType === 'timeseries') {
         const dateField = document.getElementById('aggTimeseriesDateField').value.trim();
         const interval = document.getElementById('aggTimeseriesInterval').value;
@@ -1384,7 +1399,10 @@ function buildAggregateFilter() {
  */
 function buildAggregateGrouping() {
     const groupBy = document.getElementById('aggGroupBy').value.trim();
+    const groupLimitRaw = document.getElementById('aggGroupLimit').value.trim();
     const subGroupBy = document.getElementById('aggSubGroupBy').value.trim();
+    const subGroupBySource = document.getElementById('aggSubGroupBySource').value.trim();
+    const subGroupLimitRaw = document.getElementById('aggSubGroupLimit').value.trim();
 
     if (!groupBy && !subGroupBy) {
         return {};
@@ -1396,8 +1414,32 @@ function buildAggregateGrouping() {
         grouping.group_by = groupBy;
     }
 
+    if (groupLimitRaw) {
+        const groupLimit = Number(groupLimitRaw);
+
+        if (!Number.isInteger(groupLimit) || groupLimit < 1) {
+            return { error: 'grouping.group_limit must be a positive integer' };
+        }
+
+        grouping.group_limit = groupLimit;
+    }
+
     if (subGroupBy) {
         grouping.sub_group_by = subGroupBy;
+    }
+
+    if (subGroupBySource) {
+        grouping.sub_group_by_source = subGroupBySource;
+    }
+
+    if (subGroupLimitRaw) {
+        const subGroupLimit = Number(subGroupLimitRaw);
+
+        if (!Number.isInteger(subGroupLimit) || subGroupLimit < 1) {
+            return { error: 'grouping.sub_group_limit must be a positive integer' };
+        }
+
+        grouping.sub_group_limit = subGroupLimit;
     }
 
     if (subGroupBy && !groupBy) {

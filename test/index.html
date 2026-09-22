@@ -12,19 +12,15 @@
         <h1>סביבת טסט</h1>
     </header>
 
-    <!-- Main content: map and sidebar -->
-    <main class="content">
-        <!-- Map container with iframe placeholder -->
-        <section class="map-container">
-            <div id="map" class="iframe-placeholder"></div>
-        </section>
-        <div class="actions">
-            <button onclick="aggregateLayer()">aggregate layer</button>
-            <button onclick="displayGeometries()">display geometries</button>
-            <button onclick="searchInLayer()">search in layer</button>
-            <button onclick="filterLayer()">filter layer</button>
-        </div>
-    </main>
+    <div class="map-row">
+        <div id="map" class="map-panel"></div>
+    </div>
+    <div class="actions">
+        <button onclick="aggregateLayer()">aggregate layer</button>
+        <button onclick="displayGeometries()">display geometries</button>
+        <button onclick="searchInLayer()">search in layer</button>
+        <button onclick="filterLayer()">filter layer</button>
+    </div>
     <script src="index.js"></script>
     <script src="https://stage.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
 </body>

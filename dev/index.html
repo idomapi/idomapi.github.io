@@ -18,17 +18,15 @@
         <h1>מפה </h1>
     </header>
 
-    <!-- Main content: map and sidebar -->
-    <main class="content">
-        <!-- Map container with iframe placeholder -->
-        <section class="map-container">
-            <div id="map" class="iframe-placeholder"></div>
-        </section>
+    <div class="map-row">
+        <div id="map" class="map-panel"></div>
+    </div>
+    <div class="actions">
         <button type="button" class="map-select-btn" onclick="filterLayer()">filterLayer</button>
         <button type="button" class="map-select-btn" onclick="selectFeaturesOnMap()">select features on map</button>
         <button type="button" class="map-select-btn" onclick="displayGeometries()">display geometries</button>
         <button type="button" class="map-select-btn" onclick="searchInLayer()">search in layer</button>
-    </main>
+    </div>
     <script src="index.js"></script>
     <script src="https://dev.govmap.gov.il/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
 </body>

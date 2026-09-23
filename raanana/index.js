@@ -21,7 +21,7 @@ const FEATURE_FIELD_MAP = {
     value8: 'כשרות',
     value9: 'פירוט',
     value10: 'תחום',
-    cnt_geocod: 'כמות עסקים לכתובת'
+    // cnt_geocod: 'כמות עסקים לכתובת'
 };
 
 const FEATURE_FIELD_ORDER = [
@@ -34,7 +34,7 @@ const FEATURE_FIELD_ORDER = [
     'value8',
     'value9',
     'value10',
-    'cnt_geocod'
+    // 'cnt_geocod'
 ];
 
 let categories = null;

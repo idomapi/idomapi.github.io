@@ -6,6 +6,7 @@ function initNoMap() {
     setupGetSearchResultDataPanel();
     setupGetLayerFeaturesByLocationPanel();
     setupGetLayerFilterFieldsPanel();
+    setupPublicLayersPanel();
     setupLogPanel();
 }
 
@@ -154,6 +155,31 @@ function setupGetLayerFilterFieldsPanel() {
             logEvent('getLayerFilterFields', response);
         }).catch((err) => {
             logEvent('getLayerFilterFields error', { message: String(err && err.message || err) });
+        });
+    });
+}
+
+function setupPublicLayersPanel() {
+    const btnGetPublicLayers = document.getElementById('btnGetPublicLayers');
+
+    if (!btnGetPublicLayers) {
+        return;
+    }
+
+    btnGetPublicLayers.addEventListener('click', () => {
+        const languageValue = document.getElementById('publicLayersLanguage').value;
+        let request;
+
+        if (languageValue && languageValue in govmap.languages) {
+            request = govmap.getPublicLayers(GOVMAP_TOKEN, govmap.languages[languageValue]);
+        } else {
+            request = govmap.getPublicLayers(GOVMAP_TOKEN);
+        }
+
+        request.then((response) => {
+            logEvent('getPublicLayers', response);
+        }).catch((err) => {
+            logEvent('getPublicLayers error', { message: String(err && err.message || err) });
         });
     });
 }

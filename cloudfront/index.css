@@ -1,3 +1,41 @@
+.cf-env-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cf-env-bar .cf-env-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.cf-env-bar button[data-cf-env] {
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid #c5ced8;
+    border-radius: 6px;
+    background: #f0f4f8;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.cf-env-bar button[data-cf-env]:hover {
+    background: #e2eaf2;
+}
+
+.cf-env-bar button.cf-env-active {
+    border-color: #1a5490;
+    background: #1a5490;
+    color: #fff;
+    cursor: default;
+}
+
 body {
     font-family: simplerregular, sans-serif;
     margin: 20px;

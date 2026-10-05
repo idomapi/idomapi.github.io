@@ -90,6 +90,7 @@ function createTestCase(name, category, requestBody, expectedStatus, shouldPass,
 // Generate all test cases
 function generateTestCases() {
     const tests = [];
+    const LAYER_NEIGHBORHOODS = CONFIG.ENVIRONMENT === 'PROD' ? '210172' : '22';
 
     // ===== VALID TESTS - COUNT OPERATIONS FOR ALL LAYERS =====
 
@@ -974,6 +975,38 @@ function generateTestCases() {
         false
     ));
 
+    // group_by on the unique id field — guards that 'id' stays in the field allowlist
+    // ('uniq_id' is rejected). Every id is distinct, so the result is group_limit
+    // singletons plus the 'אחר' overflow bucket.
+    tests.push(createTestCase(
+        'Count - Cellular by id within neighborhoods (centroid)',
+        'valid',
+        {
+            source: { layer: CONFIG.LAYERS.CELLULAR.id, srid: 2039 },
+            operation: { type: 'count' },
+            filter: {
+                spatial_filter: { layer: LAYER_NEIGHBORHOODS, relation: 'within', logic: 'centroid' }
+            },
+            grouping: { group_by: 'id' }
+        },
+        200,
+        true,
+        (response) => {
+            if (!Array.isArray(response.data) || response.data.length === 0) {
+                return { valid: false, message: 'No grouped data returned' };
+            }
+
+            const processed = response.metadata && response.metadata.total_records_processed;
+            const total = response.data.reduce((sum, row) => sum + row.count, 0);
+
+            if (total !== processed) {
+                return { valid: false, message: 'Group counts sum to ' + total + ' but ' + processed + ' records processed' };
+            }
+
+            return true;
+        }
+    ));
+
     // ===== SUB-GROUP / SPATIAL FILTER =====
 
     // Step 1: calibration — full distribution of company × fname
@@ -984,7 +1017,7 @@ function generateTestCases() {
             source: { layer: CONFIG.LAYERS.CELLULAR.id, srid: 2039 },
             operation: { type: 'count' },
             filter: {
-                spatial_filter: { layer: '22', relation: 'within', logic: 'centroid' },
+                spatial_filter: { layer: LAYER_NEIGHBORHOODS, relation: 'within', logic: 'centroid' },
                 view_mode: 'global'
             },
             grouping: {
@@ -1018,7 +1051,7 @@ function generateTestCases() {
             source: { layer: CONFIG.LAYERS.CELLULAR.id, srid: 2039 },
             operation: { type: 'count' },
             filter: {
-                spatial_filter: { layer: '22', relation: 'within', logic: 'centroid' },
+                spatial_filter: { layer: LAYER_NEIGHBORHOODS, relation: 'within', logic: 'centroid' },
                 view_mode: 'global'
             },
             grouping: {

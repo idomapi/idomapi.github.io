@@ -561,9 +561,10 @@
                     BUILDING_PERMITS_TLV: { id: null, fields: { group: [], timeseries: [], numeric: [] } }
                 },
                 paginationTarget: {
-                    label: 'Cellular (global)',
-                    layer: 'layer_234365',
-                    fields: ['company', 'city'],
+                    label: 'Revaha (global)',
+                    layer: '241981',
+                    fields: ['serviceid', 'servicetypename', 'fulladdress'],
+                    idField: 'serviceid',
                     filter: { view_mode: 'global' },
                     pageSize: 50
                 }
@@ -593,7 +594,8 @@
                 paginationTarget: {
                     label: 'Cellular (global)',
                     layer: 'layer_234365',
-                    fields: ['company', 'city'],
+                    fields: ['id', 'company', 'city'],
+                    idField: 'id',
                     filter: { view_mode: 'global' },
                     pageSize: 50
                 }

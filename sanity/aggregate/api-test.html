@@ -97,22 +97,64 @@
 
         .note { color: #2d3748; max-width: 420px; word-break: break-word; }
 
+        .raw-toggle {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: 11px;
+            color: #4a5568;
+            font-family: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .raw-toggle[aria-expanded="true"] {
+            font-weight: 700;
+            color: #2c5282;
+        }
+
+        tr.raw-expand-row td {
+            background: #edf2f7;
+            padding: 10px 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr.raw-expand-row[hidden] { display: none; }
+
+        .golami-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+            width: 100%;
+        }
+
+        .golami-block { min-width: 0; }
+
+        .golami-block:only-child { grid-column: 1 / -1; }
+
+        .golami-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4a5568;
+            margin: 0 0 4px;
+        }
+
         pre.golami {
             font-size: 11px;
             background: #1a202c;
             color: #e2e8f0;
             padding: 8px;
             border-radius: 4px;
-            max-height: 200px;
+            max-height: 70vh;
             overflow: auto;
-            max-width: 520px;
             white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
         }
 
-        details summary {
-            cursor: pointer;
-            font-size: 11px;
-            color: #4a5568;
+        @media (max-width: 900px) {
+            .golami-body { grid-template-columns: 1fr; }
         }
 
         .summary-bar {
@@ -199,8 +241,12 @@
                 token: '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
                 layers: {
                     cellular: 'layer_234365',
-                    tlvParcels: 'layer_235027'
-                }
+                    tlvParcels: 'layer_235027',
+                    revaha: '241981',
+                    agricParcels: 'layer_235247',
+                    buildingPermitsTlv: 'layer_245172',
+                },
+                revahaFields: ['serviceid', 'servicetypename', 'fulladdress']
             },
             'govmap.gov.il': {
                 sdkUrl: 'https://www.govmap.gov.il/govmap/api/govmap.api.js',
@@ -240,7 +286,7 @@
         const LAYER_AGRIC = LAYER_AGRIC_PARCELS;
         const LAYER_BUILDING_PERMITS_TLV = apiTestEnv.layers.buildingPermitsTlv || null;
         const LAYER_REVAHA = apiTestEnv.layers.revaha || null;
-        const LAYER_NEIGHBORHOODS = '22';
+        const LAYER_NEIGHBORHOODS = API_TEST_ENV_KEY === 'PROD' ? '210172' : '22';
 
         const API_TEST_PAGINATION_TARGET = LAYER_REVAHA
             ? {
@@ -258,6 +304,6 @@
             };
     </script>
 
-    <script src="api-test.js"></script>
+    <script src="api-test.js?v=exhaust-full-res"></script>
 </body>
 </html>

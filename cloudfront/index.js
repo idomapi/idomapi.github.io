@@ -2,6 +2,7 @@ function initGovMap() {
     createMap();
     setupGetEntitiesGeometryPanel();
     setupIntersectLayersPanel();
+    setupSelectFeaturesOnMapPanel();
     setupFilterLayersPanel();
     setupSetVisibleLayersPanel();
     setupShowMeasurePanel();
@@ -11,8 +12,8 @@ function initGovMap() {
 
 function createMap() {
     govmap.createMap('map1', {
-        token: '8c430f7f-1e21-4434-b256-c5e91fac4005',
-        visibleLayers: ['layer_155046'],
+        token: GOVMAP_TOKEN,
+        visibleLayers: ['211316', '211275'],
         showXY: true,
         identifyOnClick: true,
         isEmbeddedToggle: false,
@@ -72,8 +73,9 @@ function setupIntersectLayersPanel() {
         return;
     }
 
-    addIntersectLayerRow({ layerName: '162879', radius: 20 });
-    addIntersectLayerRow({ layerName: '162881', radius: 25 });
+    for (const layer of INTERSECT_LAYERS) {
+        addIntersectLayerRow(layer);
+    }
 
     btnAdd.addEventListener('click', () => {
         addIntersectLayerRow();
@@ -134,7 +136,7 @@ function addIntersectLayerRow(defaults) {
     row.className = 'intersect-layer-row';
     row.innerHTML = `
         <label>layerName:</label>
-        <input type="text" class="il-layerName" value="${defaults.layerName || ''}" placeholder="162879">
+        <input type="text" class="il-layerName" value="${defaults.layerName || ''}" placeholder="layerName">
         <label>whereClause:</label>
         <input type="text" class="il-whereClause" placeholder="value0 = 'x' OR value0 = 'y'">
         <label><input type="checkbox" class="il-useCurrentFilter"> useCurrentFilter</label>
@@ -172,11 +174,98 @@ function readIntersectLayerRow(row) {
     return layer;
 }
 
+function setupSelectFeaturesOnMapPanel() {
+    const btn = document.getElementById('btnSelectFeaturesOnMap');
+    const layersInput = document.getElementById('selectFeaturesLayers');
+    const geomMode = document.getElementById('selectFeaturesGeomMode');
+    const drawTypeWrap = document.getElementById('selectFeaturesDrawTypeWrap');
+    const wktWrap = document.getElementById('selectFeaturesWktWrap');
+
+    if (!btn || !layersInput || !geomMode || !drawTypeWrap || !wktWrap) {
+        return;
+    }
+
+    layersInput.value = INTERSECT_LAYERS.map((layer) => layer.layerName).join(', ');
+    layersInput.placeholder = layersInput.value || 'layerId';
+
+    geomMode.addEventListener('change', () => {
+        const isDraw = geomMode.value === 'drawType';
+
+        drawTypeWrap.classList.toggle('hidden', !isDraw);
+        wktWrap.classList.toggle('hidden', isDraw);
+    });
+
+    btn.addEventListener('click', () => {
+        if (typeof govmap.selectFeaturesOnMap !== 'function') {
+            logEvent('selectFeaturesOnMap error', { message: 'govmap.selectFeaturesOnMap is not available' });
+            return;
+        }
+
+        const layers = layersInput.value.split(',').map((s) => s.trim()).filter(Boolean);
+
+        if (layers.length === 0) {
+            logEvent('selectFeaturesOnMap error', { message: 'At least one layer is required' });
+            return;
+        }
+
+        const fields = document.getElementById('selectFeaturesFields').value
+            .split(',').map((s) => s.trim()).filter(Boolean);
+        const whereClauseRaw = document.getElementById('selectFeaturesWhereClause').value.trim();
+        const returnFields = {};
+        const whereClause = {};
+
+        for (const layerName of layers) {
+            returnFields[layerName] = fields.slice();
+
+            if (whereClauseRaw) {
+                whereClause[layerName] = whereClauseRaw;
+            }
+        }
+
+        const params = {
+            continous: document.getElementById('selectFeaturesContinous').checked,
+            filterLayer: document.getElementById('selectFeaturesFilterLayer').checked,
+            isZoomToExtent: document.getElementById('selectFeaturesZoomToExtent').checked,
+            selectOnMap: document.getElementById('selectFeaturesSelectOnMap').checked,
+            getWkt: document.getElementById('selectFeaturesGetWkt').checked,
+            layers,
+            returnFields,
+        };
+
+        if (Object.keys(whereClause).length > 0) {
+            params.whereClause = whereClause;
+        }
+
+        if (geomMode.value === 'wkt') {
+            params.wkt = document.getElementById('selectFeaturesWktInput').value.trim();
+            params.radius = Number(document.getElementById('selectFeaturesRadius').value) || 0;
+        } else {
+            const drawTypeName = document.getElementById('selectFeaturesDrawType').value;
+
+            params.drawType = govmap.drawType[drawTypeName];
+        }
+
+        logEvent('selectFeaturesOnMap parameters', params);
+
+        govmap.selectFeaturesOnMap(params).then((response) => {
+            logEvent('selectFeaturesOnMap', response);
+        }).catch((err) => {
+            logEvent('selectFeaturesOnMap error', { message: String(err && err.message || err) });
+        });
+    });
+}
+
 function setupFilterLayersPanel() {
     const btn = document.getElementById('btnFilterLayers');
+    const layerNameInput = document.getElementById('filterLayerName');
 
     if (!btn) {
         return;
+    }
+
+    if (layerNameInput) {
+        layerNameInput.value = FILTER_LAYER_NAME;
+        layerNameInput.placeholder = FILTER_LAYER_NAME || 'layerName';
     }
 
     btn.addEventListener('click', () => {
@@ -191,9 +280,21 @@ function setupFilterLayersPanel() {
 
 function setupSetVisibleLayersPanel() {
     const btn = document.getElementById('btnSetVisibleLayers');
+    const layersOnInput = document.getElementById('layersOn');
+    const layersOffInput = document.getElementById('layersOff');
 
     if (!btn) {
         return;
+    }
+
+    if (layersOnInput) {
+        layersOnInput.value = LAYERS_ON;
+        layersOnInput.placeholder = LAYERS_ON || 'layerId';
+    }
+
+    if (layersOffInput) {
+        layersOffInput.value = LAYERS_OFF;
+        layersOffInput.placeholder = LAYERS_OFF || 'layerId';
     }
 
     btn.addEventListener('click', () => {
@@ -267,54 +368,6 @@ function logEvent(name, data) {
     el.textContent = (el.textContent ? el.textContent + '\n\n' : '') + line;
     el.scrollTop = el.scrollHeight;
 }
-
-const SEARCH_IN_LAYER_PRESETS = {
-    layer_163074: {
-        layerName: 'layer_163074',
-        fieldName: 'value0',
-        fieldValues: ['ג'],
-        highlight: true,
-        showBubble: false,
-        outLineColor: [0, 255, 0, 1],
-        fillColor: [255, 0, 0, 0.5],
-    },
-    layer_162879: {
-        layerName: 'layer_162879',
-        fieldName: 'value0',
-        fieldValues: ['ג'],
-        highlight: true,
-        showBubble: false,
-        outLineColor: [0, 255, 0, 1],
-        fillColor: [255, 0, 0, 0.5],
-    },
-    layer_163153: {
-        layerName: 'layer_163153',
-        fieldName: 'value0',
-        fieldValues: ['a'],
-        highlight: true,
-        showBubble: false,
-        outLineColor: [0, 255, 0, 1],
-        fillColor: [255, 0, 0, 0.5],
-    },
-    ies: {
-        layerName: 'ies',
-        fieldName: 'name',
-        fieldValues: ['הרצליה'],
-        highlight: true,
-        showBubble: false,
-        outLineColor: [0, 255, 0, 1],
-        fillColor: [255, 0, 0, 0.5],
-    },
-    layer_155046: {
-        layerName: 'layer_155046',
-        fieldName: 'value1',
-        fieldValues: ['ב'],
-        highlight: true,
-        showBubble: false,
-        outLineColor: [0, 255, 0, 1],
-        fillColor: [255, 0, 0, 0.5],
-    }
-};
 
 function searchInLayer() {
     const key = document.getElementById('searchInLayerPreset').value;

@@ -5,11 +5,30 @@
     <title>CloudFront - גובמאפ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="stylesheet" href="index.css">
+    <script src="const.js"></script>
+    <script src="env-switcher.js"></script>
+    <script>
+        document.title = CF_PAGE_TITLE + ' - גובמאפ';
+    </script>
     <script src="index.js"></script>
-    <script src="https://d1tj85vqlmrpm.cloudfront.net/govmap/api/govmap.api.js" defer onload="initGovMap()"></script>
+    <script>
+    (function () {
+        var s = document.createElement('script');
+        s.src = GOVMAP_API_URL;
+        s.defer = true;
+        s.onload = initGovMap;
+        document.head.appendChild(s);
+    })();
+    </script>
 </head>
 
 <body>
+    <div class="cf-env-bar" id="cfEnvBar" dir="rtl" role="toolbar" aria-label="GovMap API environment">
+        <span class="cf-env-label">סביבה</span>
+        <button type="button" data-cf-env="cloudfront">cloudfront</button>
+        <button type="button" data-cf-env="stage">stage</button>
+        <button type="button" data-cf-env="prod">prod</button>
+    </div>
     <div class="page-content">
         <div class="map-and-log">
             <div id="map1"></div>
@@ -56,7 +75,7 @@
                         <div id="intersectLayersRows"></div>
                         <button type="button" id="btnAddIntersectLayer">+ הוספת שכבה (add layer)</button>
                         <label for="intersectFieldsInput">fields (comma-separated):</label>
-                        <input type="text" id="intersectFieldsInput" value="value0" placeholder="value0, value1">
+                        <input type="text" id="intersectFieldsInput" value="value0, value1" placeholder="value0, value1">
                         <label for="intersectInputType">מקור מיקום (address / geometry):</label>
                         <select id="intersectInputType">
                             <option value="address">address</option>
@@ -64,7 +83,8 @@
                         </select>
                         <span id="intersectAddressWrap">
                             <label for="intersectAddressInput">address:</label>
-                            <input type="text" id="intersectAddressInput" value="נהלל 13 תל אביב" placeholder="כתובת">
+                            <!-- <input type="text" id="intersectAddressInput" value="נהלל 13 תל אביב" placeholder="כתובת"> -->
+                            <input type="text" id="intersectAddressInput" value="החשמונאים 63 תל אביב" placeholder="כתובת">
                         </span>
                         <span id="intersectGeometryWrap" class="hidden">
                             <label for="intersectGeometryInput">geometry (WKT):</label>
@@ -75,12 +95,54 @@
                 </div>
             </details>
             <details class="panel-section">
+                <summary>selectFeaturesOnMap</summary>
+                <div class="panel-body">
+                    <fieldset class="form-block">
+                        <legend>govmap.selectFeaturesOnMap(params)</legend>
+                        <p class="hint">בחירת ישויות על המפה בציור או לפי WKT. ברירות מחדל לשכבות ולשדות זהות ל-intersectLayers.</p>
+                        <label for="selectFeaturesGeomMode">מקור גיאומטריה:</label>
+                        <select id="selectFeaturesGeomMode">
+                            <option value="drawType">drawType</option>
+                            <option value="wkt">wkt</option>
+                        </select>
+                        <span id="selectFeaturesDrawTypeWrap">
+                            <label for="selectFeaturesDrawType">drawType:</label>
+                            <select id="selectFeaturesDrawType">
+                                <option value="Polygon" selected>Polygon</option>
+                                <option value="Circle">Circle</option>
+                                <option value="Point">Point</option>
+                                <option value="Rectangle">Rectangle</option>
+                                <option value="FreehandPolygon">FreehandPolygon</option>
+                            </select>
+                        </span>
+                        <span id="selectFeaturesWktWrap" class="hidden">
+                            <label for="selectFeaturesWktInput">wkt:</label>
+                            <input type="text" id="selectFeaturesWktInput" placeholder="POINT(x y)">
+                            <label for="selectFeaturesRadius">radius (m):</label>
+                            <input type="number" id="selectFeaturesRadius" value="0" min="0" step="any">
+                        </span>
+                        <label for="selectFeaturesLayers">layers (comma-separated):</label>
+                        <input type="text" id="selectFeaturesLayers" placeholder="layerId">
+                        <label for="selectFeaturesFields">returnFields (comma-separated, same for all layers):</label>
+                        <input type="text" id="selectFeaturesFields" value="value0, value1" placeholder="value0, value1">
+                        <label for="selectFeaturesWhereClause">whereClause (optional, same for all layers):</label>
+                        <input type="text" id="selectFeaturesWhereClause" placeholder="value0 = 'x'">
+                        <label><input type="checkbox" id="selectFeaturesSelectOnMap" checked> selectOnMap</label>
+                        <label><input type="checkbox" id="selectFeaturesFilterLayer"> filterLayer</label>
+                        <label><input type="checkbox" id="selectFeaturesZoomToExtent" checked> isZoomToExtent</label>
+                        <label><input type="checkbox" id="selectFeaturesGetWkt" checked> getWkt</label>
+                        <label><input type="checkbox" id="selectFeaturesContinous"> continous</label>
+                        <button type="button" id="btnSelectFeaturesOnMap">selectFeaturesOnMap</button>
+                    </fieldset>
+                </div>
+            </details>
+            <details class="panel-section">
                 <summary>filterLayers</summary>
                 <div class="panel-body">
                     <fieldset class="form-block">
                         <legend>govmap.filterLayers(params)</legend>
                         <label for="filterLayerName">layerName:</label>
-                        <input type="text" id="filterLayerName" value="162879" placeholder="162879">
+                        <input type="text" id="filterLayerName" placeholder="layerName">
                         <label for="filterWhereClause">whereClause:</label>
                         <input type="text" id="filterWhereClause" placeholder="value0 = 'x'">
                         <label><input type="checkbox" id="filterZoomToExtent" checked> zoomToExtent</label>
@@ -94,9 +156,9 @@
                     <fieldset class="form-block">
                         <legend>govmap.setVisibleLayers(layersOn, layersOff)</legend>
                         <label for="layersOn">layersOn (comma-separated):</label>
-                        <input type="text" id="layersOn" value="162879" placeholder="162879">
+                        <input type="text" id="layersOn" placeholder="layerId">
                         <label for="layersOff">layersOff (comma-separated):</label>
-                        <input type="text" id="layersOff" value="162881" placeholder="162881">
+                        <input type="text" id="layersOff" placeholder="layerId">
                         <button type="button" id="btnSetVisibleLayers">setVisibleLayers</button>
                     </fieldset>
                 </div>

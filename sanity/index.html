@@ -325,6 +325,7 @@
                     <button type="button" id="btnShowExportMap">showExportMap</button>
                     <button type="button" id="btnCloseExportMap">closeExportMap</button>
                     <button type="button" id="btnShowMeasure">showMeasure</button>
+                    <label><input type="checkbox" id="showMeasureUseFinally"> .finally()</label>
                     <button type="button" id="btnCloseMeasure">closeMeasure</button>
                     <button type="button" id="btnCloseOpenApps">closeOpenApps</button>
                 </fieldset>
@@ -488,6 +489,26 @@
                     <label for="heatValueField">valueField:</label>
                     <input type="text" id="heatValueField" value="val1" placeholder="val1">
                     <button type="button" id="btnChangeHeatLayerValueField">changeHeatLayerValueField</button>
+                </fieldset>
+            </div>
+        </details>
+        <details class="panel-section">
+            <summary>getEntitiesGeometry</summary>
+            <div class="panel-body">
+                <fieldset class="form-block">
+                    <legend>getEntitiesGeometry(params)</legend>
+                    <label for="entitiesGeometryLayerId">layerId:</label>
+                    <input type="text" id="entitiesGeometryLayerId" value="PARCEL_ALL" placeholder="PARCEL_ALL">
+                    <label for="entitiesGeometryObjectIds">objectIds (comma-separated):</label>
+                    <input type="text" id="entitiesGeometryObjectIds" value="12345,12346" placeholder="12345, 12346, 12347">
+                    <label for="entitiesGeometryProjection">projection (optional):</label>
+                    <select id="entitiesGeometryProjection">
+                        <option value="">Default (ITM/2039)</option>
+                        <option value="4326">WGS84 (4326)</option>
+                        <option value="3857">Web Mercator (3857)</option>
+                        <option value="2039">ITM (2039)</option>
+                    </select>
+                    <button type="button" id="btnGetEntitiesGeometry">getEntitiesGeometry</button>
                 </fieldset>
             </div>
         </details>

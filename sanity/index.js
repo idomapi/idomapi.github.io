@@ -9,6 +9,7 @@ function initGovMap() {
     setupBackgroundToolsPanel();
     setupGpsPanel();
     setupDrawAndGeometryPanel();
+    setupEntitiesGeometryPanel();
     setupLogPanel();
 }
 
@@ -16,7 +17,7 @@ function createMap() {
     govmap.createMap('map1', {
         token: GOVMAP_TOKEN,
         layers: ['GASSTATIONS', 'bus_stops'],
-        // visibleLayers: ['204093', 'GASSTATIONS'],
+        visibleLayers: ['204093', 'GASSTATIONS'],
         showXY: true,
         isEmbeddedToggle: false,
         background: '0',
@@ -252,7 +253,7 @@ function setupLayerDataFilterPanel() {
                 layers: ['gasstations'],
                 returnFields: {
                     gasstations: isProd
-                        ? ['value0', 'value1', 'value2', 'value3']
+                        ? ['value1', 'value2', 'value3']
                         : ['name', 'address', 'company']
                 },
                 selectOnMap: true,
@@ -507,7 +508,7 @@ function setupIdentifyPanel() {
             const whereClause = document.getElementById('intersectWhere').value.trim();
             const radius = Number(document.getElementById('intersectRadius').value);
             const useCurrentFilter = document.getElementById('intersectUseCurrentFilter').checked;
-            const params = { layerName, fields, useCurrentFilter, radius };
+            const params = { layerName, fields, useCurrentFilter, radius, getShapes: true };
 
             if (intersectInputType && intersectInputType.value === 'geometry') {
                 params.geometry = document.getElementById('intersectGeometry').value.trim();
@@ -671,8 +672,17 @@ function setupBackgroundToolsPanel() {
 
     if (btnShowMeasure) {
         btnShowMeasure.addEventListener('click', () => {
-            govmap.showMeasure();
-            logEvent('showMeasure', { called: true });
+            const useFinally = document.getElementById('showMeasureUseFinally').checked;
+
+            if (useFinally) {
+                govmap.showMeasure().finally((e) => {
+                    logEvent('showMeasure.finally', e);
+                });
+            } else {
+                govmap.showMeasure();
+            }
+
+            logEvent('showMeasure', { called: true, useFinally });
         });
     }
     if (btnCloseMeasure) {
@@ -1079,6 +1089,34 @@ function unbindMapEvent(eventKey) {
 
     govmap.unbindEvent(eventEnum);
     logEvent('unbound', { event: eventKey });
+}
+
+function setupEntitiesGeometryPanel() {
+    const btnGetEntitiesGeometry = document.getElementById('btnGetEntitiesGeometry');
+
+    if (btnGetEntitiesGeometry) {
+        btnGetEntitiesGeometry.addEventListener('click', () => {
+            const layerId = document.getElementById('entitiesGeometryLayerId').value.trim();
+            const objectIdsStr = document.getElementById('entitiesGeometryObjectIds').value.trim();
+            const objectIds = objectIdsStr ? objectIdsStr.split(',').map((s) => s.trim()).filter(Boolean) : [];
+            const projectionValue = document.getElementById('entitiesGeometryProjection').value;
+
+            if (!layerId || objectIds.length === 0) {
+                logEvent('getEntitiesGeometry error', { message: 'Missing layerId or objectIds' });
+                return;
+            }
+
+            const params = { layerId, objectIds };
+
+            if (projectionValue && projectionValue !== '') {
+                params.projection = Number(projectionValue);
+            }
+
+            govmap.getEntitiesGeometry(params).then((response) => {
+                logEvent('getEntitiesGeometry', response);
+            });
+        });
+    }
 }
 
 function setupLogPanel() {

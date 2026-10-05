@@ -25,26 +25,42 @@ function pendingRow(id, name, requirement, specSection) {
         <td>${requirement}</td>
         <td class="status running" id="st-${id}">⏳ רץ…</td>
         <td class="note" id="note-${id}"></td>
-        <td id="raw-${id}"></td>
+        <td id="raw-toggle-${id}"></td>
     `;
     tbody.appendChild(tr);
+
+    const expandTr = document.createElement('tr');
+    expandTr.id = 'rawrow-' + id;
+    expandTr.className = 'raw-expand-row';
+    expandTr.hidden = true;
+    expandTr.innerHTML = `<td colspan="6" id="raw-${id}"></td>`;
+    tbody.appendChild(expandTr);
 }
 
-function appendRaw(container, summary, value, truncate) {
+function formatGolami(value) {
+    return typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+}
+
+function appendGolamiBlock(body, label, value) {
+    const block = document.createElement('div');
+    block.className = 'golami-block';
+    const labelEl = document.createElement('div');
+    labelEl.className = 'golami-label';
+    labelEl.textContent = label;
     const pre = document.createElement('pre');
     pre.className = 'golami';
-    const text = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
-    pre.textContent = truncate ? text.slice(0, 1200) : text;
-    const det = document.createElement('details');
-    det.innerHTML = '<summary>' + summary + '</summary>';
-    det.appendChild(pre);
-    container.appendChild(det);
+    pre.textContent = formatGolami(value);
+    block.appendChild(labelEl);
+    block.appendChild(pre);
+    body.appendChild(block);
 }
 
 function resolve(id, verdict, note, rawData, requestPayload) {
     const st = document.getElementById('st-' + id);
     const noteEl = document.getElementById('note-' + id);
+    const toggleCell = document.getElementById('raw-toggle-' + id);
     const rawEl = document.getElementById('raw-' + id);
+    const expandRow = document.getElementById('rawrow-' + id);
 
     const map = { pass: '✓ עובד', fail: '✗ שגיאה', warn: '⚠ הגבלה' };
     st.textContent = map[verdict];
@@ -52,12 +68,38 @@ function resolve(id, verdict, note, rawData, requestPayload) {
     noteEl.textContent = note;
     counts[verdict]++;
 
-    if (requestPayload !== undefined) {
-        appendRaw(rawEl, 'בקשה', Object.assign({ apiKey: API_TOKEN }, requestPayload));
-    }
+    const hasRequest = requestPayload != null;
+    const hasResponse = rawData != null;
 
-    if (rawData !== undefined) {
-        appendRaw(rawEl, requestPayload !== undefined ? 'תגובה' : 'הצג גולמי', rawData, requestPayload === undefined);
+    if (hasRequest || hasResponse) {
+        const body = document.createElement('div');
+        body.className = 'golami-body';
+
+        if (hasRequest) {
+            const displayReq = requestPayload.source
+                ? Object.assign({ apiKey: API_TOKEN }, requestPayload)
+                : requestPayload;
+            appendGolamiBlock(body, 'בקשה', displayReq);
+        }
+
+        if (hasResponse) {
+            appendGolamiBlock(body, 'תגובה', rawData);
+        }
+
+        rawEl.appendChild(body);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'raw-toggle';
+        btn.textContent = 'הצג גולמי';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.addEventListener('click', function() {
+            const open = expandRow.hidden;
+            expandRow.hidden = !open;
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            btn.textContent = open ? 'הסתר גולמי' : 'הצג גולמי';
+        });
+        toggleCell.appendChild(btn);
     }
 
     updateSummary();
@@ -147,6 +189,7 @@ pendingRow('cat-avg', 'avg(dunam) לפי yeshuvname', 'operation.type=avg + grou
 
 sectionRow('תרשימים — קטגוריה: bucket "אחר"');
 pendingRow('other-bucket', '__other__ bucket בתגובה', 'output.limit=3 + group_by → __other__', 'תרשימים › רכיב "קטגוריה" › §7 מספר קטגוריות והצגת "אחר"');
+pendingRow('other-bucket-nulls', 'bucket "אחר" כולל שורות NULL', 'סכום ה-count של כל השורות = total_records_processed', 'תרשימים › רכיב "קטגוריה" › §7 מספר קטגוריות והצגת "אחר"');
 
 sectionRow('תרשימים — קטגוריה: null_handling');
 pendingRow('null-exclude',        'null_handling=exclude',         'output.null_handling=exclude',         'תרשימים › רכיב "קטגוריה" › §4 (+ נתונים › "מספר" › §2 טיפול בערכים ריקים)');
@@ -176,6 +219,8 @@ sectionRow('סינון תכונה — filter.filter (SQL predicate)');
 pendingRow('attr-filter-str-eq', 'filter.filter = equality על שדה מחרוזת', "filter.filter: \"(field = 'value')\" — BUG: מחזיר 0 במקום תת-קבוצה", 'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 pendingRow('attr-filter-eq',    'filter.filter BETWEEN על שדה תאריך',      "filter.filter: BETWEEN תאריך — נתמך",                               'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 pendingRow('attr-filter-count', 'count מסונן < count גלובלי',              'BETWEEN מסנן בפועל',                                                'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
+pendingRow('attr-filter-unsupported-op', 'אופרטור לא נתמך נדחה ולא מתעלם', 'filter.filter: "(field>value)" — > / < אינם נתמכים; מצופה שגיאה ולא התעלמות שקטה', 'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
+pendingRow('attr-filter-or',             'OR מחזיר איחוד ולא חיתוך',       'filter.filter: "(f=a) OR (f=b)" מול "(f IN (a,b))"',                              'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 
 sectionRow('getLayerFilterFields — metadata לרכיב סינון');
 pendingRow('field-meta-cellular', 'field metadata — cellular', 'govmap.getLayerFilterFields', 'נתונים › רכיב "סינון" › §4 בחירת שדה הסינון');
@@ -185,77 +230,89 @@ pendingRow('field-meta-tlv',      'field metadata — TLV',      'govmap.getLaye
 
 // ── Filter values ─────────────────────────────────────────────────────────────
 
-agg({
+const filterCompanyPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 'company' },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { include_percentage: true, limit: 50 }
-}).then(function(r) {
-    const n = r.data && r.data.length;
-    resolve('filter-values-company', 'pass', n + ' ערכים ייחודיים, מתאים ל-dropdown', r.data.slice(0, 3));
-}).catch(function(e) { resolve('filter-values-company', 'fail', String(e)); });
+};
 
-agg({
+agg(filterCompanyPayload).then(function(r) {
+    const n = r.data && r.data.length;
+    resolve('filter-values-company', 'pass', n + ' ערכים ייחודיים, מתאים ל-dropdown', r.data.slice(0, 3), filterCompanyPayload);
+}).catch(function(e) { resolve('filter-values-company', 'fail', String(e), undefined, filterCompanyPayload); });
+
+const filterYeudPayload = {
     source: { layer: LAYER_TLV_PARCELS, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 't_yeud_karka' },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { include_percentage: true, limit: 50 }
-}).then(function(r) {
+};
+
+agg(filterYeudPayload).then(function(r) {
     const n = r.data && r.data.length;
-    resolve('filter-values-yeud', 'pass', n + ' ערכים ייחודיים', r.data.slice(0, 3));
-}).catch(function(e) { resolve('filter-values-yeud', 'fail', String(e)); });
+    resolve('filter-values-yeud', 'pass', n + ' ערכים ייחודיים', r.data.slice(0, 3), filterYeudPayload);
+}).catch(function(e) { resolve('filter-values-yeud', 'fail', String(e), undefined, filterYeudPayload); });
 
 // ── Numeric operations ────────────────────────────────────────────────────────
 
 ['sum', 'avg', 'min', 'max', 'range'].forEach(function(op) {
-    agg({
+    const payload = {
         source: { layer: LAYER_AGRIC, srid: 2039 },
         operation: { type: op, field: 'dunam' },
         filter: { view_mode: govmap.aggViewMode.Global }
-    }).then(function(r) {
+    };
+
+    agg(payload).then(function(r) {
         const val = r.data && (r.data.value !== undefined ? r.data.value : JSON.stringify(r.data).slice(0, 80));
-        resolve('num-' + op, 'pass', op + ' → ' + val, r.data);
-    }).catch(function(e) { resolve('num-' + op, 'fail', String(e)); });
+        resolve('num-' + op, 'pass', op + ' → ' + val, r.data, payload);
+    }).catch(function(e) { resolve('num-' + op, 'fail', String(e), undefined, payload); });
 });
 
 // ── Table operation ───────────────────────────────────────────────────────────
 
-agg({
+const tableOpPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'table', fields: ['company', 'city'] },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { limit: 10 }
-}).then(function(r) {
+};
+
+agg(tableOpPayload).then(function(r) {
     const rows = r.data && r.data.length;
     const hasToken = r.paging && r.paging.next_page_token !== undefined;
-    resolve('table-op', 'pass', rows + ' שורות הוחזרו; next_page_token ב-paging: ' + hasToken, r.data ? r.data.slice(0, 2) : r);
-}).catch(function(e) { resolve('table-op', 'fail', String(e)); });
+    resolve('table-op', 'pass', rows + ' שורות הוחזרו; next_page_token ב-paging: ' + hasToken, r.data ? r.data.slice(0, 2) : r, tableOpPayload);
+}).catch(function(e) { resolve('table-op', 'fail', String(e), undefined, tableOpPayload); });
 
 // Table pagination — next_page_token is in res.paging, not res.metadata
-agg({
+const tablePagePayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'table', fields: ['company', 'city'] },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { limit: 5 }
-}).then(function(r) {
+};
+
+agg(tablePagePayload).then(function(r) {
     const token = r.paging && r.paging.next_page_token;
 
     if (!token) {
-        resolve('table-page', 'warn', 'אין next_page_token — has_more: ' + (r.paging && r.paging.has_more), r.paging);
+        resolve('table-page', 'warn', 'אין next_page_token — has_more: ' + (r.paging && r.paging.has_more), r.paging, tablePagePayload);
         return;
     }
 
-    return agg({
+    const page2Payload = {
         source: { layer: LAYER_CELLULAR, srid: 2039 },
         operation: { type: 'table', fields: ['company', 'city'] },
         filter: { view_mode: govmap.aggViewMode.Global },
         output: { limit: 5, page_token: token }
-    }).then(function(r2) {
-        resolve('table-page', 'pass', 'עמוד 2: ' + (r2.data && r2.data.length) + ' שורות', r2.data ? r2.data.slice(0, 2) : r2);
+    };
+
+    return agg(page2Payload).then(function(r2) {
+        resolve('table-page', 'pass', 'עמוד 2: ' + (r2.data && r2.data.length) + ' שורות', r2.data ? r2.data.slice(0, 2) : r2, page2Payload);
     });
-}).catch(function(e) { resolve('table-page', 'fail', String(e)); });
+}).catch(function(e) { resolve('table-page', 'fail', String(e), undefined, tablePagePayload); });
 
 // Page through to exhaustion (has_more: false), checking:
 // 1. No row reappears across pages, keyed on target.idField (the layer's true unique
@@ -265,9 +322,13 @@ agg({
 // 3. total_records_found stays constant across every page
 (async function runPaginationExhaustionTest() {
     const target = API_TEST_PAGINATION_TARGET;
-    const seenKeys = new Set();
+    const keyFields = target.idField ? [target.idField] : target.fields;
+    const seenKeys = new Map();
     const duplicates = [];
     const issues = [];
+    const pageSummaries = [];
+    const pageResponses = [];
+    const pageRequests = [];
 
     let pageToken = null;
     let pageCount = 0;
@@ -275,31 +336,68 @@ agg({
     let expectedTotal = null;
     let lastOffsetEnd = 0;
     let lastResponse = null;
+    let lastRequest = null;
 
     try {
         do {
             pageCount++;
 
             const output = pageToken ? { limit: 50, page_token: pageToken } : { limit: 50 };
-            const r = await agg({
+            const pagePayload = {
                 source: { layer: target.layer, srid: 2039 },
                 operation: { type: 'table', fields: target.fields },
                 filter: target.filter,
                 output: output
-            });
+            };
+            lastRequest = pagePayload;
+            pageRequests.push(pagePayload);
+            const r = await agg(pagePayload);
 
             lastResponse = r;
+            pageResponses.push(r);
             const rows = r.data || [];
             const meta = r.metadata || {};
+            const paging = r.paging || {};
 
-            const keyFields = target.idField ? [target.idField] : target.fields;
+            pageSummaries.push({
+                page: pageCount,
+                rowCount: rows.length,
+                offset_start: meta.offset_start,
+                offset_end: meta.offset_end,
+                total_records_found: meta.total_records_found,
+                has_more: paging.has_more === true,
+                has_next_page_token: !!paging.next_page_token
+            });
 
-            rows.forEach(function(row) {
+            rows.forEach(function(row, indexInPage) {
                 const key = keyFields.map(function(f) { return row[f]; }).join('|');
-                if (seenKeys.has(key)) {
-                    duplicates.push({ page: pageCount, key: key });
+                const absoluteIndex = totalRowsSeen + indexInPage;
+                const first = seenKeys.get(key);
+
+                if (first) {
+                    duplicates.push({
+                        idField: keyFields.join(','),
+                        key: key,
+                        row: row,
+                        firstSeen: {
+                            page: first.page,
+                            indexInPage: first.indexInPage,
+                            absoluteIndex: first.absoluteIndex,
+                            row: first.row
+                        },
+                        duplicateOn: {
+                            page: pageCount,
+                            indexInPage: indexInPage,
+                            absoluteIndex: absoluteIndex
+                        }
+                    });
                 } else {
-                    seenKeys.add(key);
+                    seenKeys.set(key, {
+                        page: pageCount,
+                        indexInPage: indexInPage,
+                        absoluteIndex: absoluteIndex,
+                        row: row
+                    });
                 }
             });
             totalRowsSeen += rows.length;
@@ -307,41 +405,121 @@ agg({
             if (expectedTotal === null) {
                 expectedTotal = meta.total_records_found;
             } else if (meta.total_records_found !== expectedTotal) {
-                issues.push('עמוד ' + pageCount + ': total_records_found השתנה ' + expectedTotal + ' → ' + meta.total_records_found);
+                issues.push(
+                    'עמוד ' + pageCount + ': total_records_found השתנה '
+                    + expectedTotal + ' → ' + meta.total_records_found
+                    + ' (offset ' + meta.offset_start + '-' + meta.offset_end + ')'
+                );
             }
 
             if (meta.offset_start !== lastOffsetEnd + 1) {
-                issues.push('עמוד ' + pageCount + ': offset_start=' + meta.offset_start + ' אינו רציף ל-offset_end הקודם=' + lastOffsetEnd);
+                issues.push(
+                    'עמוד ' + pageCount + ': offset_start=' + meta.offset_start
+                    + ' אינו רציף אחרי offset_end של העמוד הקודם=' + lastOffsetEnd
+                    + ' (ציפינו ל-' + (lastOffsetEnd + 1) + ')'
+                );
             }
+
             if (meta.offset_end > expectedTotal) {
-                issues.push('עמוד ' + pageCount + ': offset_end=' + meta.offset_end + ' גדול מ-total_records_found=' + expectedTotal);
+                issues.push(
+                    'עמוד ' + pageCount + ': offset_end=' + meta.offset_end
+                    + ' גדול מ-total_records_found=' + expectedTotal
+                );
             }
+
             lastOffsetEnd = meta.offset_end;
+            pageToken = paging.has_more ? paging.next_page_token : null;
 
-            pageToken = r.paging && r.paging.has_more ? r.paging.next_page_token : null;
-
-            if (r.paging && r.paging.has_more && !pageToken) {
-                issues.push('עמוד ' + pageCount + ': has_more=true אך אין next_page_token');
+            if (paging.has_more && !pageToken) {
+                issues.push(
+                    'עמוד ' + pageCount + ': has_more=true אך next_page_token חסר'
+                    + ' — אי אפשר להמשיך לעמוד הבא (offset ' + meta.offset_start + '-' + meta.offset_end + ')'
+                );
                 break;
             }
         } while (pageToken);
 
         if (duplicates.length > 0) {
-            issues.push(duplicates.length + ' שורות כפולות בין עמודים: ' + JSON.stringify(duplicates.slice(0, 5)));
-        }
-        if (totalRowsSeen !== expectedTotal) {
-            issues.push('סה"כ שורות שהוחזרו (' + totalRowsSeen + ') ≠ total_records_found (' + expectedTotal + ')');
+            const samples = duplicates.slice(0, 5).map(function(d) {
+                return d.idField + '=' + JSON.stringify(d.key)
+                    + ' לראשונה בעמוד ' + d.firstSeen.page
+                    + ' שורה #' + (d.firstSeen.indexInPage + 1)
+                    + ' (מוחלט #' + (d.firstSeen.absoluteIndex + 1) + ')'
+                    + ' → שוב בעמוד ' + d.duplicateOn.page
+                    + ' שורה #' + (d.duplicateOn.indexInPage + 1)
+                    + ' (מוחלט #' + (d.duplicateOn.absoluteIndex + 1) + ')';
+            });
+            issues.push(
+                duplicates.length + ' כפילויות לפי מפתח ' + keyFields.join(',') + ': '
+                + samples.join(' · ')
+                + (duplicates.length > 5 ? ' · …ועוד ' + (duplicates.length - 5) : '')
+            );
         }
 
-        const summary = pageCount + ' עמודים, ' + totalRowsSeen + ' שורות, total_records_found=' + expectedTotal;
+        if (totalRowsSeen !== expectedTotal) {
+            const last = pageSummaries[pageSummaries.length - 1];
+            let stopReason = 'לא התקבלו עמודים';
+
+            if (last) {
+                if (last.has_more && !last.has_next_page_token) {
+                    stopReason = 'נעצר כי has_more=true בלי next_page_token';
+                } else if (last.has_more) {
+                    stopReason = 'has_more=true אך הלולאה נעצרה';
+                } else {
+                    stopReason = 'השרת החזיר has_more=false מוקדם מדי';
+                }
+            }
+
+            issues.push(
+                'עימוד לא הושלם: התקבלו ' + totalRowsSeen + ' שורות'
+                + ' (' + seenKeys.size + ' מפתחות ייחודיים לפי ' + keyFields.join(',') + ')'
+                + ' מתוך total_records_found=' + expectedTotal
+                + ' · חסרות ' + (expectedTotal - totalRowsSeen) + ' שורות'
+                + ' · ' + stopReason
+                + (last
+                    ? ' · עמוד אחרון #' + last.page
+                        + ' offset ' + last.offset_start + '-' + last.offset_end
+                        + ', has_more=' + last.has_more
+                        + ', next_page_token=' + (last.has_next_page_token ? 'קיים' : 'חסר')
+                    : '')
+            );
+        }
+
+        const summary = pageCount + ' עמודים, '
+            + totalRowsSeen + ' שורות, '
+            + seenKeys.size + ' ייחודיים לפי ' + keyFields.join(',') + ', '
+            + 'total_records_found=' + expectedTotal;
+
         resolve(
             'table-page-exhaust',
             issues.length === 0 ? 'pass' : 'fail',
             issues.length === 0 ? summary : summary + ' — ' + issues.join('; '),
-            { pages: pageCount, totalRowsSeen: totalRowsSeen, expectedTotal: expectedTotal, duplicates: duplicates, lastPage: lastResponse }
+            {
+                idField: keyFields,
+                fields: target.fields,
+                layer: target.layer,
+                pages: pageSummaries,
+                totalRowsSeen: totalRowsSeen,
+                uniqueKeys: seenKeys.size,
+                expectedTotal: expectedTotal,
+                duplicates: duplicates,
+                responses: pageResponses
+            },
+            { pages: pageRequests }
         );
     } catch (e) {
-        resolve('table-page-exhaust', 'fail', 'עמוד ' + pageCount + ': ' + String(e), lastResponse);
+        resolve(
+            'table-page-exhaust',
+            'fail',
+            'עמוד ' + pageCount + ': ' + String(e)
+                + (lastRequest ? ' · בקשה אחרונה: layer=' + target.layer + ', fields=' + JSON.stringify(target.fields) : ''),
+            {
+                error: String(e),
+                responses: pageResponses.length > 0 ? pageResponses : (lastResponse != null ? [lastResponse] : []),
+                pages: pageSummaries
+            },
+            pageRequests.length > 0 ? { pages: pageRequests } : lastRequest
+        );
     }
 })();
 
@@ -349,28 +527,33 @@ agg({
 
 var pctGlobal, pctFiltered;
 
-agg({
+const pctGlobalPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     filter: { view_mode: govmap.aggViewMode.Global }
-}).then(function(r) {
+};
+
+const pctFilteredPayload = {
+    source: { layer: LAYER_CELLULAR, srid: 2039 },
+    operation: { type: 'count' },
+    filter: {
+        view_mode: govmap.aggViewMode.Extent,
+        bbox: TLV_BBOX
+    }
+};
+
+agg(pctGlobalPayload).then(function(r) {
     pctGlobal = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
 
-    return agg({
-        source: { layer: LAYER_CELLULAR, srid: 2039 },
-        operation: { type: 'count' },
-        filter: {
-            view_mode: govmap.aggViewMode.Extent,
-            bbox: TLV_BBOX
-        }
-    });
+    return agg(pctFilteredPayload);
 }).then(function(r) {
     pctFiltered = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
     const pct = pctGlobal ? ((pctFiltered / pctGlobal) * 100).toFixed(2) : '?';
     resolve('pct-kpi', 'pass',
         'גלובלי: ' + pctGlobal + ', מסונן: ' + pctFiltered + ' → ' + pct + '%',
-        { global: pctGlobal, filtered: pctFiltered, pct });
-}).catch(function(e) { resolve('pct-kpi', 'fail', String(e)); });
+        { global: pctGlobal, filtered: pctFiltered, pct },
+        { global: pctGlobalPayload, filtered: pctFilteredPayload });
+}).catch(function(e) { resolve('pct-kpi', 'fail', String(e), undefined, { global: pctGlobalPayload, filtered: pctFilteredPayload }); });
 
 // ── Timeseries interval × aggregation ─────────────────────────────────────────
 
@@ -390,24 +573,26 @@ Object.values(govmap.aggTimeseriesInterval || {}).forEach(function(interval) {
             op.field = 'dunam';
         }
 
-        agg({
+        const payload = {
             source: { layer: LAYER_AGRIC, srid: 2039 },
             operation: op,
             filter: { view_mode: govmap.aggViewMode.Global }
-        }).then(function(r) {
+        };
+
+        agg(payload).then(function(r) {
             if (r.error) {
-                resolve(id, 'fail', String(r.error), r);
+                resolve(id, 'fail', String(r.error), r, payload);
                 return;
             }
 
             const sample = r.data && r.data[0];
-            resolve(id, 'pass', (r.data && r.data.length) + ' נקודות · ' + JSON.stringify(sample).slice(0, 80), r.data && r.data.slice(0, 2));
-        }).catch(function(e) { resolve(id, 'fail', String(e)); });
+            resolve(id, 'pass', (r.data && r.data.length) + ' נקודות · ' + JSON.stringify(sample).slice(0, 80), r.data && r.data.slice(0, 2), payload);
+        }).catch(function(e) { resolve(id, 'fail', String(e), undefined, payload); });
     });
 });
 
 // Quarter — no dedicated interval; use month + filter.filter BETWEEN to scope a single quarter
-agg({
+const tsQuarterPayload = {
     source: { layer: LAYER_TLV_PARCELS, srid: 2039 },
     operation: {
         type: 'timeseries',
@@ -421,46 +606,59 @@ agg({
         view_mode: govmap.aggViewMode.Global,
         filter: '(tr_status_migrash BETWEEN 2024-01-01T00:00:00 AND 2024-03-31T23:59:59)'
     }
-}).then(function(r) {
+};
+
+agg(tsQuarterPayload).then(function(r) {
     const pts = r.data && r.data.length;
     resolve('ts-quarter', pts <= 3 ? 'pass' : 'warn',
         'Q1 2024: ' + pts + ' נקודות זמן (חודשי בטווח רבעון)',
-        r.data && r.data.slice(0, 4));
-}).catch(function(e) { resolve('ts-quarter', 'fail', String(e)); });
+        r.data && r.data.slice(0, 4),
+        tsQuarterPayload);
+}).catch(function(e) { resolve('ts-quarter', 'fail', String(e), undefined, tsQuarterPayload); });
 
 // ── Bbox / extent filter ──────────────────────────────────────────────────────
 
 var bboxGlobalCount, bboxExtentCount;
 
-agg({
+const bboxGlobalPayload = {
     source: { layer: LAYER_TLV_PARCELS, srid: 2039 },
     operation: { type: 'count' },
     filter: { view_mode: govmap.aggViewMode.Global }
-}).then(function(r) {
-    bboxGlobalCount = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
-    resolve('bbox-global', 'pass', 'סה"כ רשומות: ' + bboxGlobalCount, r.data);
-}).catch(function(e) { resolve('bbox-global', 'fail', String(e)); });
+};
 
-agg({
+agg(bboxGlobalPayload).then(function(r) {
+    bboxGlobalCount = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
+    resolve('bbox-global', 'pass', 'סה"כ רשומות: ' + bboxGlobalCount, r.data, bboxGlobalPayload);
+}).catch(function(e) { resolve('bbox-global', 'fail', String(e), undefined, bboxGlobalPayload); });
+
+const bboxExtentPayload = {
     source: { layer: LAYER_TLV_PARCELS, srid: 2039 },
     operation: { type: 'count' },
     filter: { view_mode: govmap.aggViewMode.Extent, bbox: TLV_BBOX }
-}).then(function(r) {
+};
+
+agg(bboxExtentPayload).then(function(r) {
     bboxExtentCount = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
-    resolve('bbox-extent', 'pass', 'בתוך bbox: ' + bboxExtentCount, r.data);
+    resolve('bbox-extent', 'pass', 'בתוך bbox: ' + bboxExtentCount, r.data, bboxExtentPayload);
 
     if (bboxGlobalCount !== undefined) {
         if (bboxExtentCount < bboxGlobalCount) {
-            resolve('bbox-diff', 'pass', 'Extent (' + bboxExtentCount + ') < Global (' + bboxGlobalCount + ') — סינון מרחבי עובד');
+            resolve('bbox-diff', 'pass', 'Extent (' + bboxExtentCount + ') < Global (' + bboxGlobalCount + ') — סינון מרחבי עובד',
+                { extent: bboxExtentCount, global: bboxGlobalCount },
+                { global: bboxGlobalPayload, extent: bboxExtentPayload });
         } else {
-            resolve('bbox-diff', 'warn', 'Extent (' + bboxExtentCount + ') ≥ Global (' + bboxGlobalCount + ') — ייתכן שה-bbox כולל את הכל');
+            resolve('bbox-diff', 'warn', 'Extent (' + bboxExtentCount + ') ≥ Global (' + bboxGlobalCount + ') — ייתכן שה-bbox כולל את הכל',
+                { extent: bboxExtentCount, global: bboxGlobalCount },
+                { global: bboxGlobalPayload, extent: bboxExtentPayload });
         }
     } else {
-        resolve('bbox-diff', 'warn', 'global עדיין לא הסתיים — רענן לביקורת');
+        resolve('bbox-diff', 'warn', 'global עדיין לא הסתיים — רענן לביקורת',
+            undefined,
+            { global: bboxGlobalPayload, extent: bboxExtentPayload });
     }
 }).catch(function(e) {
-    resolve('bbox-extent', 'fail', String(e));
-    resolve('bbox-diff', 'fail', 'bbox-extent נכשל');
+    resolve('bbox-extent', 'fail', String(e), undefined, bboxExtentPayload);
+    resolve('bbox-diff', 'fail', 'bbox-extent נכשל', undefined, { global: bboxGlobalPayload, extent: bboxExtentPayload });
 });
 
 // ── Spatial filter by reference layer ────────────────────────────────────────
@@ -486,71 +684,114 @@ agg(spatFilterPayload).then(function(r) {
 
 // ── Category: sum / avg with grouping ─────────────────────────────────────────
 
-agg({
+const catSumPayload = {
     source: { layer: LAYER_AGRIC, srid: 2039 },
     operation: { type: 'sum', field: 'dunam' },
     grouping: { group_by: 'yeshuvname', group_limit: 10 },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { sort_order: govmap.aggSortOrder.Desc }
-}).then(function(r) {
-    resolve('cat-sum', 'pass', (r.data && r.data.length) + ' קטגוריות, שדה sum', r.data && r.data.slice(0, 3));
-}).catch(function(e) { resolve('cat-sum', 'fail', String(e)); });
+};
 
-agg({
+agg(catSumPayload).then(function(r) {
+    resolve('cat-sum', 'pass', (r.data && r.data.length) + ' קטגוריות, שדה sum', r.data && r.data.slice(0, 3), catSumPayload);
+}).catch(function(e) { resolve('cat-sum', 'fail', String(e), undefined, catSumPayload); });
+
+const catAvgPayload = {
     source: { layer: LAYER_AGRIC, srid: 2039 },
     operation: { type: 'avg', field: 'dunam' },
     grouping: { group_by: 'yeshuvname', group_limit: 10 },
     filter: { view_mode: govmap.aggViewMode.Global }
-}).then(function(r) {
-    resolve('cat-avg', 'pass', (r.data && r.data.length) + ' קטגוריות, שדה avg', r.data && r.data.slice(0, 3));
-}).catch(function(e) { resolve('cat-avg', 'fail', String(e)); });
+};
+
+agg(catAvgPayload).then(function(r) {
+    resolve('cat-avg', 'pass', (r.data && r.data.length) + ' קטגוריות, שדה avg', r.data && r.data.slice(0, 3), catAvgPayload);
+}).catch(function(e) { resolve('cat-avg', 'fail', String(e), undefined, catAvgPayload); });
 
 // ── Other bucket ──────────────────────────────────────────────────────────────
 
 // LAYER_AGRIC / yeshuvname has many distinct values — limit:3 forces the overflow bucket
-agg({
+const otherBucketPayload = {
     source: { layer: LAYER_AGRIC, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 'yeshuvname' },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { limit: 3, include_percentage: true }
-}).then(function(r) {
+};
+
+agg(otherBucketPayload).then(function(r) {
     const rows = r.data || [];
     const other = rows.find(function(d) { return d.yeshuvname === 'אחר'; });
     const keys = rows.map(function(d) { return Object.values(d).join('|'); }).join(' / ');
 
     if (other) {
-        resolve('other-bucket', 'pass', 'bucket "אחר" קיים בתגובה', rows);
+        resolve('other-bucket', 'pass', 'bucket "אחר" קיים בתגובה', rows, otherBucketPayload);
     } else {
-        resolve('other-bucket', 'warn', 'לא זוהה bucket "אחר". שורות: ' + keys, rows);
+        resolve('other-bucket', 'warn', 'לא זוהה bucket "אחר". שורות: ' + keys, rows, otherBucketPayload);
     }
-}).catch(function(e) { resolve('other-bucket', 'fail', String(e)); });
+}).catch(function(e) { resolve('other-bucket', 'fail', String(e), undefined, otherBucketPayload); });
+
+// ── Other bucket: NULL rows ───────────────────────────────────────────────────
+
+// The overflow bucket is built with `"group"::text NOT IN (top keys)`. In SQL a NULL
+// group field makes that predicate NULL rather than TRUE, so those rows land in no
+// bucket at all — while total_records_processed still counts them, which also holds
+// include_percentage below 100. Layers with no NULLs in the group field pass either way.
+const otherBucketNullsPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'count' },
+    grouping: { group_by: 'yeshuvname' },
+    filter: { view_mode: govmap.aggViewMode.Global },
+    output: { limit: 3, include_percentage: true }
+};
+
+agg(otherBucketNullsPayload).then(function(r) {
+    const rows = r.data || [];
+    const bucketed = rows.reduce(function(sum, d) { return sum + (d.count || 0); }, 0);
+    const processed = r.metadata && r.metadata.total_records_processed;
+    const pctSum = rows.reduce(function(sum, d) { return sum + (d.percentage || 0); }, 0);
+    const gap = processed - bucketed;
+    const detail = { bucketed: bucketed, total_records_processed: processed, gap: gap, percentage_sum: pctSum };
+
+    if (gap === 0) {
+        resolve('other-bucket-nulls', 'pass',
+            'כל ' + processed + ' הרשומות משויכות ל-bucket, סכום אחוזים ' + pctSum.toFixed(2),
+            detail, otherBucketNullsPayload);
+    } else {
+        resolve('other-bucket-nulls', 'fail',
+            gap + ' רשומות (NULL) אינן באף bucket — ' + bucketed + ' מתוך ' + processed + ', סכום אחוזים ' + pctSum.toFixed(2),
+            detail, otherBucketNullsPayload);
+    }
+}).catch(function(e) { resolve('other-bucket-nulls', 'fail', String(e), undefined, otherBucketNullsPayload); });
 
 // ── Null handling ─────────────────────────────────────────────────────────────
 
-agg({
+const nullExcludePayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 'company' },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { null_handling: govmap.aggNullHandling ? govmap.aggNullHandling.Exclude : 'exclude' }
-}).then(function(r) {
-    resolve('null-exclude', 'pass', (r.data && r.data.length) + ' קבוצות (ללא null)', r.data && r.data.slice(0, 3));
-}).catch(function(e) { resolve('null-exclude', 'fail', String(e)); });
+};
 
-agg({
+agg(nullExcludePayload).then(function(r) {
+    resolve('null-exclude', 'pass', (r.data && r.data.length) + ' קבוצות (ללא null)', r.data && r.data.slice(0, 3), nullExcludePayload);
+}).catch(function(e) { resolve('null-exclude', 'fail', String(e), undefined, nullExcludePayload); });
+
+const nullIncludePayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 'company' },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { null_handling: govmap.aggNullHandling ? govmap.aggNullHandling.IncludeAsOther : 'include_as_other' }
-}).then(function(r) {
-    resolve('null-include-other', 'pass', (r.data && r.data.length) + ' קבוצות (null כ-other)', r.data && r.data.slice(0, 3));
-}).catch(function(e) { resolve('null-include-other', 'fail', String(e)); });
+};
+
+agg(nullIncludePayload).then(function(r) {
+    resolve('null-include-other', 'pass', (r.data && r.data.length) + ' קבוצות (null כ-other)', r.data && r.data.slice(0, 3), nullIncludePayload);
+}).catch(function(e) { resolve('null-include-other', 'fail', String(e), undefined, nullIncludePayload); });
 
 // ── Spatial sub-group ─────────────────────────────────────────────────────────
 
-agg({
+const subSpatPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     grouping: {
@@ -567,31 +808,36 @@ agg({
             relation: govmap.aggSpatialRelation.Within
         }
     }
-}).then(function(r) {
-    resolve('sub-spat', 'pass', (r.data && r.data.length) + ' שורות company × שכונה', r.data && r.data.slice(0, 4));
-}).catch(function(e) { resolve('sub-spat', 'fail', String(e)); });
+};
+
+agg(subSpatPayload).then(function(r) {
+    resolve('sub-spat', 'pass', (r.data && r.data.length) + ' שורות company × שכונה', r.data && r.data.slice(0, 4), subSpatPayload);
+}).catch(function(e) { resolve('sub-spat', 'fail', String(e), undefined, subSpatPayload); });
 
 // ── Comparison ────────────────────────────────────────────────────────────────
 
 // comparison works on scalar operations only (no grouping) — decorates data.comparison
-agg({
+const compareGlobalPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     filter: { view_mode: govmap.aggViewMode.Global },
     comparison: { compare_to: 'global' }
-}).then(function(r) {
+};
+
+agg(compareGlobalPayload).then(function(r) {
     const comp = r.data && r.data.comparison;
     const hasComp = comp && comp.global_value !== undefined && comp.absolute_diff !== undefined;
     resolve('compare-global', hasComp ? 'pass' : 'warn',
         hasComp
             ? 'global_value: ' + comp.global_value + ', absolute_diff: ' + comp.absolute_diff + ', status: ' + comp.status
             : 'שדה comparison לא זוהה — מבנה: ' + JSON.stringify(r.data).slice(0, 120),
-        r.data);
-}).catch(function(e) { resolve('compare-global', 'fail', String(e)); });
+        r.data,
+        compareGlobalPayload);
+}).catch(function(e) { resolve('compare-global', 'fail', String(e), undefined, compareGlobalPayload); });
 
 // prev_period: requires filter.filter with a BETWEEN date range — server shifts it back one year.
 // Format: (field BETWEEN value1 AND value2) — outer parens, no quotes around dates, no inner parens.
-agg({
+const comparePrevPayload = {
     source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
     operation: { type: 'count' },
     filter: {
@@ -599,36 +845,40 @@ agg({
         filter: '(open_request BETWEEN 2024-01-01T00:00:00 AND 2024-12-31T23:59:59)'
     },
     comparison: { compare_to: 'prev_period' }
-}).then(function(r) {
+};
+
+agg(comparePrevPayload).then(function(r) {
     const comp = r.data && r.data.comparison;
     const hasComp = comp && comp.previous_value !== undefined && comp.absolute_diff !== undefined;
     resolve('compare-prev-period', hasComp ? 'pass' : 'warn',
         hasComp
             ? 'previous_value (2023): ' + comp.previous_value + ', absolute_diff: ' + comp.absolute_diff + ', status: ' + comp.status
             : 'שדה comparison לא זוהה — מבנה: ' + JSON.stringify(r.data).slice(0, 120),
-        r.data);
-}).catch(function(e) { resolve('compare-prev-period', 'fail', String(e)); });
+        r.data,
+        comparePrevPayload);
+}).catch(function(e) { resolve('compare-prev-period', 'fail', String(e), undefined, comparePrevPayload); });
 
 // ── Display format ────────────────────────────────────────────────────────────
 
 Object.values(govmap.aggDisplayFormat || {}).forEach(function(fmt) {
     const id = 'fmt-' + fmt;
-
-    agg({
+    const payload = {
         source: { layer: LAYER_CELLULAR, srid: 2039 },
         operation: { type: 'count' },
         grouping: { group_by: 'company' },
         filter: { view_mode: govmap.aggViewMode.Global },
         output: { display_format: fmt, include_percentage: true }
-    }).then(function(r) {
+    };
+
+    agg(payload).then(function(r) {
         const sample = r.data && r.data[0];
-        resolve(id, 'pass', 'display_format=' + fmt + ' → דוגמה: ' + JSON.stringify(sample).slice(0, 120), r.data && r.data.slice(0, 2));
-    }).catch(function(e) { resolve(id, 'fail', String(e)); });
+        resolve(id, 'pass', 'display_format=' + fmt + ' → דוגמה: ' + JSON.stringify(sample).slice(0, 120), r.data && r.data.slice(0, 2), payload);
+    }).catch(function(e) { resolve(id, 'fail', String(e), undefined, payload); });
 });
 
 // ── Sort ──────────────────────────────────────────────────────────────────────
 
-agg({
+const sortAlphaPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 'company' },
@@ -638,28 +888,33 @@ agg({
         sort_type: govmap.aggSortType ? govmap.aggSortType.Alphabetic : 'alphabetic',
         sort_order: govmap.aggSortOrder.Asc
     }
-}).then(function(r) {
-    const keys = r.data && r.data.map(function(d) { return d.company || d[Object.keys(d)[0]]; });
-    resolve('sort-alpha', 'pass', 'מיון אלפביתי: ' + (keys && keys.join(', ')), r.data);
-}).catch(function(e) { resolve('sort-alpha', 'fail', String(e)); });
+};
 
-agg({
+agg(sortAlphaPayload).then(function(r) {
+    const keys = r.data && r.data.map(function(d) { return d.company || d[Object.keys(d)[0]]; });
+    resolve('sort-alpha', 'pass', 'מיון אלפביתי: ' + (keys && keys.join(', ')), r.data, sortAlphaPayload);
+}).catch(function(e) { resolve('sort-alpha', 'fail', String(e), undefined, sortAlphaPayload); });
+
+const sortAscPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     grouping: { group_by: 'company' },
     filter: { view_mode: govmap.aggViewMode.Global },
     output: { sort_order: govmap.aggSortOrder.Asc }
-}).then(function(r) {
+};
+
+agg(sortAscPayload).then(function(r) {
     const vals = r.data && r.data.map(function(d) { return d.count; });
     const sorted = vals && vals.every(function(v, i) { return i === 0 || v >= vals[i - 1]; });
     resolve('sort-asc', sorted ? 'pass' : 'warn',
         sorted ? 'סדר עולה מאושר: ' + vals.join(', ') : 'סדר לא עולה: ' + vals.join(', '),
-        r.data);
-}).catch(function(e) { resolve('sort-asc', 'fail', String(e)); });
+        r.data,
+        sortAscPayload);
+}).catch(function(e) { resolve('sort-asc', 'fail', String(e), undefined, sortAscPayload); });
 
 // ── Grouped timeseries ────────────────────────────────────────────────────────
 
-agg({
+const tsGroupedPayload = {
     source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
     operation: {
         type: 'timeseries',
@@ -671,7 +926,9 @@ agg({
     },
     grouping: { group_by: 'building_stage' },
     filter: { view_mode: govmap.aggViewMode.Global }
-}).then(function(r) {
+};
+
+agg(tsGroupedPayload).then(function(r) {
     const rows = r.data || [];
     const firstGroup = rows[0];
     const hasGroupField = firstGroup && firstGroup.building_stage !== undefined;
@@ -680,45 +937,51 @@ agg({
     if (hasGroupField && hasSeriesArray) {
         resolve('ts-grouped', 'pass',
             rows.length + ' קבוצות, דוגמה: ' + (firstGroup.building_stage) + ' → ' + firstGroup.series.length + ' נקודות זמן',
-            rows.slice(0, 2));
+            rows.slice(0, 2),
+            tsGroupedPayload);
     } else {
         resolve('ts-grouped', 'warn',
             'מבנה לא צפוי — אין group_field או series[]. keys: ' + JSON.stringify(Object.keys(firstGroup || {})),
-            rows.slice(0, 2));
+            rows.slice(0, 2),
+            tsGroupedPayload);
     }
-}).catch(function(e) { resolve('ts-grouped', 'fail', String(e)); });
+}).catch(function(e) { resolve('ts-grouped', 'fail', String(e), undefined, tsGroupedPayload); });
 
 // Grouped vs ungrouped: same layer + interval + date_field, only difference is grouping.group_by.
 // The ungrouped call returns one series of {key, count} per year; the grouped call returns
 // [{ building_stage, series: [{key, count}] }, ...]. Summing the grouped series by year should
 // match the ungrouped counts, and the individual group series should differ from that total.
 
+const tsFlatPayload = {
+    source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
+    operation: {
+        type: 'timeseries',
+        timeseries: {
+            date_field: 'open_request',
+            interval: govmap.aggTimeseriesInterval.Year,
+            aggregation: govmap.aggTimeseriesAggregation.Count
+        }
+    },
+    filter: { view_mode: govmap.aggViewMode.Global }
+};
+
+const tsGroupedVsPayload = {
+    source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
+    operation: {
+        type: 'timeseries',
+        timeseries: {
+            date_field: 'open_request',
+            interval: govmap.aggTimeseriesInterval.Year,
+            aggregation: govmap.aggTimeseriesAggregation.Count
+        }
+    },
+    grouping: { group_by: 'building_stage' },
+    filter: { view_mode: govmap.aggViewMode.Global }
+};
+
 Promise.all([
-    agg({
-        source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
-        operation: {
-            type: 'timeseries',
-            timeseries: {
-                date_field: 'open_request',
-                interval: govmap.aggTimeseriesInterval.Year,
-                aggregation: govmap.aggTimeseriesAggregation.Count
-            }
-        },
-        filter: { view_mode: govmap.aggViewMode.Global }
-    }),
-    agg({
-        source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
-        operation: {
-            type: 'timeseries',
-            timeseries: {
-                date_field: 'open_request',
-                interval: govmap.aggTimeseriesInterval.Year,
-                aggregation: govmap.aggTimeseriesAggregation.Count
-            }
-        },
-        grouping: { group_by: 'building_stage' },
-        filter: { view_mode: govmap.aggViewMode.Global }
-    })
+    agg(tsFlatPayload),
+    agg(tsGroupedVsPayload)
 ]).then(function(results) {
     const flatRes = results[0];
     const groupedRes = results[1];
@@ -747,11 +1010,13 @@ Promise.all([
         grouped_sample: groupedRows.slice(0, 2),
         totals_per_year: years.map((y) => ({ year: y, ungrouped: flatByYear[y] || 0, grouped_sum: groupedSumByYear[y] || 0 }))
     };
+    const request = { ungrouped: tsFlatPayload, grouped: tsGroupedVsPayload };
 
     if (mismatches.length > 0) {
         resolve('ts-grouped-vs-total', 'fail',
             'סכום קבוצות ≠ ללא group_by לשנים: ' + mismatches.join(', '),
-            raw);
+            raw,
+            request);
 
         return;
     }
@@ -759,86 +1024,198 @@ Promise.all([
     if (groupedRows.length < 2 || !groupDiffersFromTotal) {
         resolve('ts-grouped-vs-total', 'warn',
             'סכומים תואמים אך group_by לא באמת מפצל (' + groupedRows.length + ' קבוצות)',
-            raw);
+            raw,
+            request);
 
         return;
     }
 
     resolve('ts-grouped-vs-total', 'pass',
         groupedRows.length + ' קבוצות × ' + years.length + ' שנים — סכום קבוצות = ללא group_by, סדרות שונות',
-        raw);
-}).catch(function(e) { resolve('ts-grouped-vs-total', 'fail', String(e)); });
+        raw,
+        request);
+}).catch(function(e) { resolve('ts-grouped-vs-total', 'fail', String(e), undefined, { ungrouped: tsFlatPayload, grouped: tsGroupedVsPayload }); });
 
 // ── Attribute filter (filter.filter SQL predicate) ────────────────────────────
 
-agg({
+const attrFilterStrPayload = {
     source: { layer: LAYER_CELLULAR, srid: 2039 },
     operation: { type: 'count' },
     filter: { view_mode: govmap.aggViewMode.Global, filter: "(company = 'סלקום')" }
-}).then(function(r) {
+};
+
+const attrFilterStrGlobalPayload = {
+    source: { layer: LAYER_CELLULAR, srid: 2039 },
+    operation: { type: 'count' },
+    filter: { view_mode: govmap.aggViewMode.Global }
+};
+
+agg(attrFilterStrPayload).then(function(r) {
     const filtered = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
 
-    return agg({
-        source: { layer: LAYER_CELLULAR, srid: 2039 },
-        operation: { type: 'count' },
-        filter: { view_mode: govmap.aggViewMode.Global }
-    }).then(function(globalR) {
+    return agg(attrFilterStrGlobalPayload).then(function(globalR) {
         const global = globalR.data && (globalR.data.value !== undefined ? globalR.data.value : globalR.data.count);
+        const request = { filtered: attrFilterStrPayload, global: attrFilterStrGlobalPayload };
 
         if (filtered > 0 && filtered < global) {
-            resolve('attr-filter-str-eq', 'pass', "company = 'סלקום' → " + filtered + ' מתוך ' + global);
+            resolve('attr-filter-str-eq', 'pass', "company = 'סלקום' → " + filtered + ' מתוך ' + global, { filtered: filtered, global: global }, request);
         } else if (filtered >= global) {
-            resolve('attr-filter-str-eq', 'fail', 'filter.filter נתעלם — החזיר ' + filtered + ' = גלובלי');
+            resolve('attr-filter-str-eq', 'fail', 'filter.filter מתעלם — החזיר ' + filtered + ' = גלובלי', { filtered: filtered, global: global }, request);
         } else {
-            resolve('attr-filter-str-eq', 'fail', 'החזיר ' + filtered + ' (גלובלי: ' + global + ')', r.data);
+            resolve('attr-filter-str-eq', 'fail', 'החזיר ' + filtered + ' (גלובלי: ' + global + ')', r.data, request);
         }
     });
-}).catch(function(e) { resolve('attr-filter-str-eq', 'fail', String(e)); });
+}).catch(function(e) { resolve('attr-filter-str-eq', 'fail', String(e), undefined, { filtered: attrFilterStrPayload, global: attrFilterStrGlobalPayload }); });
 
 // BETWEEN on date/numeric columns works correctly.
 
 var attrFilteredCount;
 
-agg({
+const attrFilterEqPayload = {
     source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
     operation: { type: 'count' },
     filter: {
         view_mode: govmap.aggViewMode.Global,
         filter: '(open_request BETWEEN 2024-01-01T00:00:00 AND 2024-12-31T23:59:59)'
     }
-}).then(function(r) {
-    attrFilteredCount = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
-    resolve('attr-filter-eq', 'pass', 'BETWEEN 2024 → ' + attrFilteredCount + ' רשומות', r.data);
+};
 
-    return agg({
-        source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
-        operation: { type: 'count' },
-        filter: { view_mode: govmap.aggViewMode.Global }
-    });
+const attrFilterCountGlobalPayload = {
+    source: { layer: LAYER_BUILDING_PERMITS_TLV, srid: 2039 },
+    operation: { type: 'count' },
+    filter: { view_mode: govmap.aggViewMode.Global }
+};
+
+agg(attrFilterEqPayload).then(function(r) {
+    attrFilteredCount = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
+    resolve('attr-filter-eq', 'pass', 'BETWEEN 2024 → ' + attrFilteredCount + ' רשומות', r.data, attrFilterEqPayload);
+
+    return agg(attrFilterCountGlobalPayload);
 }).then(function(r) {
     if (!r) { return; }
     const globalCount = r.data && (r.data.value !== undefined ? r.data.value : r.data.count);
+    const request = { filtered: attrFilterEqPayload, global: attrFilterCountGlobalPayload };
 
     if (attrFilteredCount < globalCount) {
         resolve('attr-filter-count', 'pass',
-            'מסונן (' + attrFilteredCount + ') < גלובלי (' + globalCount + ') — BETWEEN מסנן');
+            'מסונן (' + attrFilteredCount + ') < גלובלי (' + globalCount + ') — BETWEEN מסנן',
+            { filtered: attrFilteredCount, global: globalCount },
+            request);
     } else {
         resolve('attr-filter-count', 'warn',
-            'מסונן (' + attrFilteredCount + ') ≥ גלובלי (' + globalCount + ') — predicate לא מסנן');
+            'מסונן (' + attrFilteredCount + ') ≥ גלובלי (' + globalCount + ') — predicate לא מסנן',
+            { filtered: attrFilteredCount, global: globalCount },
+            request);
     }
 }).catch(function(e) {
-    resolve('attr-filter-eq', 'fail', String(e));
-    resolve('attr-filter-count', 'fail', 'attr-filter-eq נכשל');
+    resolve('attr-filter-eq', 'fail', String(e), undefined, attrFilterEqPayload);
+    resolve('attr-filter-count', 'fail', 'attr-filter-eq נכשל', undefined, { filtered: attrFilterEqPayload, global: attrFilterCountGlobalPayload });
 });
+
+// ── Attribute filter: unsupported operator must not pass silently ─────────────
+
+// libs/filters accepts only = <> >= <= IN BETWEEN LIKE IS NULL / IS NOT NULL. A strict
+// `>` matches no operator, so the condition is dropped, no WHERE clause is added, and the
+// query runs unfiltered with HTTP 200 — the caller cannot tell the filter was discarded.
+// An explicit error would be the correct response.
+
+const attrFilterStrictGlobalPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'count' },
+    filter: { view_mode: govmap.aggViewMode.Global }
+};
+
+const attrFilterStrictPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'count' },
+    filter: { view_mode: govmap.aggViewMode.Global, filter: '(dunam>100)' }
+};
+
+agg(attrFilterStrictGlobalPayload).then(function(globalR) {
+    const global = globalR.data && globalR.data.value;
+
+    return agg(attrFilterStrictPayload).then(function(r) {
+        const strict = r.data && r.data.value;
+        const request = { global: attrFilterStrictGlobalPayload, strict: attrFilterStrictPayload };
+        const detail = { global: global, strict_gt: strict, error: r.error };
+
+        if (r.error) {
+            resolve('attr-filter-unsupported-op', 'pass', 'נדחה בשגיאה: ' + r.error, detail, request);
+        } else if (strict === global) {
+            resolve('attr-filter-unsupported-op', 'fail',
+                '(dunam>100) מתעלם בשקט — החזיר ' + strict + ' = ללא סינון',
+                detail, request);
+        } else {
+            resolve('attr-filter-unsupported-op', 'pass',
+                '(dunam>100) סינן → ' + strict + ' מתוך ' + global,
+                detail, request);
+        }
+    });
+}).catch(function(e) { resolve('attr-filter-unsupported-op', 'fail', String(e), undefined, attrFilterStrictPayload); });
+
+// ── Attribute filter: OR between two predicates ───────────────────────────────
+
+// CONDITION_PATTERN collects each parenthesized predicate separately and
+// toParameterizedSql joins them with ' AND ', so the ` OR ` token between two groups is
+// discarded and the query becomes an intersection — returning 0 instead of the union.
+// The two keys are read from the data so the test works on any layer.
+
+const attrFilterOrKeysPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'count' },
+    grouping: { group_by: 'dunam' },
+    filter: { view_mode: govmap.aggViewMode.Global },
+    output: { limit: 2 }
+};
+
+agg(attrFilterOrKeysPayload).then(function(keysR) {
+    const keys = (keysR.data || []).filter(function(d) { return d.dunam !== 'אחר'; }).slice(0, 2);
+
+    if (keys.length < 2) {
+        resolve('attr-filter-or', 'warn', 'לא נמצאו שני ערכים לבדיקה', keysR.data, attrFilterOrKeysPayload);
+
+        return;
+    }
+
+    const expected = keys[0].count + keys[1].count;
+    const orPayload = {
+        source: { layer: LAYER_AGRIC, srid: 2039 },
+        operation: { type: 'count' },
+        filter: {
+            view_mode: govmap.aggViewMode.Global,
+            filter: '(dunam=' + keys[0].dunam + ') OR (dunam=' + keys[1].dunam + ')'
+        }
+    };
+
+    return agg(orPayload).then(function(r) {
+        const got = r.data && r.data.value;
+        const detail = { expected_union: expected, got: got, error: r.error };
+
+        if (r.error) {
+            resolve('attr-filter-or', 'warn', 'OR נדחה בשגיאה: ' + r.error, detail, orPayload);
+        } else if (got === expected) {
+            resolve('attr-filter-or', 'pass', 'OR → ' + got + ' = איחוד שתי הקבוצות', detail, orPayload);
+        } else {
+            resolve('attr-filter-or', 'fail',
+                'OR → ' + got + ' במקום ' + expected + ' — ה-OR הומר ל-AND',
+                detail, orPayload);
+        }
+    });
+}).catch(function(e) { resolve('attr-filter-or', 'fail', String(e), undefined, attrFilterOrKeysPayload); });
+
 
 // ── getLayerFilterFields ──────────────────────────────────────────────────────
 
+const fieldMetaCellularRequest = { layer: LAYER_CELLULAR, token: API_TOKEN, lang: 'he' };
+
 govmap.getLayerFilterFields(LAYER_CELLULAR, API_TOKEN, 'he').then(function(r) {
     const fields = r.data && r.data.map(function(f) { return f.name + '(' + f.fieldType + ')'; }).join(', ');
-    resolve('field-meta-cellular', 'pass', 'שדות: ' + fields, r.data && r.data.slice(0, 3));
-}).catch(function(e) { resolve('field-meta-cellular', 'fail', String(e)); });
+    resolve('field-meta-cellular', 'pass', 'שדות: ' + fields, r.data && r.data.slice(0, 3), fieldMetaCellularRequest);
+}).catch(function(e) { resolve('field-meta-cellular', 'fail', String(e), undefined, fieldMetaCellularRequest); });
+
+const fieldMetaTlvRequest = { layer: LAYER_TLV_PARCELS, token: API_TOKEN, lang: 'he' };
 
 govmap.getLayerFilterFields(LAYER_TLV_PARCELS, API_TOKEN, 'he').then(function(r) {
     const fields = r.data && r.data.map(function(f) { return f.name + '(' + f.fieldType + ')'; }).join(', ');
-    resolve('field-meta-tlv', 'pass', 'שדות: ' + fields, r.data && r.data.slice(0, 3));
-}).catch(function(e) { resolve('field-meta-tlv', 'fail', String(e)); });
+    resolve('field-meta-tlv', 'pass', 'שדות: ' + fields, r.data && r.data.slice(0, 3), fieldMetaTlvRequest);
+}).catch(function(e) { resolve('field-meta-tlv', 'fail', String(e), undefined, fieldMetaTlvRequest); });

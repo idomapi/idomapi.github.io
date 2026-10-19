@@ -1,7 +1,5 @@
 async function getStaticMap({
-    bbox = '192405.42,676108.89,192484.07,676205.11',
-    gushNum = 6433,
-    parcelNum = 668,
+    bbox = '179000,663681,179965,664095',
     token = '8afbb7f6-f247-4b73-9366-635aaa7c9b1f',
     margin = 40,
     width = 1200,
@@ -32,36 +30,71 @@ async function getStaticMap({
           <CssParameter name="stroke-width">2</CssParameter>
         </Stroke>
       </PolygonSymbolizer>
+      <TextSymbolizer>
+        <Label>
+          <ogc:PropertyName>parcel</ogc:PropertyName>
+        </Label>
+        <Font>
+          <CssParameter name="font-family">Arial</CssParameter>
+          <CssParameter name="font-size">12</CssParameter>
+          <CssParameter name="font-weight">bold</CssParameter>
+        </Font>
+        <Fill>
+          <CssParameter name="fill">#000000</CssParameter>
+        </Fill>
+        <Halo>
+          <Radius>1.5</Radius>
+          <Fill>
+            <CssParameter name="fill">#FFFFFF</CssParameter>
+          </Fill>
+        </Halo>
+      </TextSymbolizer>
+    </Rule>
+
+    <Rule>
+      <ogc:Filter>
+        <ogc:PropertyIsLessThan>
+          <ogc:PropertyName>parcel</ogc:PropertyName>
+          <ogc:Literal>20</ogc:Literal>
+        </ogc:PropertyIsLessThan>
+      </ogc:Filter>
+
+      <PolygonSymbolizer>
+        <Fill>
+          <CssParameter name="fill">#90EE90</CssParameter>
+          <CssParameter name="fill-opacity">0.5</CssParameter>
+        </Fill>
+        <Stroke>
+          <CssParameter name="stroke">#90EE90</CssParameter>
+          <CssParameter name="stroke-width">2</CssParameter>
+        </Stroke>
+      </PolygonSymbolizer>
     </Rule>
 
     <Rule>
       <ogc:Filter>
         <ogc:And>
-
-          <ogc:PropertyIsEqualTo>
-            <ogc:PropertyName>gush_num</ogc:PropertyName>
-            <ogc:Literal>${gushNum}</ogc:Literal>
-          </ogc:PropertyIsEqualTo>
-
-          <ogc:PropertyIsEqualTo>
+          <ogc:PropertyIsGreaterThan>
             <ogc:PropertyName>parcel</ogc:PropertyName>
-            <ogc:Literal>${parcelNum}</ogc:Literal>
-          </ogc:PropertyIsEqualTo>
-
+            <ogc:Literal>20</ogc:Literal>
+          </ogc:PropertyIsGreaterThan>
+          <ogc:PropertyIsLessThan>
+            <ogc:PropertyName>parcel</ogc:PropertyName>
+            <ogc:Literal>100</ogc:Literal>
+          </ogc:PropertyIsLessThan>
         </ogc:And>
       </ogc:Filter>
 
       <PolygonSymbolizer>
         <Fill>
-          <CssParameter name="fill">#000000</CssParameter>
-          <CssParameter name="fill-opacity">0.0</CssParameter>
+          <CssParameter name="fill">#FFB6C1</CssParameter>
+          <CssParameter name="fill-opacity">0.5</CssParameter>
         </Fill>
         <Stroke>
-          <CssParameter name="stroke">#2d5bd1</CssParameter>
-          <CssParameter name="stroke-width">6</CssParameter>
+          <CssParameter name="stroke">#FFB6C1</CssParameter>
+          <CssParameter name="stroke-width">2</CssParameter>
         </Stroke>
       </PolygonSymbolizer>
-
     </Rule>
 
    </FeatureTypeStyle>

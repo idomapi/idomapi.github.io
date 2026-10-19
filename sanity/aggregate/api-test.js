@@ -189,11 +189,17 @@ pendingRow('cat-avg', 'avg(dunam) לפי yeshuvname', 'operation.type=avg + grou
 
 sectionRow('תרשימים — קטגוריה: bucket "אחר"');
 pendingRow('other-bucket', '__other__ bucket בתגובה', 'output.limit=3 + group_by → __other__', 'תרשימים › רכיב "קטגוריה" › §7 מספר קטגוריות והצגת "אחר"');
-pendingRow('other-bucket-nulls', 'bucket "אחר" כולל שורות NULL', 'סכום ה-count של כל השורות = total_records_processed', 'תרשימים › רכיב "קטגוריה" › §7 מספר קטגוריות והצגת "אחר"');
+pendingRow('other-bucket-nulls', 'ספירת רשומות כוללת שורות NULL בשדה הקיבוץ', 'סכום ה-buckets = total_records_processed — בספירת רשומות יש לספור כל רשומה שעברה את הסינון', 'נתונים › רכיב "מספר" › §2 טיפול בערכים ריקים: ספירת רשומות');
 
 sectionRow('תרשימים — קטגוריה: null_handling');
 pendingRow('null-exclude',        'null_handling=exclude',         'output.null_handling=exclude',         'תרשימים › רכיב "קטגוריה" › §4 (+ נתונים › "מספר" › §2 טיפול בערכים ריקים)');
 pendingRow('null-include-other',  'null_handling=include_as_other', 'output.null_handling=include_as_other', 'תרשימים › רכיב "קטגוריה" › §4 (+ נתונים › "מספר" › §2 טיפול בערכים ריקים)');
+
+sectionRow('ערכים ריקים — שלושת המצבים + חיווי איכות נתונים');
+pendingRow('empty-no-rows',     'אין רשומות מתאימות לסינון',        'סינון ללא תוצאות → total_records_processed=0 ו-value=null (לא 0)', 'נתונים › רכיב "מספר" › §2 טיפול בערכים ריקים');
+pendingRow('empty-all-null',    'יש רשומות אך השדה ריק בכולן',      'סינון IS NULL + sum → total_records_processed>0 ו-value=null (לא 0)', 'נתונים › רכיב "מספר" › §2 טיפול בערכים ריקים');
+pendingRow('empty-true-zero',   'תוצאת חישוב 0 אמיתית',             'sum על שורות שהשדה בהן 0 → value=0 ולא null',                         'נתונים › רכיב "מספר" › §2 טיפול בערכים ריקים');
+pendingRow('empty-participating','מספר הרשומות שהשתתפו בחישוב',      'avg מחזיר גם סה"כ רשומות וגם מספר הרשומות עם ערך תקין',               'נתונים › רכיב "מספר" › §2 טיפול בערכים ריקים');
 
 sectionRow('תרשימים — עמודות מוערמות: sub_group_by_source=spatial_filter');
 pendingRow('sub-spat', 'company × שכונה (spatial sub-group)', 'sub_group_by_source=spatial_filter', 'תרשימים › רכיב "קטגוריה" › §2 חישוב לפי שכבת ייחוס מרחבית');
@@ -219,7 +225,7 @@ sectionRow('סינון תכונה — filter.filter (SQL predicate)');
 pendingRow('attr-filter-str-eq', 'filter.filter = equality על שדה מחרוזת', "filter.filter: \"(field = 'value')\" — BUG: מחזיר 0 במקום תת-קבוצה", 'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 pendingRow('attr-filter-eq',    'filter.filter BETWEEN על שדה תאריך',      "filter.filter: BETWEEN תאריך — נתמך",                               'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 pendingRow('attr-filter-count', 'count מסונן < count גלובלי',              'BETWEEN מסנן בפועל',                                                'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
-pendingRow('attr-filter-unsupported-op', 'אופרטור לא נתמך נדחה ולא מתעלם', 'filter.filter: "(field>value)" — > / < אינם נתמכים; מצופה שגיאה ולא התעלמות שקטה', 'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
+pendingRow('attr-filter-unsupported-op', 'אופרטור > / < אינו נתמך — מתעלם', 'filter.filter: "(field>value)" — > / < אינם נתמכים; התעלמות מהתנאי היא ההתנהגות המצופה', 'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 pendingRow('attr-filter-or',             'OR מחזיר איחוד ולא חיתוך',       'filter.filter: "(f=a) OR (f=b)" מול "(f IN (a,b))"',                              'נתונים › רכיב "סינון" › §5 סינון לפי ערך שדה');
 
 sectionRow('getLayerFilterFields — metadata לרכיב סינון');
@@ -732,10 +738,11 @@ agg(otherBucketPayload).then(function(r) {
 
 // ── Other bucket: NULL rows ───────────────────────────────────────────────────
 
-// The overflow bucket is built with `"group"::text NOT IN (top keys)`. In SQL a NULL
-// group field makes that predicate NULL rather than TRUE, so those rows land in no
-// bucket at all — while total_records_processed still counts them, which also holds
-// include_percentage below 100. Layers with no NULLs in the group field pass either way.
+// "התעלמות מערכים ריקים" is the default for field computations, but record counting must
+// count every row that passed the filter, even one whose fields are empty. The overflow
+// bucket is built with `"group"::text NOT IN (top keys)`, which is NULL — not TRUE — for a
+// NULL group value, so those rows land in no bucket and the buckets no longer add up to
+// total_records_processed. The second call names the NULL rows as the cause of the gap.
 const otherBucketNullsPayload = {
     source: { layer: LAYER_AGRIC, srid: 2039 },
     operation: { type: 'count' },
@@ -744,23 +751,37 @@ const otherBucketNullsPayload = {
     output: { limit: 3, include_percentage: true }
 };
 
-agg(otherBucketNullsPayload).then(function(r) {
-    const rows = r.data || [];
-    const bucketed = rows.reduce(function(sum, d) { return sum + (d.count || 0); }, 0);
-    const processed = r.metadata && r.metadata.total_records_processed;
-    const pctSum = rows.reduce(function(sum, d) { return sum + (d.percentage || 0); }, 0);
-    const gap = processed - bucketed;
-    const detail = { bucketed: bucketed, total_records_processed: processed, gap: gap, percentage_sum: pctSum };
+const otherBucketNullCountPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'count' },
+    filter: { view_mode: govmap.aggViewMode.Global, filter: '(yeshuvname IS NULL)' }
+};
 
-    if (gap === 0) {
-        resolve('other-bucket-nulls', 'pass',
-            'כל ' + processed + ' הרשומות משויכות ל-bucket, סכום אחוזים ' + pctSum.toFixed(2),
-            detail, otherBucketNullsPayload);
-    } else {
-        resolve('other-bucket-nulls', 'fail',
-            gap + ' רשומות (NULL) אינן באף bucket — ' + bucketed + ' מתוך ' + processed + ', סכום אחוזים ' + pctSum.toFixed(2),
-            detail, otherBucketNullsPayload);
-    }
+agg(otherBucketNullsPayload).then(function(r) {
+    return agg(otherBucketNullCountPayload).then(function(nullR) {
+        const rows = r.data || [];
+        const bucketed = rows.reduce(function(sum, d) { return sum + (d.count || 0); }, 0);
+        const processed = r.metadata && r.metadata.total_records_processed;
+        const pctSum = rows.reduce(function(sum, d) { return sum + (d.percentage || 0); }, 0);
+        const nulls = nullR.data && nullR.data.value;
+        const gap = processed - bucketed;
+        const detail = { bucketed: bucketed, total_records_processed: processed, gap: gap, null_rows: nulls, percentage_sum: pctSum };
+        const request = { grouped: otherBucketNullsPayload, nulls: otherBucketNullCountPayload };
+
+        if (gap === 0) {
+            resolve('other-bucket-nulls', 'pass',
+                'כל ' + processed + ' הרשומות משויכות ל-bucket, סכום אחוזים ' + pctSum.toFixed(2),
+                detail, request);
+        } else if (gap === nulls) {
+            resolve('other-bucket-nulls', 'fail',
+                gap + ' רשומות עם NULL בשדה הקיבוץ אינן באף bucket — ' + bucketed + ' מתוך ' + processed + ', סכום אחוזים ' + pctSum.toFixed(2),
+                detail, request);
+        } else {
+            resolve('other-bucket-nulls', 'fail',
+                'חסרות ' + gap + ' רשומות ורק ' + nulls + ' מהן NULL — ' + bucketed + ' מתוך ' + processed,
+                detail, request);
+        }
+    });
 }).catch(function(e) { resolve('other-bucket-nulls', 'fail', String(e), undefined, otherBucketNullsPayload); });
 
 // ── Null handling ─────────────────────────────────────────────────────────────
@@ -788,6 +809,114 @@ const nullIncludePayload = {
 agg(nullIncludePayload).then(function(r) {
     resolve('null-include-other', 'pass', (r.data && r.data.length) + ' קבוצות (null כ-other)', r.data && r.data.slice(0, 3), nullIncludePayload);
 }).catch(function(e) { resolve('null-include-other', 'fail', String(e), undefined, nullIncludePayload); });
+
+// ── Empty values: the three states the spec requires to be distinguishable ─────
+
+// (1) no rows matched the filter, (2) rows matched but the field is NULL in all of them,
+// (3) the computation really is 0. A 0 must never stand for (1) or (2), so the UI can
+// tell "no data" from a meaningful zero.
+
+const emptyNoRowsPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'sum', field: 'dunam' },
+    filter: { view_mode: govmap.aggViewMode.Global, filter: '(dunam = -99999)' }
+};
+
+agg(emptyNoRowsPayload).then(function(r) {
+    const value = r.data && r.data.value;
+    const processed = r.metadata && r.metadata.total_records_processed;
+    const detail = { value: value, total_records_processed: processed };
+
+    if (processed === 0 && value === null) {
+        resolve('empty-no-rows', 'pass', 'אין רשומות: value=null, total_records_processed=0', detail, emptyNoRowsPayload);
+    } else {
+        resolve('empty-no-rows', 'fail',
+            'צפוי value=null ו-total=0, התקבל value=' + JSON.stringify(value) + ' total=' + processed,
+            detail, emptyNoRowsPayload);
+    }
+}).catch(function(e) { resolve('empty-no-rows', 'fail', String(e), undefined, emptyNoRowsPayload); });
+
+const emptyAllNullPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'sum', field: 'dunam' },
+    filter: { view_mode: govmap.aggViewMode.Global, filter: '(dunam IS NULL)' }
+};
+
+agg(emptyAllNullPayload).then(function(r) {
+    const value = r.data && r.data.value;
+    const processed = r.metadata && r.metadata.total_records_processed;
+    const detail = { value: value, total_records_processed: processed };
+
+    if (processed > 0 && value === null) {
+        resolve('empty-all-null', 'pass',
+            processed + ' רשומות עם שדה ריק: value=null, נבדל ממצב "אין רשומות"',
+            detail, emptyAllNullPayload);
+    } else {
+        resolve('empty-all-null', 'fail',
+            'צפוי value=null ו-total>0, התקבל value=' + JSON.stringify(value) + ' total=' + processed,
+            detail, emptyAllNullPayload);
+    }
+}).catch(function(e) { resolve('empty-all-null', 'fail', String(e), undefined, emptyAllNullPayload); });
+
+const emptyTrueZeroPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'sum', field: 'dunam' },
+    filter: { view_mode: govmap.aggViewMode.Global, filter: '(dunam = 0)' }
+};
+
+agg(emptyTrueZeroPayload).then(function(r) {
+    const value = r.data && r.data.value;
+    const processed = r.metadata && r.metadata.total_records_processed;
+    const detail = { value: value, total_records_processed: processed };
+
+    if (processed === 0) {
+        resolve('empty-true-zero', 'warn', 'אין בשכבה שורות עם dunam=0 — לא ניתן לבדוק 0 אמיתי', detail, emptyTrueZeroPayload);
+    } else if (value === 0) {
+        resolve('empty-true-zero', 'pass', '0 אמיתי מוחזר כ-0 על ' + processed + ' רשומות', detail, emptyTrueZeroPayload);
+    } else {
+        resolve('empty-true-zero', 'fail',
+            'צפוי value=0, התקבל ' + JSON.stringify(value),
+            detail, emptyTrueZeroPayload);
+    }
+}).catch(function(e) { resolve('empty-true-zero', 'fail', String(e), undefined, emptyTrueZeroPayload); });
+
+// The spec wants both numbers kept: all filtered rows and the rows that actually had a
+// value. avg returns data.count, so the two are compared against an explicit IS NOT NULL
+// count — if data.count equals the total instead, the quality indicator cannot be built.
+
+const emptyParticipatingPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'avg', field: 'dunam' },
+    filter: { view_mode: govmap.aggViewMode.Global }
+};
+
+const emptyValidCountPayload = {
+    source: { layer: LAYER_AGRIC, srid: 2039 },
+    operation: { type: 'count' },
+    filter: { view_mode: govmap.aggViewMode.Global, filter: '(dunam IS NOT NULL)' }
+};
+
+agg(emptyParticipatingPayload).then(function(r) {
+    return agg(emptyValidCountPayload).then(function(validR) {
+        const reported = r.data && r.data.count;
+        const processed = r.metadata && r.metadata.total_records_processed;
+        const valid = validR.data && validR.data.value;
+        const detail = { reported_count: reported, total_records_processed: processed, valid_rows: valid };
+        const request = { avg: emptyParticipatingPayload, valid: emptyValidCountPayload };
+
+        if (valid === processed) {
+            resolve('empty-participating', 'warn', 'אין שורות NULL בשדה — לא ניתן להבדיל בין שני המספרים', detail, request);
+        } else if (reported === valid) {
+            resolve('empty-participating', 'pass',
+                'data.count=' + reported + ' = רשומות עם ערך תקין, total_records_processed=' + processed,
+                detail, request);
+        } else {
+            resolve('empty-participating', 'fail',
+                'data.count=' + reported + ' הוא סה"כ הרשומות ולא ' + valid + ' שהשתתפו בחישוב',
+                detail, request);
+        }
+    });
+}).catch(function(e) { resolve('empty-participating', 'fail', String(e), undefined, emptyParticipatingPayload); });
 
 // ── Spatial sub-group ─────────────────────────────────────────────────────────
 
@@ -1112,12 +1241,12 @@ agg(attrFilterEqPayload).then(function(r) {
     resolve('attr-filter-count', 'fail', 'attr-filter-eq נכשל', undefined, { filtered: attrFilterEqPayload, global: attrFilterCountGlobalPayload });
 });
 
-// ── Attribute filter: unsupported operator must not pass silently ─────────────
+// ── Attribute filter: unsupported operator is ignored ─────────────────────────
 
-// libs/filters accepts only = <> >= <= IN BETWEEN LIKE IS NULL / IS NOT NULL. A strict
-// `>` matches no operator, so the condition is dropped, no WHERE clause is added, and the
-// query runs unfiltered with HTTP 200 — the caller cannot tell the filter was discarded.
-// An explicit error would be the correct response.
+// libs/filters accepts only = <> >= <= IN BETWEEN LIKE IS NULL / IS NOT NULL. Strict `>`
+// and `<` are not supported, so the condition is dropped and the query runs unfiltered —
+// the expected behavior. The spec's range filter is two-sided, so it uses BETWEEN (or
+// >= / <=) and never needs a strict operator. This test pins `>` as a no-op.
 
 const attrFilterStrictGlobalPayload = {
     source: { layer: LAYER_AGRIC, srid: 2039 },
@@ -1142,12 +1271,12 @@ agg(attrFilterStrictGlobalPayload).then(function(globalR) {
         if (r.error) {
             resolve('attr-filter-unsupported-op', 'pass', 'נדחה בשגיאה: ' + r.error, detail, request);
         } else if (strict === global) {
-            resolve('attr-filter-unsupported-op', 'fail',
-                '(dunam>100) מתעלם בשקט — החזיר ' + strict + ' = ללא סינון',
+            resolve('attr-filter-unsupported-op', 'pass',
+                '(dunam>100) מתעלם כמצופה — החזיר ' + strict + ' = ללא סינון',
                 detail, request);
         } else {
-            resolve('attr-filter-unsupported-op', 'pass',
-                '(dunam>100) סינן → ' + strict + ' מתוך ' + global,
+            resolve('attr-filter-unsupported-op', 'warn',
+                '(dunam>100) סינן → ' + strict + ' מתוך ' + global + ' — > אינו אמור להיתמך',
                 detail, request);
         }
     });

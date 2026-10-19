@@ -284,8 +284,15 @@ body {
     }
 
     .panels #gpsSection,
-    .panels #drawSection {
+    .panels #drawSection,
+    .panels #toolsSection {
         display: block;
+    }
+
+    /* ponytail: mobile shows only the showMeasure button from the tools section */
+    .panels #toolsSection .form-block:not(:has(#btnShowMeasure)),
+    .panels #toolsSection .form-block > *:not(#btnShowMeasure) {
+        display: none;
     }
 }
 
